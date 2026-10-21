@@ -1,0 +1,34 @@
+{
+  "version": 8,
+  "center": [
+    114.5,
+    30.2
+  ],
+  "zoom": 12,
+  "sources": {
+    "basemap": {
+      "type": "raster",
+      "tiles": [
+        "tiles/{z}/{x}/{y}"
+      ],
+      "tileSize": 256,
+      "minzoom": 10,
+      "maxzoom": 14
+    }
+  },
+  "layers": [
+    {
+      "id": "background",
+      "type": "background",
+      "paint": {
+        "background-color": "#e2e9c8"
+      }
+    },
+    {
+      "id": "basemap",
+      "type": "raster",
+      "source": "basemap"
+    }
+  ],
+  "name": "Synthetic farm raster"
+}

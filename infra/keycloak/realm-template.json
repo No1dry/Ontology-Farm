@@ -1,0 +1,29 @@
+{
+  "realm": "lzo",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "resetPasswordAllowed": false,
+  "clients": [{
+    "clientId": "lzo-api",
+    "enabled": true,
+    "protocol": "openid-connect",
+    "publicClient": false,
+    "secret": "${LZO_OIDC_CLIENT_SECRET}",
+    "standardFlowEnabled": true,
+    "directAccessGrantsEnabled": false,
+    "serviceAccountsEnabled": false,
+    "redirectUris": ["${LZO_PUBLIC_ORIGIN}/api/v1/session/callback", "${LZO_PUBLIC_ORIGIN}/api/v1/session/login"],
+    "webOrigins": ["${LZO_PUBLIC_ORIGIN}"],
+    "attributes": {"pkce.code.challenge.method": "S256"}
+  }, {
+    "clientId": "lzo-identity-admin",
+    "enabled": true,
+    "protocol": "openid-connect",
+    "publicClient": false,
+    "secret": "${LZO_IDENTITY_ADMIN_CLIENT_SECRET}",
+    "standardFlowEnabled": false,
+    "directAccessGrantsEnabled": false,
+    "serviceAccountsEnabled": true
+  }]
+}

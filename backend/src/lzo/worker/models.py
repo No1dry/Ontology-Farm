@@ -1,0 +1,50 @@
+"""Job projections and append-only execution attempts."""
+from sqlalchemy import BigInteger, Column, DateTime, Integer, MetaData, String, Table
+from sqlalchemy.dialects.postgresql import JSONB, UUID
+
+metadata = MetaData()
+jobs = Table("jobs", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("kind", String(128), nullable=False),
+    Column("status", String(16), nullable=False),
+    Column("revision", Integer, nullable=False),
+    Column("initiator_id", UUID(as_uuid=True), nullable=False),
+    Column("resource_id", UUID(as_uuid=True), nullable=False),
+    Column("action", String(128), nullable=False),
+    Column("bundle_id", UUID(as_uuid=True)),
+    Column("payload", JSONB, nullable=False),
+    Column("reference_ids", JSONB, nullable=False),
+    Column("cursor", JSONB, nullable=False),
+    Column("result_ref", JSONB),
+    Column("error_code", String(128)),
+    Column("attempts", Integer, nullable=False),
+    Column("retry_count", Integer, nullable=False),
+    Column("max_attempts", Integer, nullable=False),
+    Column("lease_token", UUID(as_uuid=True)),
+    Column("worker_id", String(128)),
+    Column("lease_expires_at", DateTime(timezone=True)),
+    Column("heartbeat_at", DateTime(timezone=True)),
+    Column("available_at", DateTime(timezone=True), nullable=False),
+    Column("created_at", DateTime(timezone=True), nullable=False),
+    Column("updated_at", DateTime(timezone=True), nullable=False),
+    Column("outbox_id", UUID(as_uuid=True)),
+    Column("outbox_position", BigInteger))
+job_dependencies = Table("job_dependencies", metadata,
+    Column("job_id", UUID(as_uuid=True), primary_key=True),
+    Column("resource_id", UUID(as_uuid=True), primary_key=True))
+job_attempts = Table("job_attempts", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("job_id", UUID(as_uuid=True), nullable=False),
+    Column("attempt", Integer, nullable=False),
+    Column("lease_token", UUID(as_uuid=True), nullable=False),
+    Column("worker_id", String(128), nullable=False),
+    Column("initiator_id", UUID(as_uuid=True), nullable=False),
+    Column("authorization_version", Integer, nullable=False),
+    Column("phase", String(32), nullable=False),
+    Column("error_code", String(128)),
+    Column("recorded_at", DateTime(timezone=True), nullable=False))
+source_health = Table("source_health", metadata,
+    Column("source_id", UUID(as_uuid=True), primary_key=True),
+    Column("status", String(16), nullable=False),
+    Column("error_code", String(128)),
+    Column("checked_at", DateTime(timezone=True), nullable=False))

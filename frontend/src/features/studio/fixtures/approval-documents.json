@@ -1,0 +1,33 @@
+[
+  {
+    "name": "exponent",
+    "document": {
+      "classes": [],
+      "properties": [],
+      "relations": [],
+      "shapes": "",
+      "dependencies": [],
+      "ui_metadata": {
+        "precision": 1e-07
+      }
+    },
+    "canonical": "{\"classes\":[],\"dependencies\":[],\"properties\":[],\"relations\":[],\"shapes\":\"\",\"ui_metadata\":{\"precision\":1e-07}}",
+    "digest": "d45390cab4691bf54d0f1b2fd91343468451d412c214436eff68de3315b835ce"
+  },
+  {
+    "name": "integer-keys",
+    "document": {
+      "classes": [],
+      "properties": [],
+      "relations": [],
+      "shapes": "",
+      "dependencies": [],
+      "ui_metadata": {
+        "10": "ten",
+        "2": "two"
+      }
+    },
+    "canonical": "{\"classes\":[],\"dependencies\":[],\"properties\":[],\"relations\":[],\"shapes\":\"\",\"ui_metadata\":{\"10\":\"ten\",\"2\":\"two\"}}",
+    "digest": "71b1624b48c7896fa3ccd7a2cb32246b8112be771a19ed9ddc4da6a62ced5a33"
+  }
+]

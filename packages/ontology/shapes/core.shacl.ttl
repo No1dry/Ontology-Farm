@@ -1,0 +1,4 @@
+@prefix lzo: <https://w3id.org/lzo/ontology/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+lzo:DeviceShape a sh:NodeShape; sh:targetClass lzo:Device;
+  sh:property [ sh:path lzo:managedBy; sh:minCount 1; sh:maxCount 1; sh:class lzo:Organization ] .

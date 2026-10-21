@@ -1,0 +1,16 @@
+FROM node:24.22.0-bookworm-slim@sha256:a5f4366e834695d5f363b920c104953a535d3a9864d1bdf74566a0ebe01daee5 AS node
+FROM python:3.12.7-slim-bookworm@sha256:60d9996b6a8a3689d36db740b49f4327be3be09a21122bd02fb8895abb38b50d
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
+COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+WORKDIR /workspace
+COPY backend/requirements.lock /tmp/requirements.lock
+RUN pip install --no-cache-dir -r /tmp/requirements.lock
+COPY package.json package-lock.json ./
+RUN npm ci && npx playwright install --with-deps chromium
+COPY playwright.config.ts ./
+COPY tests/e2e ./tests/e2e
+COPY backend/src ./backend/src
+COPY scripts/bootstrap_authorization.py scripts/seed_workbench.py scripts/seed_studio.py ./scripts/
+CMD ["npm", "test"]

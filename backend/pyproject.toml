@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools==75.1.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lzo-platform"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+description = "Liangzi Lake operational ontology platform API and worker"
+# All application and test dependencies are installed from requirements.lock.
+dependencies = ["semantica[shacl]==0.7.0", "rdflib==7.6.0", "pyshacl==0.30.1", "PyLD==3.3.0", "openpyxl==3.1.5", "defusedxml==0.7.1", "python-multipart==0.0.32", "PyMySQL[rsa]==1.2.3", "cryptography==50.0.2"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

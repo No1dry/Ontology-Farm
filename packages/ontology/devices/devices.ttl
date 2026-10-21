@@ -1,0 +1,15 @@
+@prefix lzo: <https://w3id.org/lzo/ontology/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+lzo:Device a owl:Class; rdfs:subClassOf lzo:AgriculturalEntity, <http://www.w3.org/ns/ssn/System> .
+lzo:Sensor a owl:Class; rdfs:subClassOf lzo:Device, <http://www.w3.org/ns/sosa/Sensor> .
+lzo:Camera a owl:Class; rdfs:subClassOf lzo:Device .
+lzo:WaterGate a owl:Class; rdfs:subClassOf lzo:Device, <http://www.w3.org/ns/sosa/Actuator> .
+lzo:Pump a owl:Class; rdfs:subClassOf lzo:Device, <http://www.w3.org/ns/sosa/Actuator> .
+lzo:IrrigationEquipment a owl:Class; rdfs:subClassOf lzo:Device .
+lzo:AgriculturalMachine a owl:Class; rdfs:subClassOf lzo:Device .
+lzo:Drone a owl:Class; rdfs:subClassOf lzo:Device .
+lzo:serves a owl:ObjectProperty; rdfs:domain lzo:Device; rdfs:range lzo:AgriculturalZone .
+lzo:monitors a owl:ObjectProperty; rdfs:domain lzo:Device; rdfs:range lzo:AgriculturalEntity .
+lzo:controls a owl:ObjectProperty; rdfs:domain lzo:Device; rdfs:range lzo:AgriculturalEntity .
+lzo:mountedOn a owl:ObjectProperty; rdfs:domain lzo:Device; rdfs:range lzo:AgriculturalEntity .

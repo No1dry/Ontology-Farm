@@ -1,0 +1,22 @@
+{
+  "name": "lzo-platform-tests",
+  "private": true,
+  "version": "0.1.0",
+  "engines": {"node": "24.22.0"},
+  "scripts": {
+    "test": "playwright test",
+    "test:e2e": "playwright test",
+    "test:list": "playwright test --list",
+    "test:workbench": "playwright test --project=workbench",
+    "web:test": "npm --prefix frontend test",
+    "web:build": "npm --prefix frontend run build",
+    "api:export": "python scripts/export_openapi.py",
+    "api:generate": "npm --prefix frontend run api:generate",
+    "api:check": "npm --prefix frontend run api:check"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "typescript": "7.0.2",
+    "@types/node": "24.10.1"
+  }
+}

@@ -1,0 +1,262 @@
+{
+  "seed": 20261020,
+  "data_nature": "synthetic",
+  "objects": [
+    {
+      "resource_id": "ac321fa4-e87a-5e33-b82d-b9d59d7f944e",
+      "class_iris": [
+        "https://w3id.org/lzo/ontology/Organization"
+      ],
+      "display_name": "organization",
+      "owner_scope_id": "7a5fe595-cf63-5559-9fa1-7eba4db994e7",
+      "related_scope_ids": [
+        "c46b241c-5667-51d9-a934-b8436e2cafcc"
+      ],
+      "state": "active",
+      "data_nature": "synthetic",
+      "assertions": []
+    },
+    {
+      "resource_id": "dfd2da6e-c37b-530f-98ed-ee509252e61a",
+      "class_iris": [
+        "https://w3id.org/lzo/ontology/CropConcept"
+      ],
+      "display_name": "crop-pond",
+      "owner_scope_id": "7a5fe595-cf63-5559-9fa1-7eba4db994e7",
+      "related_scope_ids": [
+        "c46b241c-5667-51d9-a934-b8436e2cafcc"
+      ],
+      "state": "active",
+      "data_nature": "synthetic",
+      "assertions": []
+    },
+    {
+      "resource_id": "40666cd6-bfc7-59e2-be49-fd5ad55450bd",
+      "class_iris": [
+        "https://w3id.org/lzo/ontology/Pond"
+      ],
+      "display_name": "pond",
+      "owner_scope_id": "7a5fe595-cf63-5559-9fa1-7eba4db994e7",
+      "related_scope_ids": [
+        "c46b241c-5667-51d9-a934-b8436e2cafcc"
+      ],
+      "state": "active",
+      "data_nature": "synthetic",
+      "assertions": [
+        {
+          "assertion_id": "25c90f28-27b9-5724-897b-f9e2e33beee5",
+          "resource_id": "40666cd6-bfc7-59e2-be49-fd5ad55450bd",
+          "predicate_iri": "https://w3id.org/lzo/ontology/crop",
+          "object": {
+            "kind": "iri",
+            "value": "urn:lzo:object:dfd2da6e-c37b-530f-98ed-ee509252e61a"
+          },
+          "state": "accepted",
+          "data_nature": "synthetic",
+          "valid_from": "2026-01-01T00:00:00Z",
+          "support": {
+            "support_id": "aef51e8c-689b-5caa-a325-f1c6636656b3",
+            "source_version": "synthetic-v1",
+            "raw_value": {
+              "seed": 20261020
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource_id": "e8bf39eb-022b-5c13-9dfc-49d0bad03696",
+      "class_iris": [
+        "https://w3id.org/lzo/ontology/Pump"
+      ],
+      "display_name": "shared-pump",
+      "owner_scope_id": "7a5fe595-cf63-5559-9fa1-7eba4db994e7",
+      "related_scope_ids": [
+        "c46b241c-5667-51d9-a934-b8436e2cafcc"
+      ],
+      "state": "active",
+      "data_nature": "synthetic",
+      "assertions": [
+        {
+          "assertion_id": "086dd4e9-c27b-508f-bd8a-a5dac557059d",
+          "resource_id": "e8bf39eb-022b-5c13-9dfc-49d0bad03696",
+          "predicate_iri": "https://w3id.org/lzo/ontology/managedBy",
+          "object": {
+            "kind": "iri",
+            "value": "urn:lzo:object:ac321fa4-e87a-5e33-b82d-b9d59d7f944e"
+          },
+          "state": "accepted",
+          "data_nature": "synthetic",
+          "valid_from": "2026-01-01T00:00:00Z",
+          "support": {
+            "support_id": "f792b665-7dad-577a-af85-878f99a860e1",
+            "source_version": "synthetic-v1",
+            "raw_value": {
+              "seed": 20261020
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource_id": "b4e0d4d0-2128-5639-98bc-18cc2e9c52fd",
+      "class_iris": [
+        "https://w3id.org/lzo/ontology/Sensor"
+      ],
+      "display_name": "pond-sensor",
+      "owner_scope_id": "7a5fe595-cf63-5559-9fa1-7eba4db994e7",
+      "related_scope_ids": [
+        "c46b241c-5667-51d9-a934-b8436e2cafcc"
+      ],
+      "state": "active",
+      "data_nature": "synthetic",
+      "assertions": [
+        {
+          "assertion_id": "be3b1201-6935-5379-b2b5-9ab78b4ee6e0",
+          "resource_id": "b4e0d4d0-2128-5639-98bc-18cc2e9c52fd",
+          "predicate_iri": "https://w3id.org/lzo/ontology/managedBy",
+          "object": {
+            "kind": "iri",
+            "value": "urn:lzo:object:ac321fa4-e87a-5e33-b82d-b9d59d7f944e"
+          },
+          "state": "accepted",
+          "data_nature": "synthetic",
+          "valid_from": "2026-01-01T00:00:00Z",
+          "support": {
+            "support_id": "c9a739ff-253e-5331-b8a3-77e6067255e0",
+            "source_version": "synthetic-v1",
+            "raw_value": {
+              "seed": 20261020
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource_id": "619588b3-c764-5c23-bfc6-5fd1c69cebb8",
+      "class_iris": [
+        "https://w3id.org/lzo/ontology/Camera"
+      ],
+      "display_name": "pond-camera",
+      "owner_scope_id": "7a5fe595-cf63-5559-9fa1-7eba4db994e7",
+      "related_scope_ids": [
+        "c46b241c-5667-51d9-a934-b8436e2cafcc"
+      ],
+      "state": "active",
+      "data_nature": "synthetic",
+      "assertions": [
+        {
+          "assertion_id": "e0d052c0-b8bc-5f43-9c44-6846ffe154a5",
+          "resource_id": "619588b3-c764-5c23-bfc6-5fd1c69cebb8",
+          "predicate_iri": "https://w3id.org/lzo/ontology/managedBy",
+          "object": {
+            "kind": "iri",
+            "value": "urn:lzo:object:ac321fa4-e87a-5e33-b82d-b9d59d7f944e"
+          },
+          "state": "accepted",
+          "data_nature": "synthetic",
+          "valid_from": "2026-01-01T00:00:00Z",
+          "support": {
+            "support_id": "ba8fb2ed-04e8-5679-9965-ff7bd3322559",
+            "source_version": "synthetic-v1",
+            "raw_value": {
+              "seed": 20261020
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "patches": [
+    {
+      "resource_id": "e8bf39eb-022b-5c13-9dfc-49d0bad03696",
+      "expected_revision": 1,
+      "additions": [
+        {
+          "assertion_id": "6a54cd0b-f8e6-5348-acb7-f8b74528c328",
+          "resource_id": "e8bf39eb-022b-5c13-9dfc-49d0bad03696",
+          "predicate_iri": "https://w3id.org/lzo/ontology/serves",
+          "object": {
+            "kind": "iri",
+            "value": "urn:lzo:object:40666cd6-bfc7-59e2-be49-fd5ad55450bd"
+          },
+          "state": "accepted",
+          "data_nature": "synthetic",
+          "valid_from": "2026-01-01T00:00:00Z",
+          "support": {
+            "support_id": "57b6fa35-40ad-5dd6-b16e-decf3b8e229c",
+            "source_version": "synthetic-v1",
+            "raw_value": {
+              "seed": 20261020
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource_id": "b4e0d4d0-2128-5639-98bc-18cc2e9c52fd",
+      "expected_revision": 1,
+      "additions": [
+        {
+          "assertion_id": "f5579840-9366-512e-b968-c861e09c4b5f",
+          "resource_id": "b4e0d4d0-2128-5639-98bc-18cc2e9c52fd",
+          "predicate_iri": "https://w3id.org/lzo/ontology/monitors",
+          "object": {
+            "kind": "iri",
+            "value": "urn:lzo:object:40666cd6-bfc7-59e2-be49-fd5ad55450bd"
+          },
+          "state": "accepted",
+          "data_nature": "synthetic",
+          "valid_from": "2026-01-01T00:00:00Z",
+          "support": {
+            "support_id": "5f0a0653-8768-57f3-8f7b-ef241c17abcb",
+            "source_version": "synthetic-v1",
+            "raw_value": {
+              "seed": 20261020
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "shared_device_id": "e8bf39eb-022b-5c13-9dfc-49d0bad03696",
+  "geometry": {
+    "resource_id": "40666cd6-bfc7-59e2-be49-fd5ad55450bd",
+    "expected_revision": 1,
+    "geojson": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            114.5,
+            30.2
+          ],
+          [
+            114.501,
+            30.2
+          ],
+          [
+            114.501,
+            30.201
+          ],
+          [
+            114.5,
+            30.201
+          ],
+          [
+            114.5,
+            30.2
+          ]
+        ]
+      ]
+    },
+    "source_crs": "EPSG:4490",
+    "source_support": {
+      "support_id": "4914ecdf-1af0-51bc-9866-5610570c6822",
+      "source_version": "synthetic-v1",
+      "raw_value": {
+        "seed": 20261020
+      }
+    }
+  }
+}

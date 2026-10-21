@@ -1,0 +1,517 @@
+{
+  "generator": "scripts/generate_demo_map.py",
+  "data_nature": "synthetic",
+  "description": "Original synthetic Liangzi Lake agricultural demonstration; not surveyed geography",
+  "center": [
+    114.5,
+    30.2
+  ],
+  "bbox": [
+    114.48,
+    30.18,
+    114.52,
+    30.22
+  ],
+  "min_zoom": 10,
+  "max_zoom": 14,
+  "coverage": "3x3 XYZ tiles at every zoom 10 through 14; declared bbox is inside their intersection",
+  "glyphs": {
+    "fontstack": "Noto Sans Regular",
+    "source_repository": "https://github.com/maplibre/demotiles",
+    "source_revision": "601ae60796ceceda2cbd2ed3d2ea92d17a84be4b",
+    "source_path_template": "font/Noto Sans Regular/{range}.pbf",
+    "license": "SIL Open Font License 1.1",
+    "coverage_file": "glyph-coverage.json",
+    "declared_blocks": [
+      "U+0000-00FF",
+      "U+3000-30FF",
+      "U+4E00-9FFF",
+      "U+FF00-FFFF"
+    ],
+    "available_codepoint_count": 21648,
+    "missing_unified_ideographs": [
+      40913,
+      40914,
+      40915,
+      40916,
+      40917,
+      40918,
+      40919,
+      40920,
+      40921,
+      40922,
+      40923,
+      40924,
+      40925,
+      40926,
+      40927,
+      40928,
+      40929,
+      40930,
+      40931,
+      40932,
+      40933,
+      40934,
+      40935,
+      40936,
+      40937,
+      40938,
+      40939,
+      40940,
+      40941,
+      40942,
+      40943,
+      40944,
+      40945,
+      40946,
+      40947,
+      40948,
+      40949,
+      40950,
+      40951,
+      40952,
+      40953,
+      40954,
+      40955,
+      40956,
+      40957,
+      40958,
+      40959
+    ],
+    "client_option": "localIdeographFontFamily: false"
+  },
+  "generator_environment": {
+    "python": "3.12.7",
+    "sqlite": "3.45.3",
+    "zlib": "1.2.13"
+  },
+  "generator_sha256": "8961008f2da70363b93b0492fc8eea8dff2fc74b7a2377f2923c6ac9c7d23bd9",
+  "files": {
+    ".gitattributes": {
+      "sha256": "3f742516cbb9a738e5381ed2d92ca40009a65bb4470b6e8fb5ccf31fb0ce12e8",
+      "bytes": 96
+    },
+    "assets/glyphs/Noto Sans Regular/0-255.pbf": {
+      "sha256": "ef1f38a3f1978591e846e9eaddf8a54f7047f546fc6aaed7872cc53151a5de78",
+      "bytes": 76580
+    },
+    "assets/glyphs/Noto Sans Regular/12288-12543.pbf": {
+      "sha256": "6bbe541b57b43364b5b707686bd992898469e5d6f66e7be31828b2d2e6f5c4f7",
+      "bytes": 147462
+    },
+    "assets/glyphs/Noto Sans Regular/19968-20223.pbf": {
+      "sha256": "e1c87b549df7bb07b0bb19b52e379b10054872dcec5a86d824440371534060a4",
+      "bytes": 192358
+    },
+    "assets/glyphs/Noto Sans Regular/20224-20479.pbf": {
+      "sha256": "af4b2222a8e7e63866df86782833f5a51315258dff00090b04d4f213ae1ac8ac",
+      "bytes": 206424
+    },
+    "assets/glyphs/Noto Sans Regular/20480-20735.pbf": {
+      "sha256": "3374ab23080bc94a8675f423df7f32ccc93ce7de765e1417e46726b87cd9590b",
+      "bytes": 206396
+    },
+    "assets/glyphs/Noto Sans Regular/20736-20991.pbf": {
+      "sha256": "72e118b13767b513b4038fc9cc3844acfc77bc18f4e6581a5f03c447ddd68522",
+      "bytes": 200017
+    },
+    "assets/glyphs/Noto Sans Regular/20992-21247.pbf": {
+      "sha256": "8dc93d4b7a35972427fc641e847f2b4522b6b1eaa58b909e6f2bd5d8fd867163",
+      "bytes": 198855
+    },
+    "assets/glyphs/Noto Sans Regular/21248-21503.pbf": {
+      "sha256": "a98e1d6ea9b7e92ba58baea665ce1972d3c88f46f79510ca0f628ce79c73f303",
+      "bytes": 194787
+    },
+    "assets/glyphs/Noto Sans Regular/21504-21759.pbf": {
+      "sha256": "8554c2a16e8f4253a0df81a3a5044ff9d409e883a59b18e9369cc5f817ee30ba",
+      "bytes": 195477
+    },
+    "assets/glyphs/Noto Sans Regular/21760-22015.pbf": {
+      "sha256": "b48f04f782e4d6f55c21bd633a404f6af3324dbe1906eadd3049d4ea1611d006",
+      "bytes": 196748
+    },
+    "assets/glyphs/Noto Sans Regular/22016-22271.pbf": {
+      "sha256": "4fc5010bffb70bc72782b12f1255332c35ed339866adc6a7219a4963f9deb9b9",
+      "bytes": 195372
+    },
+    "assets/glyphs/Noto Sans Regular/22272-22527.pbf": {
+      "sha256": "ab6358c7b33eb550d8a8a455f13599e4b8f0df3ef61da41bbb3e506941d9f8a5",
+      "bytes": 200783
+    },
+    "assets/glyphs/Noto Sans Regular/22528-22783.pbf": {
+      "sha256": "69acec4d8aa09e94e2eb45fdfbf3d893977e94a1f43a6c1d477d2c0de1fe9eb4",
+      "bytes": 202932
+    },
+    "assets/glyphs/Noto Sans Regular/22784-23039.pbf": {
+      "sha256": "d360c6ab260caeb374b38bead3b0235390f39d1900648c288803a568789b873f",
+      "bytes": 204970
+    },
+    "assets/glyphs/Noto Sans Regular/23040-23295.pbf": {
+      "sha256": "3373149a2e4520c4f715be94aca3f1b76bfc8ac1758256adf21d9a6b2def896a",
+      "bytes": 205585
+    },
+    "assets/glyphs/Noto Sans Regular/23296-23551.pbf": {
+      "sha256": "ee40e22db97c98e6608d66601e24bcd831a5dcbc13a1ad6f093279c0bd3b3e46",
+      "bytes": 202279
+    },
+    "assets/glyphs/Noto Sans Regular/23552-23807.pbf": {
+      "sha256": "2e9cdf17173ba2b75230ce4d3e1b3f44d6d30c7dd0a8719e976346213e2a91af",
+      "bytes": 198190
+    },
+    "assets/glyphs/Noto Sans Regular/23808-24063.pbf": {
+      "sha256": "768c26aded33a823118ec7e98bc6932d8f938711a8cbc7b1937b7f6579310a2e",
+      "bytes": 199146
+    },
+    "assets/glyphs/Noto Sans Regular/24064-24319.pbf": {
+      "sha256": "248e52d8771a7075952d57206157cd637599e3985344ce47c8a9f1a87ba8b9be",
+      "bytes": 202650
+    },
+    "assets/glyphs/Noto Sans Regular/24320-24575.pbf": {
+      "sha256": "990aa9e98d4f650378ff0e7ac920796019cd1d09882a9842ec3baaa69bd2b34f",
+      "bytes": 202735
+    },
+    "assets/glyphs/Noto Sans Regular/24576-24831.pbf": {
+      "sha256": "bc4948387e5e6f7b3b932c2288b34876b564b80a192cef3356463b25d0199e56",
+      "bytes": 203858
+    },
+    "assets/glyphs/Noto Sans Regular/24832-25087.pbf": {
+      "sha256": "b1fd7a8f4a3137dda88a83bf514f3e8900bb25b5c57fac5a0a3a8a83e047e673",
+      "bytes": 204114
+    },
+    "assets/glyphs/Noto Sans Regular/25088-25343.pbf": {
+      "sha256": "aacebabcf4a04fdea8135a0dbbabbf1bc406202527778c16082a4e40c32c72e1",
+      "bytes": 204412
+    },
+    "assets/glyphs/Noto Sans Regular/25344-25599.pbf": {
+      "sha256": "429e3909d67275b4152c256e4a9331a2b3c0421ed0200392453ad34fbe51767a",
+      "bytes": 205528
+    },
+    "assets/glyphs/Noto Sans Regular/25600-25855.pbf": {
+      "sha256": "6af02c7443d06da67f438a63652b00b1346ddbdb91bd6e4079be4c187add4ca1",
+      "bytes": 205948
+    },
+    "assets/glyphs/Noto Sans Regular/25856-26111.pbf": {
+      "sha256": "7b765282e0cf4705fc416da6b7178495cd0e32a86f9dc81480beb7ab628a19b3",
+      "bytes": 203968
+    },
+    "assets/glyphs/Noto Sans Regular/26112-26367.pbf": {
+      "sha256": "33bfd9858fdcb9c7eb64a5706bdc8b843cca489d86680fd23e4e9e20a0cad364",
+      "bytes": 195892
+    },
+    "assets/glyphs/Noto Sans Regular/26368-26623.pbf": {
+      "sha256": "17fac159b78addf7b62f7e8bf516f861a1d44d017d0da69c2b11260226902320",
+      "bytes": 204360
+    },
+    "assets/glyphs/Noto Sans Regular/26624-26879.pbf": {
+      "sha256": "7c96e8dcd08c9bdb5d5959a5e84630b1e5f1d29800a0ba9b062c77e2b9bbb12c",
+      "bytes": 205500
+    },
+    "assets/glyphs/Noto Sans Regular/26880-27135.pbf": {
+      "sha256": "75bdba64066816c368241a82a72a66003813997bc36750323b84c665b2afe570",
+      "bytes": 205752
+    },
+    "assets/glyphs/Noto Sans Regular/27136-27391.pbf": {
+      "sha256": "5a0cb996db7af1cbace0e3de360f50315afd16914d6db350a3ad61b6d292a9aa",
+      "bytes": 205920
+    },
+    "assets/glyphs/Noto Sans Regular/27392-27647.pbf": {
+      "sha256": "d91184161f6145935e75050d0b3c54d243bee03946c7761a2939daad309a790b",
+      "bytes": 203890
+    },
+    "assets/glyphs/Noto Sans Regular/27648-27903.pbf": {
+      "sha256": "7e85534f046e97a2781a8964d65642270267a075f6697cfb12a37dee45b66ebf",
+      "bytes": 203879
+    },
+    "assets/glyphs/Noto Sans Regular/27904-28159.pbf": {
+      "sha256": "b11207478fa1f485491988b6a3f8d4365cdc10bd47a681a946b4b0647d2a6317",
+      "bytes": 204717
+    },
+    "assets/glyphs/Noto Sans Regular/28160-28415.pbf": {
+      "sha256": "59a3e78873654bff6e7f5745549c82af33cf1f1e694fa0f1d50c7257745ce45c",
+      "bytes": 204996
+    },
+    "assets/glyphs/Noto Sans Regular/28416-28671.pbf": {
+      "sha256": "16d68eb0b0d938e32511e7025441f711dd996fd4bb45910b60bfb593c058557c",
+      "bytes": 205277
+    },
+    "assets/glyphs/Noto Sans Regular/28672-28927.pbf": {
+      "sha256": "c4f72eb186dd35bfd0fbe2c11d16d2ad8751b7129d8a30f17135df51f481333b",
+      "bytes": 204968
+    },
+    "assets/glyphs/Noto Sans Regular/28928-29183.pbf": {
+      "sha256": "eed2063394e26dd51b37ea4245e34ba14cf1d5713d76518e4c6ebb8d9c646ae3",
+      "bytes": 204944
+    },
+    "assets/glyphs/Noto Sans Regular/29184-29439.pbf": {
+      "sha256": "8234d9cccbc016a35d4c9a4c5dd24091cd7de7f12da9ced531cf3590030400fe",
+      "bytes": 203954
+    },
+    "assets/glyphs/Noto Sans Regular/29440-29695.pbf": {
+      "sha256": "884b6776c23f8c9b9a21e0e0105287a9ea25890dd0b1e110d27c76f54d7d091f",
+      "bytes": 203438
+    },
+    "assets/glyphs/Noto Sans Regular/29696-29951.pbf": {
+      "sha256": "cd5b0a1a1762028ef76e74ca8798b806950f3e91d0a672de2c33b89d2f8cb352",
+      "bytes": 203246
+    },
+    "assets/glyphs/Noto Sans Regular/29952-30207.pbf": {
+      "sha256": "c3a38be840ae1e801c9216c5c8df3d962a8409c866763613e5ba833afbef61c1",
+      "bytes": 201492
+    },
+    "assets/glyphs/Noto Sans Regular/30208-30463.pbf": {
+      "sha256": "6b16f48d78a48b6cbe7a8076be489797f9860e346d017b979897be878dff3e32",
+      "bytes": 201913
+    },
+    "assets/glyphs/Noto Sans Regular/30464-30719.pbf": {
+      "sha256": "2adf8c9db14a55921db1469d8c043675048614ba8542a3f94c0155adf9e82c26",
+      "bytes": 197227
+    },
+    "assets/glyphs/Noto Sans Regular/30720-30975.pbf": {
+      "sha256": "811d3af54f808fb5e0270ec298bfca0727e0e76f75366a9606e87d0764efeb5d",
+      "bytes": 202966
+    },
+    "assets/glyphs/Noto Sans Regular/30976-31231.pbf": {
+      "sha256": "bab42360ea766f871913dd2f9c6bf9e31eb55610b6c9ff043f17a45f8e7da408",
+      "bytes": 204526
+    },
+    "assets/glyphs/Noto Sans Regular/31232-31487.pbf": {
+      "sha256": "4dd2c5ae63ac532c74d948c5a98d124b81168d44dde01cba416e82fd79312cad",
+      "bytes": 203882
+    },
+    "assets/glyphs/Noto Sans Regular/31488-31743.pbf": {
+      "sha256": "1c79013fbad52a0e4dcfbdcd9a3369a2b1a68336921ab98b743a208a4f168af4",
+      "bytes": 205472
+    },
+    "assets/glyphs/Noto Sans Regular/31744-31999.pbf": {
+      "sha256": "d358a3a73944e134fdffe8cc2ccfb6acd11cd566321bab8832ec8933894d2064",
+      "bytes": 205370
+    },
+    "assets/glyphs/Noto Sans Regular/32000-32255.pbf": {
+      "sha256": "16bf10af0696f7c7ba613a7a9356b3adc8a013923ccfd5b5b2e3274b0910ea38",
+      "bytes": 204467
+    },
+    "assets/glyphs/Noto Sans Regular/32256-32511.pbf": {
+      "sha256": "412d3e5772ff1005c159ae612cc5bceab6f3cc83c233b36e7e5f3604fe4288e4",
+      "bytes": 204619
+    },
+    "assets/glyphs/Noto Sans Regular/32512-32767.pbf": {
+      "sha256": "142a45e278bd1a9d2adfb0b79ffdcfe04d40ad30db99ff0446003222f6869d6f",
+      "bytes": 200304
+    },
+    "assets/glyphs/Noto Sans Regular/32768-33023.pbf": {
+      "sha256": "905a016e83e007cc3d44a1bfc02f06dd3205da666151dc90647234d7ee37eed0",
+      "bytes": 203055
+    },
+    "assets/glyphs/Noto Sans Regular/33024-33279.pbf": {
+      "sha256": "5c4d5e8ba4587e3cae4e9de98c649f175b0618769e5c3cdfe2e4089f56bd28f9",
+      "bytes": 203558
+    },
+    "assets/glyphs/Noto Sans Regular/33280-33535.pbf": {
+      "sha256": "cc8060d81eac6e83737f6581aac5fc8f2f0f3fe13443b93b3a14d5ddbf5755a1",
+      "bytes": 203147
+    },
+    "assets/glyphs/Noto Sans Regular/33536-33791.pbf": {
+      "sha256": "7ec80465647b88df0ca474db81052c561354bfcebe437f6462c529dc896c9f91",
+      "bytes": 203913
+    },
+    "assets/glyphs/Noto Sans Regular/33792-34047.pbf": {
+      "sha256": "b5253526d052665953110bb0af3ef00255b5a43f1355fcdebc56d3c849749987",
+      "bytes": 204215
+    },
+    "assets/glyphs/Noto Sans Regular/34048-34303.pbf": {
+      "sha256": "4ebff7e72001313169cfe019b341dd4d733f3c3e2ebf3b62d81d32ff6a31e497",
+      "bytes": 204968
+    },
+    "assets/glyphs/Noto Sans Regular/34304-34559.pbf": {
+      "sha256": "211cb09a6d079615129ad4eded30a77677ec27d7b6d220f3e951b3ace686cb3d",
+      "bytes": 204130
+    },
+    "assets/glyphs/Noto Sans Regular/34560-34815.pbf": {
+      "sha256": "4303f04eea2e69dcf7b0a70d820c9fd198888ab6596ecc06e49cc888ca784946",
+      "bytes": 204665
+    },
+    "assets/glyphs/Noto Sans Regular/34816-35071.pbf": {
+      "sha256": "339915b6ff8e3230c8c16bdf527d7277260a6ca4aed64a8e32f710cbd4e8c08c",
+      "bytes": 205444
+    },
+    "assets/glyphs/Noto Sans Regular/35072-35327.pbf": {
+      "sha256": "dedcbc2904f5c053646b8374ae9dd7e505cad575240a650b95b3bb49f63ff5b7",
+      "bytes": 204325
+    },
+    "assets/glyphs/Noto Sans Regular/35328-35583.pbf": {
+      "sha256": "bef9e756ccb91485f01bab5c91b254bca8c853ab8662c202f47176706fac7dbb",
+      "bytes": 204971
+    },
+    "assets/glyphs/Noto Sans Regular/35584-35839.pbf": {
+      "sha256": "d30ea6aff32a6b029042d595b819e22f26623d517163df48e6529aaad705612d",
+      "bytes": 204506
+    },
+    "assets/glyphs/Noto Sans Regular/35840-36095.pbf": {
+      "sha256": "8308df86f919ab94280c2995a9d6e562a50ce363e1914a26de3401bdd433120d",
+      "bytes": 203741
+    },
+    "assets/glyphs/Noto Sans Regular/36096-36351.pbf": {
+      "sha256": "144da779372afa0b0c792e39afbcf96a0063fcaaf22652fc221948806229ea7f",
+      "bytes": 203997
+    },
+    "assets/glyphs/Noto Sans Regular/36352-36607.pbf": {
+      "sha256": "e4bacbac9f8f3f0f6a073e8f202d508dd37af5f5a9bdc1c641fa970214125457",
+      "bytes": 204250
+    },
+    "assets/glyphs/Noto Sans Regular/36608-36863.pbf": {
+      "sha256": "7804586daeeefc80bdb85cf020ce5e69a9ae2ebc06906f5133f1f1366d767384",
+      "bytes": 205641
+    },
+    "assets/glyphs/Noto Sans Regular/36864-37119.pbf": {
+      "sha256": "082e801cbac4b23a9afd5440022ef3cea7c5f4dbd003d6b2151b196e9f9d1605",
+      "bytes": 204671
+    },
+    "assets/glyphs/Noto Sans Regular/37120-37375.pbf": {
+      "sha256": "71fa8b6daa99993c57f3827f343100b1bd23fd4163186801ab866e2995ecf148",
+      "bytes": 203528
+    },
+    "assets/glyphs/Noto Sans Regular/37376-37631.pbf": {
+      "sha256": "5c02f04c51cec4b568186db0e410c1986c5a2c6b6155a4335af95b60d6a417bf",
+      "bytes": 204128
+    },
+    "assets/glyphs/Noto Sans Regular/37632-37887.pbf": {
+      "sha256": "cfbc91378946d24a4e0dfee343f1ac0dd3f6dbfafbaa39238d6282585fed0c9b",
+      "bytes": 204912
+    },
+    "assets/glyphs/Noto Sans Regular/37888-38143.pbf": {
+      "sha256": "e9e478fb2ce718f67b550d763ec34f8237c7990a115b19619a2857abd7c545d6",
+      "bytes": 204782
+    },
+    "assets/glyphs/Noto Sans Regular/38144-38399.pbf": {
+      "sha256": "f3a3b70e3136702faef0f38920763d9add8ae4044a2ebb1aa044cc956b4df83a",
+      "bytes": 196049
+    },
+    "assets/glyphs/Noto Sans Regular/38400-38655.pbf": {
+      "sha256": "f04454545b95ecfddb2d7e9f03e14f933d04305b5902837f94b7c959354086c6",
+      "bytes": 197643
+    },
+    "assets/glyphs/Noto Sans Regular/38656-38911.pbf": {
+      "sha256": "e96e97e3e363bcbfb7c5942675abee2c3d6b68868838df30dbc5bf9b524897ed",
+      "bytes": 202212
+    },
+    "assets/glyphs/Noto Sans Regular/38912-39167.pbf": {
+      "sha256": "44e06bb22bb8108d7fc29bedd9d43324233076dbc4393f6a48d2c9ee74d70cfb",
+      "bytes": 203187
+    },
+    "assets/glyphs/Noto Sans Regular/39168-39423.pbf": {
+      "sha256": "d8ba91d7cccfeb27042186eada0567ce39d9a03d6197c28e5977b7d700c8a77c",
+      "bytes": 204345
+    },
+    "assets/glyphs/Noto Sans Regular/39424-39679.pbf": {
+      "sha256": "b9274c7f5af594be626ee086e0699560b6f7c250e7e68438092cd0f0824cc9ee",
+      "bytes": 203472
+    },
+    "assets/glyphs/Noto Sans Regular/39680-39935.pbf": {
+      "sha256": "0453bc6d0c9db6b97b6c793c07abe6fa54abbe2aaf3f9c4b81c27e8c77ff5191",
+      "bytes": 204745
+    },
+    "assets/glyphs/Noto Sans Regular/39936-40191.pbf": {
+      "sha256": "ee9ff2750cd9d1807d6259003b055088d94c409e786697ca015d32d3788c5850",
+      "bytes": 204860
+    },
+    "assets/glyphs/Noto Sans Regular/40192-40447.pbf": {
+      "sha256": "7f21626cc7e395fbae16e5fdbee33a3be13bd3f4275a989f24af1bf4ab729641",
+      "bytes": 205475
+    },
+    "assets/glyphs/Noto Sans Regular/40448-40703.pbf": {
+      "sha256": "53bb75f1bf3bf6ed6a4fcfd067e15593f9be53d32a56fc75cb167b379c4eebfd",
+      "bytes": 203860
+    },
+    "assets/glyphs/Noto Sans Regular/40704-40959.pbf": {
+      "sha256": "5b0c42f5db6e9e6f4f02c8e648966dd9222f032a5590a7bbbd46e40d35d93d67",
+      "bytes": 164356
+    },
+    "assets/glyphs/Noto Sans Regular/65280-65535.pbf": {
+      "sha256": "e39025c183136637d2ad76494ab682df1aa7c0a0c9a18d3ebb4843157dd2e2e9",
+      "bytes": 88109
+    },
+    "assets/glyphs/Noto Sans Regular/LICENSE.md": {
+      "sha256": "9f6ffa4d4ceb839c1d12b830273c1d9f01cb0f5e2535f6143b8f7befdd5650d5",
+      "bytes": 4300
+    },
+    "assets/sprite/sprite.json": {
+      "sha256": "1d4ca34d7f67c4110f161f495d6dac927de6958eb419b8565dafe5fa2d705b40",
+      "bytes": 60
+    },
+    "assets/sprite/sprite.png": {
+      "sha256": "b251a16a414ebf81dd1c67f6daa8ba266348b236c2125cd667421aa8ed59fc3f",
+      "bytes": 84
+    },
+    "assets/sprite/sprite@2x.json": {
+      "sha256": "0401df08d94ec16f8e890279a57aec9193e4c860d4617666e35f43e5068d292e",
+      "bytes": 60
+    },
+    "assets/sprite/sprite@2x.png": {
+      "sha256": "aeef7e59b0acf8b93dc4aafb65c15e793833a583db9209b0794bce4e03972783",
+      "bytes": 108
+    },
+    "glyph-coverage.json": {
+      "sha256": "cf6418f8ef444233d2280f9ddbaa5d27f3ee7d97d1b1665ed356c8cc20d34255",
+      "bytes": 129381
+    },
+    "LICENSE-PMTILES.txt": {
+      "sha256": "0371c38f338835f7fc13ed71176f3d92144e22c8b736a31cced57adbbeb647b3",
+      "bytes": 1713
+    },
+    "LICENSES.md": {
+      "sha256": "d45f6d73f172ab4d7fe59c3e32945ac6d5a3c8247b51c8582f782098ecf24204",
+      "bytes": 3439
+    },
+    "style-mvt.json": {
+      "sha256": "790d54e84f8c4e79786fa9d78f06630d6a2f58685df54b1bd2aa057155deec88",
+      "bytes": 1081
+    },
+    "style-raster.json": {
+      "sha256": "a4979c3030745321d1a480927b91534681ada588894796d8af529bb5fb9e603a",
+      "bytes": 526
+    },
+    "style.json": {
+      "sha256": "790d54e84f8c4e79786fa9d78f06630d6a2f58685df54b1bd2aa057155deec88",
+      "bytes": 1081
+    },
+    "synthetic-mvt.mbtiles": {
+      "sha256": "b8715c398b78b23aca2dbbbfbf8ed993c12620ef5521805b30efca1f544f57cf",
+      "bytes": 24576
+    },
+    "synthetic-mvt.pmtiles": {
+      "sha256": "bdc885d5767033762aaa1bfa16a864c0481c1e0b3825ce2c7e2699cfac2e695e",
+      "bytes": 5985
+    },
+    "synthetic-raster.mbtiles": {
+      "sha256": "10423018429770a59747186e8a1e1608b8f8e0dc983817552e8cbd609db1e94d",
+      "bytes": 110592
+    },
+    "synthetic-raster.pmtiles": {
+      "sha256": "018d53fdfe3890d0a7da14bdf2a9206f7d6ca179b0b3e8acac23a8c41e599285",
+      "bytes": 82068
+    }
+  },
+  "validation": {
+    "raster": {
+      "tiles": 45,
+      "zooms": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ]
+    },
+    "mvt": {
+      "tiles": 45,
+      "zooms": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ]
+    }
+  }
+}

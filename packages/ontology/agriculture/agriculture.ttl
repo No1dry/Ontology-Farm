@@ -1,0 +1,12 @@
+@prefix lzo: <https://w3id.org/lzo/ontology/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+lzo:Farm a owl:Class; rdfs:subClassOf lzo:AgriculturalEntity .
+lzo:AgriculturalZone a owl:Class; rdfs:subClassOf lzo:AgriculturalEntity .
+lzo:Field a owl:Class; rdfs:subClassOf lzo:AgriculturalZone .
+lzo:Pond a owl:Class; rdfs:subClassOf lzo:AgriculturalZone .
+lzo:Orchard a owl:Class; rdfs:subClassOf lzo:AgriculturalZone .
+lzo:CropConcept a owl:Class; rdfs:subClassOf <http://www.w3.org/2004/02/skos/core#Concept> .
+lzo:CultivationCycle a owl:Class; rdfs:subClassOf lzo:AgriculturalEntity .
+lzo:crop a owl:ObjectProperty; rdfs:range lzo:CropConcept .
+lzo:locatedIn a owl:ObjectProperty; rdfs:domain lzo:AgriculturalEntity; rdfs:range lzo:AgriculturalEntity .

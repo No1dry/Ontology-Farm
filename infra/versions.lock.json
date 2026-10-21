@@ -1,0 +1,64 @@
+{
+  "runtime": {
+    "python": "3.12.7",
+    "node": "24.22.0",
+    "postgresql": "17.11",
+    "postgis": "3.6.2",
+    "keycloak": "26.8.1",
+    "apache_jena_fuseki": "6.2.0",
+    "java": "21",
+    "mysql": "8.4.11"
+  },
+  "compose": {
+    "python": "python:3.12.7-slim-bookworm@sha256:60d9996b6a8a3689d36db740b49f4327be3be09a21122bd02fb8895abb38b50d",
+    "node": "node:24.22.0-bookworm-slim@sha256:a5f4366e834695d5f363b920c104953a535d3a9864d1bdf74566a0ebe01daee5",
+    "postgres": "postgis/postgis:17-3.6@sha256:d7053f57b0d62c427ffbf412208b6625317124d62eebf40672e990fea81e9d53",
+    "keycloak": "quay.io/keycloak/keycloak:26.8.1@sha256:79c623a22abacf3fe6c00a5fb30f5b7843d717b234033b80995891c06116d244",
+    "nginx": "nginx:1.28.0-alpine@sha256:30f1c0d78e0ad60901648be663a710bdadf19e4c10ac6782c235200619158284",
+    "java": "eclipse-temurin:21-jre-jammy@sha256:affcab5356e1270ac35d2361ee83135af2f03e8d580eca78a6d5d6fdbf048db0",
+    "mysql": "mysql:8.4@sha256:0f51e63e537a1f176423fa03ef559aabe6fa4372a53160a44bc7e75da7d15364"
+  },
+  "native": {
+    "compose_cli": {
+      "version": "5.6.0",
+      "url": "https://github.com/docker/compose/releases/download/v5.6.0/docker-compose-windows-x86_64.exe",
+      "sha256": "8aeaa0055e660e12cf07cd70680dc8333957fe6718528b91ec3da084eab62483",
+      "purpose": "standalone config validation only; no daemon installed"
+    },
+    "archives": {
+      "node": {
+        "url": "https://nodejs.org/dist/v24.22.0/node-v24.22.0-win-x64.zip",
+        "sha256": "f9683a19877e12a9b167305c8db71040d812876359de21f0d2e97c3f321f80c3",
+        "license": "MIT"
+      },
+      "postgres": {
+        "url": "https://get.enterprisedb.com/postgresql/postgresql-17.11-5-windows-x64-binaries.zip",
+        "sha256": "80379b2c04d51c30225532e0ae04509899141e9957ed096fe749d7fd9df8f82f",
+        "license": "PostgreSQL License"
+      },
+      "postgis": {
+        "url": "https://download.osgeo.org/postgis/windows/pg17/postgis-bundle-pg17-3.6.2x64.zip",
+        "sha256": "7ba180ee2a352987b9a2f194673652c59483b55852295ccf401dceccd8765425",
+        "license": "GPL-2.0-or-later"
+      },
+      "keycloak": {
+        "url": "https://github.com/keycloak/keycloak/releases/download/26.8.1/keycloak-26.8.1.zip",
+        "sha256": "4cd312c889af358a819a74a6c6f068f9ea159a6959e49924607cec95cfd4c1a4",
+        "license": "Apache-2.0"
+      },
+      "fuseki": {
+        "url": "https://dlcdn.apache.org/jena/binaries/apache-jena-fuseki-6.2.0.zip",
+        "sha256": "0c3e2dc55037ced325e3716bf86e91fdf20fb96e595fc3530232c05fae789a9e",
+        "license": "Apache-2.0"
+      },
+      "mysql": {
+        "url": "https://cdn.mysql.com/Downloads/MySQL-8.4/mysql-8.4.11-winx64.zip",
+        "sha256": "a492371d687d2bab088b0062581144a0044b8964baefdf4faa579292b423d25c",
+        "license": "GPL-2.0",
+        "bytes": 281191914,
+        "signature_url": "https://cdn.mysql.com/Downloads/MySQL-8.4/mysql-8.4.11-winx64.zip.asc",
+        "signer_fingerprint": "BCA43417C3B485DD128EC6D4B7B3B788A8D3785C"
+      }
+    }
+  }
+}

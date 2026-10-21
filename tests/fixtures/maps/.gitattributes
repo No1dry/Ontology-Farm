@@ -1,0 +1,7 @@
+*.pbf binary
+*.mbtiles binary
+*.pmtiles binary
+*.png binary
+*.json -text
+*.md -text
+*.txt -text

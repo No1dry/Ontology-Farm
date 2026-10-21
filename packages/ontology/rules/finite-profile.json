@@ -1,0 +1,12 @@
+{
+  "profile": "finite_explicit_axioms_v1",
+  "enabled": true,
+  "families": [
+    "subclass",
+    "type",
+    "subproperty",
+    "inverse",
+    "symmetric",
+    "transitive"
+  ]
+}

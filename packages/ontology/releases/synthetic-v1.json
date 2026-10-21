@@ -1,0 +1,48 @@
+{
+  "version": "synthetic-v1",
+  "namespace": "https://w3id.org/lzo/ontology/",
+  "data_nature": "synthetic",
+  "inference_profile": "finite_explicit_axioms_v1",
+  "artifacts": [
+    {
+      "path": "agriculture/agriculture.ttl",
+      "role": "schema",
+      "format": "turtle",
+      "sha256": "557768bbc94260e98740801df916197003f0b5f800109c4a781030af00e47217",
+      "size_bytes": 813,
+      "media_type": "text/turtle"
+    },
+    {
+      "path": "core/core.ttl",
+      "role": "schema",
+      "format": "turtle",
+      "sha256": "c46358b966b6785da70fd0b28a3727bbdd6826fcdb1325767bfd510b892a458f",
+      "size_bytes": 955,
+      "media_type": "text/turtle"
+    },
+    {
+      "path": "devices/devices.ttl",
+      "role": "schema",
+      "format": "turtle",
+      "sha256": "4aad19890ade5aaed5bab9f4c0a0c0daa60a027155e82441d0eeb679975f5182",
+      "size_bytes": 1138,
+      "media_type": "text/turtle"
+    },
+    {
+      "path": "rules/finite-profile.json",
+      "role": "profile",
+      "format": "json",
+      "sha256": "1c06e818778628b6902609eba01397c8ae7d2d1b275a3ce83913b561063fd2dc",
+      "size_bytes": 181,
+      "media_type": "application/json"
+    },
+    {
+      "path": "shapes/core.shacl.ttl",
+      "role": "shapes",
+      "format": "turtle",
+      "sha256": "1c201bf7b485a383697bbc0f0b02da94a07fd437a02ee56dc384a87a5e58aaa1",
+      "size_bytes": 250,
+      "media_type": "text/turtle"
+    }
+  ]
+}

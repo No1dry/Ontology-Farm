@@ -1,0 +1,20 @@
+@prefix lzo: <https://w3id.org/lzo/ontology/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix ssn: <http://www.w3.org/ns/ssn/> .
+skos:Concept a owl:Class .
+prov:Entity a owl:Class .
+prov:Agent a owl:Class .
+sosa:Sensor a owl:Class .
+sosa:Actuator a owl:Class .
+ssn:System a owl:Class .
+lzo:AgriculturalEntity a owl:Class .
+lzo:Organization a owl:Class; rdfs:subClassOf prov:Agent .
+lzo:Source a owl:Class; rdfs:subClassOf prov:Entity .
+lzo:Evidence a owl:Class; rdfs:subClassOf prov:Entity .
+lzo:Assertion a owl:Class; rdfs:subClassOf prov:Entity .
+lzo:managedBy a owl:ObjectProperty; rdfs:range lzo:Organization .
+lzo:partOf a owl:ObjectProperty, owl:TransitiveProperty; rdfs:domain lzo:AgriculturalEntity; rdfs:range lzo:AgriculturalEntity .

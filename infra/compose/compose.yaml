@@ -1,0 +1,226 @@
+name: ${COMPOSE_PROJECT_NAME:-lzo-dev}
+
+x-api: &api
+  build:
+    context: ../..
+    dockerfile: backend/Dockerfile
+  environment: &api-env
+    LZO_DATABASE_URL: postgresql+psycopg://lzo_app:${LZO_APP_PASSWORD:?Generate .env first}@postgres:5432/lzo
+    LZO_FUSEKI_URL: http://fuseki:3030/lzo
+    LZO_OIDC_ISSUER: ${LZO_PUBLIC_ORIGIN:-https://localhost:8443}/identity/realms/lzo
+    LZO_OIDC_DISCOVERY_URL: http://keycloak:8080/identity/realms/lzo/.well-known/openid-configuration
+    LZO_OIDC_CLIENT_ID: lzo-api
+    LZO_OIDC_CLIENT_SECRET: ${LZO_OIDC_CLIENT_SECRET:?Generate .env first}
+    LZO_PUBLIC_ORIGIN: ${LZO_PUBLIC_ORIGIN:-https://localhost:8443}
+    LZO_OIDC_BACKCHANNEL_BASE: http://keycloak:8080/identity/realms/lzo
+    LZO_SESSION_ENCRYPTION_KEY: ${LZO_SESSION_ENCRYPTION_KEY:?Generate session key first}
+    LZO_SOURCE_ENCRYPTION_KEY: ${LZO_SOURCE_ENCRYPTION_KEY:-}
+    LZO_SOURCE_CA_BUNDLE: /etc/lzo/source-certs/localhost.crt
+    LZO_IDENTITY_ADMIN_CLIENT_SECRET: ${LZO_IDENTITY_ADMIN_CLIENT_SECRET:?Configure identity first}
+    LZO_IDENTITY_ADMIN_URL: http://keycloak:8080/identity/admin/realms/lzo
+    LZO_INVITATION_SMTP_CONFIGURED: ${LZO_INVITATION_SMTP_CONFIGURED:-false}
+    LZO_FILE_ROOT: /var/lib/lzo/artifacts
+    LZO_WORKER_HANDLER_MODULES: ${LZO_WORKER_HANDLER_MODULES:-lzo.worker.handlers}
+    LZO_JOB_LEASE_SECONDS: ${LZO_JOB_LEASE_SECONDS:-60}
+    LZO_JOB_MAX_ATTEMPTS: ${LZO_JOB_MAX_ATTEMPTS:-3}
+    LZO_JOB_BATCH_TIMEOUT_SECONDS: ${LZO_JOB_BATCH_TIMEOUT_SECONDS:-30}
+    LZO_JOB_MAX_BATCHES_PER_RUN: ${LZO_JOB_MAX_BATCHES_PER_RUN:-100}
+    LZO_JOB_QUEUE_LIMIT: ${LZO_JOB_QUEUE_LIMIT:-10000}
+    LZO_JOB_RETRY_BASE_SECONDS: ${LZO_JOB_RETRY_BASE_SECONDS:-5}
+    LZO_JOB_RETRY_CAP_SECONDS: ${LZO_JOB_RETRY_CAP_SECONDS:-300}
+    LZO_JOB_POLL_SECONDS: ${LZO_JOB_POLL_SECONDS:-1}
+    LZO_JOB_CLAIM_SCAN_LIMIT: ${LZO_JOB_CLAIM_SCAN_LIMIT:-50}
+    LZO_JOB_MAX_JSON_BYTES: ${LZO_JOB_MAX_JSON_BYTES:-65536}
+  volumes:
+    - artifacts:/var/lib/lzo/artifacts
+    - ./source-certs:/etc/lzo/source-certs:ro
+  networks: [backend]
+  depends_on:
+    postgres: {condition: service_healthy}
+    fuseki: {condition: service_started}
+    keycloak: {condition: service_started}
+
+services:
+  postgres:
+    image: postgis/postgis:17-3.6@sha256:d7053f57b0d62c427ffbf412208b6625317124d62eebf40672e990fea81e9d53
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Generate .env first}
+      LZO_OWNER_PASSWORD: ${LZO_OWNER_PASSWORD:?Generate .env first}
+      LZO_APP_PASSWORD: ${LZO_APP_PASSWORD:?Generate .env first}
+      KEYCLOAK_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD:?Generate .env first}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ../../database/postgres/init-databases.sh:/docker-entrypoint-initdb.d/20-lzo.sh:ro
+    networks: [backend]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U postgres -d lzo"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+  fuseki:
+    build:
+      context: ../..
+      dockerfile: database/fuseki/Dockerfile
+    volumes: ["fuseki:/fuseki/databases"]
+    networks: [backend]
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.1@sha256:79c623a22abacf3fe6c00a5fb30f5b7843d717b234033b80995891c06116d244
+    command: [start, --import-realm]
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD:?Generate .env first}
+      KC_HOSTNAME: ${LZO_PUBLIC_ORIGIN:-https://localhost:8443}/identity
+      KC_HTTP_ENABLED: "true"
+      KC_HTTP_RELATIVE_PATH: /identity
+      KC_PROXY_HEADERS: xforwarded
+      KC_HEALTH_ENABLED: "true"
+      KC_BOOTSTRAP_ADMIN_USERNAME: bootstrap-admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:?Generate .env first}
+      LZO_PUBLIC_ORIGIN: ${LZO_PUBLIC_ORIGIN:-https://localhost:8443}
+      LZO_OIDC_CLIENT_SECRET: ${LZO_OIDC_CLIENT_SECRET:?Generate .env first}
+      LZO_IDENTITY_ADMIN_CLIENT_SECRET: ${LZO_IDENTITY_ADMIN_CLIENT_SECRET:?Configure identity first}
+    volumes:
+      - ../keycloak/realm-template.json:/opt/keycloak/data/import/lzo-realm.json:ro
+      - keycloak:/opt/keycloak/data
+    networks: [backend]
+    depends_on:
+      postgres: {condition: service_healthy}
+  api:
+    <<: *api
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready',timeout=8)"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+  worker:
+    <<: *api
+    command: [python, -m, lzo.worker]
+  proxy:
+    build:
+      context: ../..
+      dockerfile: frontend/Dockerfile
+    ports: ["127.0.0.1:${LZO_HTTPS_PORT:-8443}:8443"]
+    volumes:
+      - ../proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    networks: [backend, edge]
+    depends_on: [api, keycloak]
+  api-test:
+    <<: *api
+    profiles: [test, api-test]
+    command: [pytest, tests, -q]
+    user: "0:0"
+    environment:
+      <<: *api-env
+      LZO_MIGRATION_DATABASE_URL: postgresql+psycopg://lzo_owner:${LZO_OWNER_PASSWORD:?Generate .env first}@postgres:5432/lzo
+      LZO_TEST_PROJECT: ${COMPOSE_PROJECT_NAME:-lzo-dev}
+      LZO_SERVICE_MODE: compose
+      SOURCE_POSTGRES_PASSWORD: ${SOURCE_POSTGRES_PASSWORD:?Generate .env first}
+      SOURCE_MYSQL_PASSWORD: ${SOURCE_MYSQL_PASSWORD:?Generate .env first}
+      SOURCE_POSTGRES_PASSWORD_NO_TLS: ${SOURCE_POSTGRES_PASSWORD_NO_TLS:-}
+      SOURCE_MYSQL_PASSWORD_NO_TLS: ${SOURCE_MYSQL_PASSWORD_NO_TLS:-}
+      LZO_TEST_SOURCE_CA: /etc/lzo/source-certs/localhost.crt
+      LZO_TEST_SOURCE_WRONG_CA: /etc/lzo/wrong-source-ca/localhost.crt
+    volumes:
+      - test-artifacts:/var/lib/lzo/artifacts
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./source-certs:/etc/lzo/source-certs:ro
+      - ./wrong-source-ca:/etc/lzo/wrong-source-ca:ro
+  migrate:
+    <<: *api
+    profiles: [migrate]
+    command: [python, -m, lzo.migrate]
+    environment:
+      <<: *api-env
+      LZO_MIGRATION_DATABASE_URL: postgresql+psycopg://lzo_owner:${LZO_OWNER_PASSWORD:?Generate .env first}@postgres:5432/lzo
+  web-test:
+    build:
+      context: ../..
+      dockerfile: frontend/Dockerfile
+      target: test
+    profiles: [web-test]
+    networks: [backend]
+  e2e-test:
+    build:
+      context: ../..
+      dockerfile: infra/testing/Dockerfile.e2e
+    profiles: [e2e-test]
+    command: [npx, playwright, test]
+    networks: [backend]
+    environment:
+      LZO_BASE_URL: https://proxy:8443
+      LZO_PUBLIC_ORIGIN: ${LZO_PUBLIC_ORIGIN:-https://localhost:8443}
+      APP_ENV: test
+      LZO_FIXTURE_CONTROL: /workspace/tests/e2e/support/workbench_fixture.py
+      LZO_FIXTURE_PYTHON: python
+      LZO_WORKBENCH_MANIFEST: /fixtures/manifest.json
+      LZO_WORKBENCH_ENV: /fixtures/workbench.env
+      LZO_E2E_PASSWORD: ${LZO_E2E_PASSWORD:-}
+    volumes:
+      - ./workbench-fixtures:/fixtures:ro
+    depends_on: [proxy]
+  source-postgres:
+    image: postgis/postgis:17-3.6@sha256:d7053f57b0d62c427ffbf412208b6625317124d62eebf40672e990fea81e9d53
+    profiles: [source-postgres]
+    environment:
+      POSTGRES_DB: synthetic_source
+      POSTGRES_PASSWORD: ${SOURCE_POSTGRES_PASSWORD:?Generate .env first}
+    command: [bash, -c, "install -m 0600 -o postgres -g postgres /certs/localhost.key /tmp/source.key && exec docker-entrypoint.sh postgres -c ssl=on -c ssl_cert_file=/certs/localhost.crt -c ssl_key_file=/tmp/source.key"]
+    volumes: ["source-postgres:/var/lib/postgresql/data", "./source-certs:/certs:ro"]
+    networks: [backend]
+  source-mysql:
+    image: mysql:8.4@sha256:0f51e63e537a1f176423fa03ef559aabe6fa4372a53160a44bc7e75da7d15364
+    profiles: [source-mysql]
+    environment:
+      MYSQL_DATABASE: synthetic_source
+      MYSQL_ROOT_PASSWORD: ${SOURCE_MYSQL_PASSWORD:?Generate .env first}
+      MYSQL_ROOT_HOST: "%"
+    command: [bash, -c, "install -m 0600 -o mysql -g mysql /certs/localhost.key /tmp/source.key && exec docker-entrypoint.sh mysqld --require-secure-transport=ON --ssl-ca=/certs/localhost.crt --ssl-cert=/certs/localhost.crt --ssl-key=/tmp/source.key"]
+    volumes: ["source-mysql:/var/lib/mysql", "./source-certs:/certs:ro"]
+    networks: [backend]
+
+  # Negative TLS fixtures only. Never enabled by the default deployment.
+  source-postgres-no-tls:
+    image: postgis/postgis:17-3.6@sha256:d7053f57b0d62c427ffbf412208b6625317124d62eebf40672e990fea81e9d53
+    profiles: [source-no-tls-test]
+    environment:
+      POSTGRES_DB: synthetic_source
+      POSTGRES_PASSWORD: ${SOURCE_POSTGRES_PASSWORD_NO_TLS:-}
+    command: [postgres, -c, ssl=off]
+    tmpfs: [/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD, pg_isready, -U, postgres, -d, synthetic_source]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    networks: [backend]
+  source-mysql-no-tls:
+    image: mysql:8.4@sha256:0f51e63e537a1f176423fa03ef559aabe6fa4372a53160a44bc7e75da7d15364
+    profiles: [source-no-tls-test]
+    environment:
+      MYSQL_DATABASE: synthetic_source
+      MYSQL_ROOT_PASSWORD: ${SOURCE_MYSQL_PASSWORD_NO_TLS:-}
+      MYSQL_ROOT_HOST: "%"
+    command: [mysqld, "--tls-version=", --require-secure-transport=OFF]
+    tmpfs: [/var/lib/mysql]
+    healthcheck:
+      test: [CMD, mysqladmin, ping, --protocol=tcp, -h, 127.0.0.1, --ssl-mode=DISABLED]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    networks: [backend]
+
+volumes:
+  postgres:
+  fuseki:
+  keycloak:
+  artifacts:
+  test-artifacts:
+  source-postgres:
+  source-mysql:
+networks:
+  backend: {internal: true}
+  edge:
