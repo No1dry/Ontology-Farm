@@ -17,7 +17,7 @@ from rdflib import BNode, Dataset, Literal, URIRef
 from rdflib.namespace import OWL
 from rdflib.plugins.serializers.jsonld import from_rdf
 
-from lzo.artifacts.store import ArtifactStore
+from lzo.storage.blobs import BlobStore, get_blob_store
 from lzo.config import Settings
 from lzo.contracts import BlobRef
 from lzo.semantic.rdf import INTERNAL, SKOLEM, RdfTerm, iri, term_from_node
@@ -66,7 +66,7 @@ class SkolemizedDocument:
 
 
 @contextmanager
-def semantic_file_context(store: ArtifactStore):
+def semantic_file_context(store: BlobStore):
     token = _store.set(store)
     try:
         yield
@@ -268,7 +268,7 @@ def parse_semantic_document(blob: BlobRef, format: Format["turtle", "json-ld"]) 
     store = _store.get()
     if store is None:
         settings = Settings()
-        store = ArtifactStore(settings.file_root, max_upload_bytes=settings.artifact_max_upload_bytes)
+        store = get_blob_store(settings)
     if blob.size_bytes > MAX_BYTES:
         raise SemanticBudgetExceeded("Semantic input exceeds byte budget")
     with store.open(blob) as stream:

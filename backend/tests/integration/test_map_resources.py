@@ -15,7 +15,7 @@ BASE = '/api/v1/maps/resources'
 def map_http(scope_scenario, settings, tmp_path):
     from fastapi.testclient import TestClient
     from lzo.artifacts.service import ArtifactService
-    from lzo.artifacts.store import ArtifactStore
+    from lzo.storage.blobs import get_blob_store
     from lzo.auth.models import sessions
     from lzo.auth.session import SESSION_COOKIE, SessionService, digest
     from lzo.main import create_app
@@ -33,7 +33,7 @@ def map_http(scope_scenario, settings, tmp_path):
     s.grant('admin', 'editor', scope='farm_a')
     s.grant('admin', 'editor', scope='farm_b')
     config = settings.model_copy(update={'file_root': tmp_path / 'private', 'list_page_size': 1})
-    s.store = ArtifactStore(config.file_root / 'artifacts', max_upload_bytes=config.artifact_max_upload_bytes)
+    s.store = get_blob_store(config)
     app = create_app(config)
     app.state.engine.dispose()
     app.state.engine = s.app

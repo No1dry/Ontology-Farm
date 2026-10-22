@@ -51,6 +51,16 @@ def prepare_compose():
         lines = [line.replace("REPLACE_WITH_FERNET_KEY", Fernet.generate_key().decode()) for line in lines]
         env.write_text("\n".join(lines) + "\n")
         env.chmod(0o600)
+    secret_dir = directory / 'secrets'
+    secret_dir.mkdir(exist_ok=True)
+    secret_dir.chmod(0o700)
+    for name in ('s3_access_key', 's3_secret_key', 's3_admin_access_key', 's3_admin_secret_key'):
+        path = secret_dir / name
+        if not path.exists():
+            path.write_text(secrets.token_urlsafe(32))
+        # Local Compose secrets are bind-mounted files. Keep host traversal
+        # private while allowing the unprivileged container UID to read its mount.
+        path.chmod(0o444)
     print("Prepared local HTTPS certificate and isolated Compose secrets (values hidden).")
 
 

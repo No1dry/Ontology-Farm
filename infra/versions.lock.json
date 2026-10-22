@@ -7,7 +7,8 @@
     "keycloak": "26.8.1",
     "apache_jena_fuseki": "6.2.0",
     "java": "21",
-    "mysql": "8.4.11"
+    "mysql": "8.4.11",
+    "seaweedfs": "4.48"
   },
   "compose": {
     "python": "python:3.12.7-slim-bookworm@sha256:60d9996b6a8a3689d36db740b49f4327be3be09a21122bd02fb8895abb38b50d",
@@ -16,7 +17,8 @@
     "keycloak": "quay.io/keycloak/keycloak:26.8.1@sha256:79c623a22abacf3fe6c00a5fb30f5b7843d717b234033b80995891c06116d244",
     "nginx": "nginx:1.28.0-alpine@sha256:30f1c0d78e0ad60901648be663a710bdadf19e4c10ac6782c235200619158284",
     "java": "eclipse-temurin:21-jre-jammy@sha256:affcab5356e1270ac35d2361ee83135af2f03e8d580eca78a6d5d6fdbf048db0",
-    "mysql": "mysql:8.4@sha256:0f51e63e537a1f176423fa03ef559aabe6fa4372a53160a44bc7e75da7d15364"
+    "mysql": "mysql:8.4@sha256:0f51e63e537a1f176423fa03ef559aabe6fa4372a53160a44bc7e75da7d15364",
+    "seaweedfs": "chrislusf/seaweedfs:4.48@sha256:4e61d15fd35994cb1e43e1e553dff106794841fd9a99ade2fc8c8bfce4d7872d"
   },
   "native": {
     "compose_cli": {
@@ -58,6 +60,11 @@
         "bytes": 281191914,
         "signature_url": "https://cdn.mysql.com/Downloads/MySQL-8.4/mysql-8.4.11-winx64.zip.asc",
         "signer_fingerprint": "BCA43417C3B485DD128EC6D4B7B3B788A8D3785C"
+      },
+      "seaweedfs": {
+        "url": "https://github.com/seaweedfs/seaweedfs/releases/download/4.48/windows_amd64.zip",
+        "sha256": "fe90c04c0620ad1a1c756f86cd5e1443773f56a446688077a4bb5ec04c3cc874",
+        "license": "Apache-2.0"
       }
     }
   }

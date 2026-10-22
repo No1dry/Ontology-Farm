@@ -292,7 +292,9 @@ def test_exact_turtle_jsonld_layer_round_trips_and_candidate_download_right(lexi
     request=Request({'type':'http','app':s.client.app,'headers':[(b'cookie',
         '; '.join(f'{k}={v}' for k,v in s.client.cookies.items()).encode())],
         'state':{'request_id':'export-stream-test'}})
-    original_open=ArtifactStore.open
+    from lzo.storage.blobs import get_blob_store
+    provider_class = type(get_blob_store(s.client.app.state.settings))
+    original_open=provider_class.open
     opened=[]
     def short_open(store,blob):
         stream=original_open(store,blob)
@@ -312,7 +314,7 @@ def test_exact_turtle_jsonld_layer_round_trips_and_candidate_download_right(lexi
             await anext(response.body_iterator)
         assert failure.value.status==404
     with monkeypatch.context() as patch:
-        patch.setattr(ArtifactStore,'open',short_open)
+        patch.setattr(provider_class,'open',short_open)
         response=download(UUID(paths[1].rsplit('/',1)[-1]),request)
         asyncio.run(paused_stream())
     assert opened and all(stream.closed for stream in opened)

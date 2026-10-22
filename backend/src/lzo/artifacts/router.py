@@ -10,22 +10,25 @@ from fastapi.responses import StreamingResponse
 from lzo.artifacts.schemas import (ArtifactDetail, ArtifactLinkWrite, ArtifactMutationDetail,
                                     ArtifactReviewWrite, ApiErrorDetail)
 from lzo.artifacts.service import ArtifactService
-from lzo.artifacts.store import ArtifactStore
+from lzo.storage.blobs import get_blob_store
 from lzo.auth.permissions import current_version, permission_context
 from lzo.auth.router import AuthRequest, authenticated
 from lzo.auth.session import SESSION_COOKIE, SessionService
 from lzo.db import PgUnitOfWork
 from lzo.errors import ApiError, parse_if_match, require_idempotency_key
 from lzo.governance.idempotency import execute_idempotent
+from lzo.artifacts.uploads import UploadService
+from lzo.storage.blobs import parse_range
+from pydantic import BaseModel, Field
 
 _ERROR_RESPONSES = {status: {"model": ApiErrorDetail} for status in
                     (401, 403, 404, 409, 413, 422, 428, 503)}
 router = APIRouter(prefix="/api/v1/artifacts", tags=["Artifacts"], responses=_ERROR_RESPONSES)
 
 
-def _store(request: Request) -> ArtifactStore:
+def _store(request: Request):
     settings = request.app.state.settings
-    return ArtifactStore(settings.file_root / "artifacts", max_upload_bytes=settings.artifact_max_upload_bytes)
+    return get_blob_store(settings)
 
 
 def _digest(data) -> str:
@@ -98,6 +101,80 @@ async def upload(request: Request, resource_id: UUID, filename: str,
     return ArtifactDetail.model_validate(result)
 
 
+class UploadSessionCreate(BaseModel):
+    resource_id: UUID
+    filename: str = Field(min_length=1, max_length=255)
+    media_type: str
+    size_bytes: int = Field(gt=0)
+    sha256: str = Field(pattern='^[0-9a-f]{64}$')
+    metadata: dict = Field(default_factory=dict)
+    previous_version_id: UUID | None = None
+
+
+@router.post('/uploads', status_code=201, operation_id='createArtifactUpload')
+def create_upload(body: UploadSessionCreate, request: Request, auth: AuthRequest = Depends(authenticated)):
+    result = UploadService(auth.uow, _store(request), request.app.state.settings).create(auth.actor,
+        **body.model_dump(), idempotency_key=require_idempotency_key(request.headers.get('Idempotency-Key')),
+        expected_resource_revision=parse_if_match(request.headers.get('If-Match')))
+    auth.uow.commit()
+    return result
+
+
+@router.get('/uploads/{upload_id}', operation_id='getArtifactUpload')
+def upload_status(upload_id: UUID, request: Request, response: Response,
+                  auth: AuthRequest = Depends(authenticated)):
+    response.headers['Cache-Control'] = 'no-store'
+    return UploadService(auth.uow, _store(request), request.app.state.settings).status(auth.actor, upload_id)
+
+
+@router.put('/uploads/{upload_id}/parts/{number}', operation_id='putArtifactUploadPart')
+async def upload_part(upload_id: UUID, number: int, request: Request):
+    from contextlib import contextmanager
+    @contextmanager
+    def transaction():
+        with PgUnitOfWork(request.app.state.engine) as uow:
+            current_version(uow, lock=True)
+            session = SessionService(uow, request.app.state.settings)
+            row = session.read(request.cookies.get(SESSION_COOKIE), lock=True)
+            session.csrf(row, request.headers.get('X-CSRF-Token'), request.headers.get('Origin'))
+            actor = session.actor(row, request.state.request_id)
+            with permission_context(uow):
+                yield uow, actor
+    store = _store(request)
+    settings = request.app.state.settings
+    with transaction() as (uow, actor):
+        part_bytes = UploadService(uow, store, settings).status(actor, upload_id)['part_bytes']
+    async def bounded():
+        size = 0
+        async for chunk in request.stream():
+            size += len(chunk)
+            if size > part_bytes:
+                raise ApiError('UPLOAD_TOO_LARGE', 413, 'Upload part exceeds budget')
+            yield chunk
+    staged = await store.stage_async(bounded(), 'application/octet-stream')
+    try:
+        with transaction() as (uow, actor):
+            result = UploadService(uow, store, settings).part(actor, upload_id, number, staged)
+            uow.commit()
+            return result
+    finally:
+        store.discard(staged)
+
+
+@router.post('/uploads/{upload_id}/complete', response_model=ArtifactDetail, operation_id='completeArtifactUpload')
+def complete_upload(upload_id: UUID, request: Request, auth: AuthRequest = Depends(authenticated)):
+    result = UploadService(auth.uow, _store(request), request.app.state.settings).complete(auth.actor, upload_id)
+    auth.uow.commit()
+    return result
+
+
+@router.delete('/uploads/{upload_id}', operation_id='cancelArtifactUpload')
+def cancel_upload(upload_id: UUID, request: Request, auth: AuthRequest = Depends(authenticated)):
+    result = UploadService(auth.uow, _store(request), request.app.state.settings).cancel(auth.actor, upload_id)
+    auth.uow.commit()
+    return result
+
+
 @router.get("/{version_id}", response_model=ArtifactDetail, operation_id="getArtifact")
 def get(version_id: UUID, response: Response, request: Request,
         auth: AuthRequest = Depends(authenticated)):
@@ -119,7 +196,8 @@ def content(version_id: UUID, request: Request):
         with permission_context(uow):
             service = ArtifactService(uow, _store(request), request.app.state.settings)
             detail = service.get(actor, version_id)
-            stream = service.content(actor, version_id)
+            requested = parse_range(request.headers.get('Range'), detail.size_bytes)
+            stream = service.content(actor, version_id, requested)
             from lzo.artifacts.service import _scope
             generated = _scope(uow, detail.resource_id)["resource_kind"] in {"semantic.export", "evidence"}
     def chunks():
@@ -140,11 +218,15 @@ def content(version_id: UUID, request: Request):
                   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                   "application/msword"}
     disposition = "attachment; filename=\"download\"; filename*=UTF-8''" + quote(detail.filename, safe="")
-    return StreamingResponse(chunks(), media_type=detail.media_type if detail.media_type in safe_types
+    range_headers = {'Accept-Ranges': 'bytes'}
+    if requested:
+        range_headers['Content-Range'] = f'bytes {requested[0]}-{requested[1]}/{detail.size_bytes}'
+    return StreamingResponse(chunks(), status_code=206 if requested else 200,
+        media_type=detail.media_type if detail.media_type in safe_types
         else "application/octet-stream", headers={"Content-Disposition": disposition,
-            "Content-Length": str(detail.size_bytes), "Cache-Control": "no-store",
+            "Content-Length": str(requested[1]-requested[0]+1 if requested else detail.size_bytes), "Cache-Control": "no-store",
             "X-Content-Type-Options": "nosniff", "Content-Security-Policy": "sandbox",
-            "Referrer-Policy": "no-referrer"})
+            "Referrer-Policy": "no-referrer", **range_headers})
 
 
 @router.post("/{version_id}/links", response_model=ArtifactMutationDetail,

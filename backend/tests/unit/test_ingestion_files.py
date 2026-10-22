@@ -15,7 +15,14 @@ from lzo.artifacts.store import ArtifactStore
 @pytest.fixture
 def file_case(tmp_path):
     from openpyxl import Workbook
-    store = ArtifactStore(tmp_path, max_upload_bytes=2**20)
+    import os
+    if os.environ.get('LZO_TEST_BLOB_PROVIDER') == 's3':
+        from lzo.config import Settings
+        from lzo.storage.blobs import get_blob_store
+        store = get_blob_store(Settings().model_copy(update={'artifact_max_upload_bytes':2**20,
+            'blob_staging_path':tmp_path/'staging'}))
+    else:
+        store = ArtifactStore(tmp_path, max_upload_bytes=2**20)
     key = SourceKey(source_id=uuid4(), source_system="farm", source_instance="one", collection="pond", canonical_key="")
     options = {fmt: FileOptions(format=fmt, encoding="utf-8", delimiter=",", sheet="pond", header_row=1,
         records_path="", key_paths=("id",), source_crs=None, source_timezone="UTC", data_nature="synthetic")

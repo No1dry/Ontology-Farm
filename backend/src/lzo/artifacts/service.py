@@ -10,7 +10,8 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 from lzo.artifacts.models import artifact_links, artifact_quotas, artifact_reviews, artifact_versions
 from lzo.artifacts.schemas import ArtifactDetail, ArtifactLinkDetail, ArtifactMutationDetail, ArtifactReviewDetail
-from lzo.artifacts.store import ArtifactStore, StagedBlob
+from lzo.artifacts.store import StagedBlob
+from lzo.storage.blobs import get_blob_store
 from lzo.auth.models import resource_scopes
 from lzo.auth.permissions import authorized_statement, require_permission, validate_actor
 from lzo.contracts import ActorContext, BlobRef, JsonObject, ResourceScope, RevisionRef, UnitOfWork
@@ -72,8 +73,7 @@ def _attach_evidence(uow, actor, resource_id, blob, metadata, *, action):
         if not isinstance(filename, str):
             raise ApiError("INVALID_FILENAME", 422, "Invalid artifact filename")
         settings = getattr(uow, "artifact_settings", None) or Settings()
-        store = getattr(uow, "artifact_store", None) or ArtifactStore(
-            settings.file_root / "artifacts", max_upload_bytes=settings.artifact_max_upload_bytes)
+        store = getattr(uow, "artifact_store", None) or get_blob_store(settings)
         with store.open(blob):
             pass
         ArtifactService(uow, None, settings)._register_upload(actor, resource_id, blob,
@@ -269,7 +269,8 @@ class ArtifactService:
             authorize_publication(self.uow, actor, resource_id)
         elif semantic_export:
             raise Forbidden("IMMUTABLE_EXPORT", "Export owner binding is required")
-        if blob.size_bytes < 1 or blob.size_bytes > self.settings.artifact_max_upload_bytes:
+        budget = self.settings.artifact_resource_budgets.get(scope['resource_kind'], self.settings.artifact_max_upload_bytes)
+        if blob.size_bytes < 1 or blob.size_bytes > budget:
             raise ApiError("UPLOAD_TOO_LARGE", 413, "Artifact exceeds upload limit")
         if not isinstance(metadata, dict):
             raise ApiError("INVALID_METADATA", 422, "Artifact metadata must be a JSON object")
@@ -358,9 +359,10 @@ class ArtifactService:
             links=[ArtifactLinkDetail(**link) for link in links],
             reviews=[ArtifactReviewDetail(**review) for review in reviews])
 
-    def content(self, actor: ActorContext, version_id: UUID):
+    def content(self, actor: ActorContext, version_id: UUID, byte_range=None):
         row = self._version(actor, version_id)
-        return self.store.open(BlobRef(row["sha256"], row["size_bytes"], row["media_type"], row["id"]))
+        ref = BlobRef(row["sha256"], row["size_bytes"], row["media_type"], row["id"])
+        return self.store.open_range(ref, *byte_range) if byte_range else self.store.open(ref)
 
     def link(self, actor: ActorContext, version_id: UUID, target_resource_id: UUID,
              relation: str, expected_revision: int) -> ArtifactMutationDetail:

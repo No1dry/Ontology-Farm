@@ -5,6 +5,13 @@ x-api: &api
     context: ../..
     dockerfile: backend/Dockerfile
   environment: &api-env
+    LZO_BLOB_PROVIDER: ${LZO_BLOB_PROVIDER:-s3}
+    LZO_S3_ENDPOINT: http://object-store:8333
+    LZO_S3_BUCKET: lzo-artifacts
+    LZO_S3_REGION: us-east-1
+    LZO_S3_ACCESS_KEY_FILE: /run/secrets/s3_access_key
+    LZO_S3_SECRET_KEY_FILE: /run/secrets/s3_secret_key
+    LZO_BLOB_STAGING_PATH: /var/lib/lzo/artifacts/staging-s3
     LZO_STORAGE_MODE: ${LZO_STORAGE_MODE:-split}
     LZO_GIS_DATABASE_URL: postgresql+psycopg://lzo_gis_app:${LZO_GIS_APP_PASSWORD:?Generate .env first}@postgres:5432/lzo_gis
     LZO_TIMESERIES_DATABASE_URL: postgresql+psycopg://lzo_timeseries_app:${LZO_TIMESERIES_APP_PASSWORD:?Generate .env first}@postgres:5432/lzo_timeseries
@@ -39,12 +46,32 @@ x-api: &api
     - artifacts:/var/lib/lzo/artifacts
     - ./source-certs:/etc/lzo/source-certs:ro
   networks: [backend]
+  secrets: [s3_access_key, s3_secret_key]
   depends_on:
+    object-store-init: {condition: service_completed_successfully}
     postgres: {condition: service_healthy}
     fuseki: {condition: service_started}
     keycloak: {condition: service_started}
 
 services:
+  object-store:
+    image: chrislusf/seaweedfs:4.48@sha256:4e61d15fd35994cb1e43e1e553dff106794841fd9a99ade2fc8c8bfce4d7872d
+    entrypoint: [/bin/sh, /etc/lzo/entrypoint.sh]
+    volumes:
+      - object-store:/data
+      - ../../database/object-store/entrypoint.sh:/etc/lzo/entrypoint.sh:ro
+      - ../../database/object-store/filer.toml:/etc/seaweedfs/filer.toml:ro
+    secrets: [s3_access_key, s3_secret_key, s3_admin_access_key, s3_admin_secret_key]
+    networks: [backend]
+  object-store-init:
+    build:
+      context: ../..
+      dockerfile: backend/Dockerfile
+    command: [python, /bootstrap.py]
+    volumes: ["../../database/object-store/bootstrap.py:/bootstrap.py:ro"]
+    secrets: [s3_admin_access_key, s3_admin_secret_key]
+    networks: [backend]
+    depends_on: [object-store]
   postgres:
     image: postgis/postgis:17-3.6@sha256:d7053f57b0d62c427ffbf412208b6625317124d62eebf40672e990fea81e9d53
     environment:
@@ -230,6 +257,7 @@ services:
     networks: [backend]
 
 volumes:
+  object-store:
   postgres:
   fuseki:
   keycloak:
@@ -240,3 +268,13 @@ volumes:
 networks:
   backend: {internal: true}
   edge:
+
+secrets:
+  s3_access_key:
+    file: ./secrets/s3_access_key
+  s3_secret_key:
+    file: ./secrets/s3_secret_key
+  s3_admin_access_key:
+    file: ./secrets/s3_admin_access_key
+  s3_admin_secret_key:
+    file: ./secrets/s3_admin_secret_key

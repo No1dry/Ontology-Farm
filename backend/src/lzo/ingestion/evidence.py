@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 from pydantic import ValidationError, TypeAdapter
 from sqlalchemy import select
 from lzo.artifacts.service import ArtifactService, _permission, _scope
-from lzo.artifacts.store import ArtifactStore, StagedBlob
+from lzo.storage.blobs import get_blob_store, StagedBlob
 from lzo.contracts import BlobRef, ResourceScope, RevisionRef
 from lzo.errors import ApiError, Conflict
 from lzo.governance.models import revisions, resource_heads
@@ -73,7 +73,7 @@ class EvidenceService:
 
     def create(self, uow, actor, stream, media_type, command, *, expected_revision=None):
         owner, references = self.preflight(uow, actor, command, expected_revision)
-        store = self.store or ArtifactStore(self.settings.file_root / "artifacts", max_upload_bytes=self.settings.artifact_max_upload_bytes)
+        store = self.store or get_blob_store(self.settings)
         blob = stream if isinstance(stream, (BlobRef, StagedBlob)) else store.put(stream, media_type)
         typed = command.model_copy(update={"scope": ResourceScope(owner, command.scope.owner_scope_id,
             command.scope.related_scope_ids, command.scope.security_class)})

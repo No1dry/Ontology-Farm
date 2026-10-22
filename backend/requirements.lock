@@ -1,5 +1,9 @@
 # Resolved on Python 3.12.7; platform markers retain Linux image compatibility.
 alembic==1.17.2
+boto3==1.40.75
+botocore==1.40.76
+jmespath==1.0.1
+s3transfer==0.14.0
 Authlib==1.9.1
 aiosmtpd==1.4.6
 atpublic==9.0.0

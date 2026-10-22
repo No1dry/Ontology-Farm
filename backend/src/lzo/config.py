@@ -33,6 +33,25 @@ class Settings(BaseSettings):
     oidc_client_secret: str | None = Field(default=None, repr=False)
     oidc_backchannel_base: str | None = None
     file_root: Path
+    blob_provider: Literal['local', 's3'] = 'local'
+    s3_endpoint: str | None = Field(default=None, repr=False)
+    s3_bucket: str = 'lzo-artifacts'
+    s3_region: str = 'us-east-1'
+    s3_access_key_file: Path | None = Field(default=None, repr=False)
+    s3_secret_key_file: Path | None = Field(default=None, repr=False)
+    blob_staging_path: Path | None = None
+    artifact_resource_budgets: dict[str, int] = Field(default_factory=dict)
+    artifact_upload_session_seconds: int = Field(default=86400, ge=60, le=604800)
+    artifact_upload_part_bytes: int = Field(default=8 * 1024 * 1024, ge=1)
+
+    @model_validator(mode='after')
+    def explicit_blob_configuration(self):
+        if self.blob_provider == 's3' and not all((self.s3_endpoint, self.s3_access_key_file,
+                                                  self.s3_secret_key_file, self.blob_staging_path)):
+            raise ValueError('s3 requires endpoint, credential files and local staging path')
+        if any(value < 1 for value in self.artifact_resource_budgets.values()):
+            raise ValueError('resource budgets must be positive')
+        return self
     artifact_max_upload_bytes: int = Field(default=50 * 1024 * 1024, ge=1)
     artifact_user_quota_bytes: int = Field(default=2 * 1024 * 1024 * 1024, ge=1)
     artifact_scope_quota_bytes: int = Field(default=20 * 1024 * 1024 * 1024, ge=1)

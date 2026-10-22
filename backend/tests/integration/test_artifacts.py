@@ -154,7 +154,8 @@ def artifact_http(artifacts, tmp_path):
     from lzo.main import create_app
 
     s = artifacts
-    settings = s.limits.model_copy(update={"file_root": tmp_path / "http-private"})
+    settings = s.limits.model_copy(update={"file_root": tmp_path / "http-private",
+                                          "blob_staging_path": tmp_path / 'http-private-s3'})
     app = create_app(settings)
     app.state.engine.dispose()
     app.state.engine = s.app
@@ -203,6 +204,43 @@ def test_http_upload_download_and_same_bytes_cross_scope_are_private(artifact_ht
     assert s.http.get("/api/v1/artifacts/../secret/content", headers=s.headers()).status_code in {400, 404, 422}
 
 
+def test_http_single_ranges_and_invalid_range(artifact_http):
+    s = artifact_http
+    response = s.http.post(f"/api/v1/artifacts?resource_id={s.ids_by_name['object_a']}&filename=clip.bin",
+        content=b'abcdef', headers={**s.headers(), 'Content-Type':'application/octet-stream'})
+    assert response.status_code == 201, response.text
+    url = f"/api/v1/artifacts/{response.json()['version_id']}/content"
+    for header, value, content_range in [('bytes=1-3', b'bcd', 'bytes 1-3/6'),
+                                        ('bytes=-2', b'ef', 'bytes 4-5/6')]:
+        part = s.http.get(url, headers={**s.headers(), 'Range':header})
+        assert part.status_code == 206 and part.content == value
+        assert part.headers['Content-Range'] == content_range
+        assert part.headers['Accept-Ranges'] == 'bytes'
+        assert int(part.headers['Content-Length']) == len(value)
+    invalid = s.http.get(url, headers={**s.headers(), 'Range':'bytes=6-'})
+    assert invalid.status_code == 416
+
+
+def test_http_resumable_session_routes(artifact_http):
+    import hashlib
+    s = artifact_http
+    base = '/api/v1/artifacts/uploads'
+    created = s.http.post(base, json=dict(resource_id=str(s.ids_by_name['object_a']), filename='clip.bin',
+        media_type='application/octet-stream', size_bytes=6, sha256=hashlib.sha256(b'abcdef').hexdigest()),
+        headers=s.headers())
+    assert created.status_code == 201, created.text
+    url = base+'/'+created.json()['id']
+    status = s.http.get(url, headers=s.headers())
+    assert status.status_code == 200 and status.json()['parts'] == []
+    uploaded = s.http.put(url+'/parts/1', content=b'abcdef', headers=s.headers())
+    assert uploaded.status_code == 200, uploaded.text
+    completed = s.http.post(url+'/complete', headers=s.headers())
+    assert completed.status_code == 200, completed.text
+    replay = s.http.post(url+'/complete', headers=s.headers())
+    assert replay.status_code == 200 and replay.json()['version_id'] == completed.json()['version_id']
+    assert not any(word in completed.text.lower() for word in ['x-amz-', 'secret_key', 's3_endpoint'])
+
+
 def test_http_upload_replay_and_preconditions_do_not_duplicate_versions(artifact_http):
     from lzo.artifacts.models import artifact_versions
 
@@ -244,8 +282,11 @@ def test_http_revalidates_revoked_rights_after_streaming(artifact_http):
     assert response.status_code in {403, 404}
     with s.transaction() as uow:
         assert uow.session.execute(select(artifact_versions)).all() == []
-    assert list((s.http_settings.file_root / "artifacts" / "staging").iterdir()) == []
-    assert [p for p in (s.http_settings.file_root / "artifacts" / "objects").rglob("*") if p.is_file()] == []
+    if s.http_settings.blob_provider == 's3':
+        assert list((s.http_settings.blob_staging_path / 'staging').iterdir()) == []
+    else:
+        assert list((s.http_settings.file_root / "artifacts" / "staging").iterdir()) == []
+        assert [p for p in (s.http_settings.file_root / "artifacts" / "objects").rglob("*") if p.is_file()] == []
 
 
 def test_concurrent_users_cannot_exceed_one_scope_quota(artifacts):

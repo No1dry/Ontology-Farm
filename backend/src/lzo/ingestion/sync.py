@@ -12,7 +12,7 @@ from lzo.ingestion.schemas import SourceChange,SourcePosition,ScanResult,ParseIs
 from lzo.ingestion.sources import SourceService,ConnectionService,add_scoped,digest
 from lzo.ingestion.connectors.base import scope_digest
 from lzo.ingestion.credentials import SourceCredentialStore
-from lzo.artifacts.store import ArtifactStore
+from lzo.storage.blobs import get_blob_store
 from lzo.artifacts.service import ArtifactService
 from lzo.ontology.drafts import bind_dependencies
 from lzo.worker.service import checkpoint
@@ -89,7 +89,7 @@ class SyncService:
             event=append_revision(ctx.uow,ctx.actor,identifier,0,meta,'source.scan.started')
             bind_dependencies(ctx.uow,identifier,{source.id},event.event_id)
             checkpoint(job_id,lease_token,{'scan_id':str(identifier),'state':'running'})
-        store=ArtifactStore(ctx.runner.settings.file_root/'artifacts',max_upload_bytes=ctx.runner.settings.artifact_max_upload_bytes)
+        store=get_blob_store(ctx.runner.settings)
         credentials=TaskCredentials(ctx,source.id,source.connection_revision)
         connector=self.connector_factory(source,credentials,store,ctx.runner.settings)
         try:

@@ -44,6 +44,12 @@ class ArtifactStore:
 
     def _finish(self, staged: Path, ref: BlobRef) -> BlobRef:
         digest, size = ref.sha256, ref.size_bytes
+        with staged.open('rb') as stream:
+            actual = hashlib.sha256()
+            for chunk in iter(lambda: stream.read(_CHUNK), b''):
+                actual.update(chunk)
+            if stream.tell() != size or actual.hexdigest() != digest:
+                raise ApiError('BLOB_CORRUPT', 503, 'Staged artifact failed validation')
         destination = self._path(digest)
         destination.parent.mkdir(parents=True, exist_ok=True)
         try:
@@ -51,6 +57,8 @@ class ArtifactStore:
         except FileExistsError:
             if destination.is_symlink() or destination.stat().st_size != size:
                 raise ApiError("BLOB_CORRUPT", 503, "Stored artifact failed validation") from None
+            with self.open(ref):
+                pass
         finally:
             staged.unlink(missing_ok=True)
         return ref
@@ -137,4 +145,33 @@ class ArtifactStore:
         if os.fstat(stream.fileno()).st_size != blob.size_bytes:
             stream.close()
             raise ApiError("BLOB_CORRUPT", 503, "Stored artifact failed validation")
+        digest = hashlib.sha256()
+        for chunk in iter(lambda: stream.read(_CHUNK), b''):
+            digest.update(chunk)
+        if digest.hexdigest() != blob.sha256:
+            stream.close()
+            raise ApiError("BLOB_CORRUPT", 503, "Stored artifact failed validation")
+        stream.seek(0)
         return stream
+
+    def open_range(self, blob: BlobRef, start: int, end: int) -> BinaryIO:
+        from lzo.storage.blobs import parse_range
+        parse_range(f'bytes={start}-{end}', blob.size_bytes)
+        stream = self.open(blob)
+        output = tempfile.TemporaryFile()
+        try:
+            stream.seek(start)
+            remaining = end - start + 1
+            while remaining:
+                piece = stream.read(min(_CHUNK, remaining))
+                if not piece:
+                    raise ApiError('BLOB_CORRUPT', 503, 'Stored artifact failed validation')
+                output.write(piece)
+                remaining -= len(piece)
+            output.seek(0)
+            return output
+        except BaseException:
+            output.close()
+            raise
+        finally:
+            stream.close()

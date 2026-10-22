@@ -128,8 +128,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.exception_handler(ApiError)
     async def api_error(request: Request, error: ApiError):
         from lzo.semantic.semantic_profile import SemanticProfileError
-        return error_response(request, error.code, error.status, error.message, error.details,
-                              trusted_details=isinstance(error, SemanticProfileError))
+        response = error_response(request, error.code, error.status, error.message, error.details,
+                                  trusted_details=isinstance(error, SemanticProfileError))
+        if error.code == 'INVALID_RANGE' and error.details:
+            response.headers['Content-Range'] = f"bytes */{error.details['size_bytes']}"
+        return response
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request: Request, error: RequestValidationError):
@@ -196,8 +199,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             with tempfile.TemporaryFile(dir=config.file_root) as probe:
                 probe.write(b"ready")
                 probe.flush()
+            if config.blob_provider == "s3":
+                from lzo.storage.blobs import get_blob_store
+                get_blob_store(config).ready()
             dependencies["files"] = "ready"
-        except OSError:
+        except (OSError, ApiError):
             pass
 
         available = all(status == "ready" for status in dependencies.values())

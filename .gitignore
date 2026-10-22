@@ -52,3 +52,4 @@ database/fuseki/databases/
 # Synthetic distributable map archives are source fixtures, not runtime databases.
 !tests/fixtures/maps/*.mbtiles
 !tests/fixtures/maps/*.pmtiles
+infra/compose/secrets/

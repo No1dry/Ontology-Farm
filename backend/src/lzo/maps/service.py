@@ -6,7 +6,7 @@ from sqlalchemy import delete, insert, or_, select, update
 
 from lzo.artifacts.models import artifact_versions
 from lzo.artifacts.service import ArtifactService, _permission
-from lzo.artifacts.store import ArtifactStore
+from lzo.storage.blobs import BlobStore, get_blob_store
 from lzo.auth.models import grants, resource_scopes, roles
 from lzo.auth.permissions import authorized_statement, grant_predicate, require_permission, validate_actor
 from lzo.config import Settings
@@ -28,7 +28,7 @@ def referenced_versions(payload):
 
 
 class MapService:
-    def __init__(self, uow: UnitOfWork, store: ArtifactStore, settings: Settings):
+    def __init__(self, uow: UnitOfWork, store: BlobStore, settings: Settings):
         self.uow, self.store, self.settings = uow, store, settings
         self.artifacts = ArtifactService(uow, store, settings)
 
@@ -204,7 +204,7 @@ class MapService:
 
 def _context_service(uow):
     settings = getattr(uow, 'map_settings', None) or Settings()
-    store = getattr(uow, 'artifact_store', None) or ArtifactStore(settings.file_root / 'artifacts', max_upload_bytes=settings.artifact_max_upload_bytes)
+    store = getattr(uow, 'artifact_store', None) or get_blob_store(settings)
     return MapService(uow, store, settings)
 
 

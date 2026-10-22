@@ -9,7 +9,7 @@ from rdflib.namespace import RDF, RDFS, OWL, XSD
 
 from lzo.artifacts.models import artifact_versions
 from lzo.artifacts.service import ArtifactService
-from lzo.artifacts.store import ArtifactStore
+from lzo.storage.blobs import get_blob_store
 from lzo.auth.models import resource_scopes
 from lzo.auth.permissions import authorized_statement, require_permission, validate_actor
 from lzo.config import Settings
@@ -31,7 +31,7 @@ def settings_for(uow):
 
 def store_for(uow):
     settings = settings_for(uow)
-    return ArtifactStore(settings.file_root / "artifacts", max_upload_bytes=settings.artifact_max_upload_bytes)
+    return get_blob_store(settings)
 
 
 def visible_statement(actor, table):
