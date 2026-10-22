@@ -109,12 +109,14 @@ class Aggregate(DTO):
 
 
 class TelemetryPage(DTO):
-    status: Literal['current', 'pending', 'failed', 'unavailable']
+    status: Literal['current', 'pending', 'failed', 'unavailable', 'incomplete']
     items: list[ObservationView]
     next_cursor: str | None
     watermark: str | None
     aggregate: Aggregate
     aggregate_scope: Literal['page']
+    incomplete_reason: Literal['query_budget'] | None = None
+    query_url: str | None = None
 
 
 class BatchAccepted(DTO):

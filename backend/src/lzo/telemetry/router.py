@@ -66,9 +66,12 @@ for path, kind in (('observations', 'observation'), ('events', 'event'), ('media
 
 
 @router.get('/objects/{id}/data', response_model=ObjectDataView, operation_id='getObjectData')
-def object_data(id: UUID, request: Request, auth: AuthRequest = Depends(authenticated)):
+def object_data(id: UUID, request: Request, observations_start: datetime | None = None,
+                observations_end: datetime | None = None, observations_device_id: UUID | None = None,
+                observations_metric_id: str | None = None, auth: AuthRequest = Depends(authenticated)):
     svc = service(request, auth)
-    return ObjectDataService(auth.uow, svc.registry).get(auth.actor, id)
+    return ObjectDataService(auth.uow, svc.registry).get(auth.actor, id, observations_start=observations_start,
+        observations_end=observations_end, observations_device_id=observations_device_id, observations_metric_id=observations_metric_id)
 
 
 @router.get('/telemetry/retention-preview', operation_id='previewTelemetryRetention')

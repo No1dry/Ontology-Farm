@@ -233,6 +233,11 @@ class ProjectionService:
                 dependent=_revision(self.uow,dependency)
                 if dependent["event_type"] in OBJECT_EVENTS:
                     require_deliveries(self.uow,dependency.event_id,("gis",))
+                elif dependent['event_type'] == 'telemetry.batch.accepted':
+                    if self.actor is not None:
+                        from lzo.telemetry.service import TelemetryService
+                        TelemetryService(self.uow).reference_dependencies(self.actor, dependency)
+                    require_deliveries(self.uow, dependency.event_id, ('timeseries',))
         if producer.before_publish is not None:
             try:
                 producer.before_publish(self.uow, self.actor, row)

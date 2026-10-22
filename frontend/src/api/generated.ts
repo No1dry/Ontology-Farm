@@ -5848,15 +5848,19 @@ export interface components {
              * @constant
              */
             aggregate_scope: "page";
+            /** Incomplete Reason */
+            incomplete_reason?: "query_budget" | null;
             /** Items */
             items: components["schemas"]["ObservationView"][];
             /** Next Cursor */
             next_cursor: string | null;
+            /** Query Url */
+            query_url?: string | null;
             /**
              * Status
              * @enum {string}
              */
-            status: "current" | "pending" | "failed" | "unavailable";
+            status: "current" | "pending" | "failed" | "unavailable" | "incomplete";
             /** Watermark */
             watermark: string | null;
         };
@@ -9624,7 +9628,12 @@ export interface operations {
     };
     getObjectData: {
         parameters: {
-            query?: never;
+            query?: {
+                observations_start?: string | null;
+                observations_end?: string | null;
+                observations_device_id?: string | null;
+                observations_metric_id?: string | null;
+            };
             header?: never;
             path: {
                 id: string;

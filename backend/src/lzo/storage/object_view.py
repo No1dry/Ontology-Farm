@@ -1,5 +1,6 @@
 """Object data composition with independent domain receipts and current authority."""
 from uuid import UUID
+from urllib.parse import urlencode
 from sqlalchemy import select
 from sqlalchemy.exc import DBAPIError
 from lzo.artifacts.service import _permission
@@ -17,7 +18,29 @@ class ObjectDataService:
         self.uow, self.registry = uow, registry
         self.telemetry = TelemetryService(uow, registry)
 
-    def get(self, actor, identifier):
+    def _telemetry_part(self, actor, identifier, kind, **filters):
+        route = {'observation': 'observations', 'media': 'media', 'track': 'tracks'}[kind]
+        query = {'object_id': str(identifier), 'limit': min(filters.get('limit', 50), 50)}
+        query.update({key: str(value) for key, value in filters.items()
+            if key in ('start', 'end', 'device_id', 'metric_id') and value is not None})
+        try:
+            page = self.telemetry.query(actor, object_id=identifier, kind=kind, **filters)
+        except ApiError as error:
+            if error.code != 'TELEMETRY_QUERY_BUDGET':
+                raise
+            # A bounded historical page is a recovery entry, not an omitted
+            # latest snapshot silently labelled current. Its cursor continues
+            # normally; route selectors also let the caller narrow latest.
+            suggested = (error.details or {}).get('suggested_start')
+            if suggested is not None:
+                query['start'] = suggested
+            page = {'status': 'incomplete', 'incomplete_reason': 'query_budget', 'items': [],
+                'next_cursor': None, 'watermark': None, 'aggregate': self.telemetry._aggregate([]), 'aggregate_scope': 'page'}
+        page['query_url'] = '/api/v1/telemetry/'+route+'?'+urlencode(query)
+        return page
+
+    def get(self, actor, identifier, *, observations_start=None, observations_end=None,
+            observations_device_id=None, observations_metric_id=None):
         self.telemetry._object(actor, identifier)
         row = self.uow.session.execute(select(revisions).where(revisions.c.resource_id == identifier)
             .order_by(revisions.c.revision.desc()).limit(1)).mappings().one()
@@ -62,8 +85,9 @@ class ObjectDataService:
         catalog['watermarks'] = [value['revision'] for value in (*catalog['models'], *catalog['documents'])]
         statuses = {value['projection_status'] for value in (*catalog['models'], *catalog['documents'])}
         catalog['status'] = next((state for state in ('failed', 'unavailable', 'pending') if state in statuses), 'current')
-        observations = self.telemetry.query(actor, object_id=identifier, latest=True, limit=100)
-        media = self.telemetry.query(actor, object_id=identifier, kind='media', limit=20)
-        tracks = self.telemetry.query(actor, object_id=identifier, kind='track', limit=20)
+        observations = self._telemetry_part(actor, identifier, 'observation', latest=True, limit=100,
+            start=observations_start, end=observations_end, device_id=observations_device_id, metric_id=observations_metric_id)
+        media = self._telemetry_part(actor, identifier, 'media', limit=20)
+        tracks = self._telemetry_part(actor, identifier, 'track', limit=20)
         return {'identity': identity, 'gis': gis, 'catalog': catalog,
             'observations': observations, 'media': media, 'tracks': tracks}

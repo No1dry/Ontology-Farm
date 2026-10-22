@@ -236,6 +236,19 @@ class TelemetryService:
         return {'id': str(identifier), 'event_id': str(row['event_id']), 'status': status,
             'delivery_status': receipt.status, 'attempts': receipt.attempts, 'error': receipt.error}
 
+    def reference_dependencies(self, actor, ref):
+        """Exact acceptance provenance, independent of a later retry audit head.
+
+        Pending target delivery is allowed at semantic command acceptance; the
+        existing projection barrier waits on this exact event before publication.
+        """
+        row = self._batch(actor, ref.resource_id)
+        if ref.revision != 1 or row['event_id'] != ref.event_id:
+            raise ApiError('INVALID_REVISION_REFERENCE', 422, 'Exact telemetry acceptance reference required')
+        from lzo.governance.history import revision_visibility_dependencies
+        return set(self.uow.session.execute(select(revision_visibility_dependencies.c.resource_id).where(
+            revision_visibility_dependencies.c.event_id == ref.event_id)).scalars())
+
     def retry(self, actor, identifier, key=None):
         row = self._batch(actor, identifier)
         _permission(self.uow, actor, identifier, 'source.manage')
@@ -374,7 +387,8 @@ class TelemetryService:
                     after = (datetime.fromisoformat(row['sampled_at']), UUID(row['id']))
                     scanned += 1
                     if scanned > 10000:
-                        raise ApiError('TELEMETRY_QUERY_BUDGET', 422, 'Narrow the interval before querying more samples')
+                        raise ApiError('TELEMETRY_QUERY_BUDGET', 422, 'Narrow the interval before querying more samples',
+                            {'suggested_start': output[-1]['sampled_at'] if output else None})
                     if accepted.get(str(candidate['event_id']), {}).get(row['id']) != row:
                         continue
                     if not history and row['id'] in superseded:
@@ -398,7 +412,8 @@ class TelemetryService:
                 grouped[(row['source_namespace']['source_id'], row['object_id'], row['device_id'], row['point_id'], row['metric_id'])] = row
             output = sorted(grouped.values(), key=lambda row: (row['sampled_at'], row['id']))
             if len(output) > limit:
-                raise ApiError('TELEMETRY_QUERY_BUDGET', 422, 'Narrow latest query to fewer series')
+                raise ApiError('TELEMETRY_QUERY_BUDGET', 422, 'Narrow latest query to fewer series',
+                    {'suggested_start': output[-1]['sampled_at']})
         next_cursor = None
         if len(output) > limit:
             last = output[limit-1]

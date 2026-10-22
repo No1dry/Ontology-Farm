@@ -12,6 +12,218 @@ from test_timeseries import telemetry_case
 from test_catalog import catalog_case
 
 
+def _route_client(s):
+    """Actual session/CSRF authority, no request/authentication doubles."""
+    from fastapi.testclient import TestClient
+    from lzo.main import create_app
+    from lzo.auth.session import SessionService, SESSION_COOKIE
+    app = create_app(s.config)
+    app.state.storage_registry.close()
+    app.state.storage_registry = s.registry
+    app.state.engine = s.app
+    with s.transaction() as uow:
+        cookie = SessionService(uow, s.config).create(s.users['alice'], {'synthetic': True})
+        uow.commit()
+    client = TestClient(app, base_url='https://testserver')
+    client.cookies.set(SESSION_COOKIE, cookie)
+    return client
+
+
+def _install_acknowledged_history(s, count, streams):
+    """Bulk fixture installation, not an admission throughput benchmark.
+
+    Each <=1000-row fixture manifest has a real ledger ref, frozen delivery,
+    core identity rows and actual normal target-handler/inbox acknowledgement.
+    Per-row admission authorization is already covered by telemetry_case tests.
+    """
+    from sqlalchemy import insert
+    from lzo.contracts import ResourceScope
+    from lzo.governance.revisions import append_revision, lock_ledger
+    from lzo.governance.risk import digest_change
+    from lzo.ingestion.sources import add_scoped, bind
+    from lzo.telemetry.service import record_content, record_id
+    from lzo.telemetry.repository import batches, identities, apply_batch
+    from lzo.synchronization.contracts import SyncEnvelope
+    from lzo.synchronization.delivery import enqueue_delivery, deliver_once
+    base = s.observation()
+    namespace = {'source_id': str(s.source.id), 'source_system': 'synthetic',
+        'source_instance': s.source.configuration.source_instance, 'collection': 'field-pond-orchard'}
+    received = datetime.now(timezone.utc)
+    for offset in range(0, count, 1000):
+        rows, keys = [], []
+        for n in range(offset, min(count, offset+1000)):
+            record = base.model_copy(update={'source_record_id': 'retained-'+str(n), 'metric_id': 'metric-'+str(n % streams),
+                'sampled_at': base.sampled_at+timedelta(seconds=n)})
+            content = record_content(record)
+            identifier = record_id(s.source.id, record.source_record_id, 1)
+            digest = digest_change(content)
+            rows.append(content | {'id': str(identifier), 'content_hash': digest, 'received_at': received.isoformat(),
+                'source_namespace': namespace, 'supersedes_id': None})
+            keys.append(dict(source_id=s.source.id, source_record_id=record.source_record_id, version=1,
+                id=identifier, object_id=record.object_id, content_hash=digest, received_at=received))
+        identifier = uuid4()
+        manifest_hash = digest_change(rows)
+        with s.transaction() as uow:
+            lock_ledger(uow)
+            add_scoped(uow, s.actor('alice'), identifier, s.scope, 'telemetry.batch', 'source.manage')
+            ref = append_revision(uow, s.actor('alice'), identifier, 0, {'source_id': str(s.source.id),
+                'manifest_hash': manifest_hash, 'count': len(rows), 'accepted_count': len(rows), 'adapter': 'incremental-v1'}, 'telemetry.batch.accepted')
+            bind(uow, ref, {s.source.id, base.object_id})
+            uow.session.execute(insert(batches).values(id=identifier, source_id=s.source.id, manifest_hash=manifest_hash, event_id=ref.event_id))
+            uow.session.execute(insert(identities), keys)
+            enqueue_delivery(uow, SyncEnvelope(event_id=ref.event_id, entity_id=identifier, aggregate_revision=1,
+                target='timeseries', operation='telemetry.batch', payload={'source_id': str(s.source.id), 'manifest_hash': manifest_hash,
+                    'records': rows, 'input_artifact_version_id': None, 'mapping_version_id': None}, data_nature='synthetic'))
+            uow.commit()
+    assert deliver_once(s.registry, 'timeseries', apply_batch).delivered == (count+999)//1000
+    with s.registry.engine('timeseries').connect() as connection:
+        assert connection.execute(text('SELECT count(*) FROM telemetry_samples WHERE source_id=:id'), {'id': s.source.id}).scalar_one() == count
+
+
+@pytest.mark.parametrize('count,streams,selection', [(10001, 1, {'observations_start': '2026-01-15T14:46:39Z'}),
+    (101, 101, {'observations_metric_id': 'metric-100'})])
+def test_object_route_keeps_parts_and_offers_bounded_latest_after_budget(telemetry_case, count, streams, selection):
+    s = telemetry_case
+    _install_acknowledged_history(s, count, streams)
+    identifier = s.ids_by_name['object_a']
+    with _route_client(s) as client:
+        response = client.get('/api/v1/objects/'+str(identifier)+'/data')
+        assert response.status_code == 200, response.text
+        result = response.json()
+        assert result['identity']['id'] == str(identifier)
+        assert result['gis']['status'] == 'pending'
+        assert result['catalog']['status'] == 'current'
+        assert result['media']['status'] == 'current' and result['tracks']['status'] == 'current'
+        assert result['observations']['status'] == 'incomplete'
+        assert result['observations']['incomplete_reason'] == 'query_budget'
+        assert result['observations']['query_url'].startswith('/api/v1/telemetry/observations?')
+        recovered = client.get(result['observations']['query_url'])
+        assert recovered.status_code == 200, recovered.text
+        assert 1 <= len(recovered.json()['items']) <= 50
+        bounded = client.get('/api/v1/objects/'+str(identifier)+'/data', params=selection)
+        assert bounded.status_code == 200, bounded.text
+        page = bounded.json()['observations']
+        assert page['status'] == 'current' and len(page['items']) == 1
+        assert page['items'][0]['source_record_id'] == 'retained-'+str(count-1)
+        assert client.get(page['query_url']).status_code == 200
+
+
+def test_selected_telemetry_reference_waits_for_exact_receipt_and_keeps_authority_after_retry(object_case):
+    from lzo.auth.models import roles
+    from lzo.contracts import ResourceScope, RevisionRef
+    from lzo.ingestion.sources import SourceService
+    from lzo.ingestion.schemas import SourceCreate
+    from lzo.storage.registry import StorageRegistry
+    from lzo.storage.blobs import get_blob_store
+    from lzo.artifacts.service import ArtifactService
+    from lzo.telemetry.schemas import BatchInput, ObservationInput
+    from lzo.telemetry.service import TelemetryService
+    from lzo.telemetry.repository import apply_batch
+    from lzo.synchronization.contracts import SyncEnvelope
+    from lzo.synchronization import delivery
+    from lzo.gis.repository import apply_geometry
+    from lzo.semantic.projection import ProjectionService
+    from lzo.semantic.fuseki import FusekiRepository, graph_iri
+    from lzo.errors import ApiError
+    s = object_case
+    created = s.create_object()
+    assert created.status_code == 201, created.text
+    identifier = UUID(created.json()['revision']['resource_id'])
+    with s.transaction() as uow:
+        uow.session.execute(update(roles).where(roles.c.id == s.roles['editor']).values(actions=['view', 'edit', 'source.manage', 'source.read']))
+        uow.commit()
+    regional = s.grant('alice', 'editor', scope='farm_b')
+    registry = StorageRegistry.from_settings(s.config)
+    registry._engines['core'].dispose()
+    registry._engines['core'] = s.app
+    try:
+        with s.transaction() as uow:
+            uow.ontology_settings = s.config
+            source = SourceService(uow).create(uow, s.actor('alice'), SourceCreate(source_system='synthetic', source_instance=uuid4().hex,
+                collection='selected-summary', kind='file', scope=ResourceScope(None, s.scopes['farm_a'], (), 'data'), data_nature='synthetic'))
+            store = get_blob_store(s.config)
+            artifact = ArtifactService(uow, store, s.config).register_upload(s.actor('alice'), s.ids_by_name['object_b'],
+                store.put(io.BytesIO(b'Original authored synthetic event reference'), 'text/plain'), filename='event.txt', metadata={'synthetic': True})
+            event = ObservationInput(kind='event', event_type='synthetic.pump.stopped', source_record_id='selected-event',
+                object_id=identifier, device_id=identifier, point_id='synthetic-pump', raw_value='pump stopped', normalized_value=None,
+                sampled_at='2026-01-15T12:00:00Z', data_nature='synthetic', artifact_version_id=artifact.version_id)
+            service = TelemetryService(uow, registry)
+            selected = service.accept(s.actor('alice'), BatchInput(source_id=source.id, records=(event,)), 'selected')
+            unrelated = service.accept(s.actor('alice'), BatchInput(source_id=source.id,
+                records=(event.model_copy(update={'source_record_id': 'unrelated-event'}),)), 'unrelated')
+            uow.commit()
+        # A retry audit becomes the head, while the selected provenance still
+        # pins the original immutable acceptance revision/event and its links.
+        with s.transaction() as uow:
+            uow.ontology_settings = s.config
+            uow.session.execute(text("UPDATE store_deliveries SET status='failed' WHERE entity_id=:id"), {'id': selected['id']})
+            TelemetryService(uow, registry).retry(s.actor('alice'), UUID(selected['id']), 'selected-repair')
+            wire = uow.session.execute(text("SELECT envelope FROM store_deliveries WHERE event_id=:id AND target='timeseries'"),
+                {'id': selected['event_id']}).scalar_one()
+            assert uow.session.execute(text('SELECT revision FROM resource_heads WHERE resource_id=:id'), {'id': selected['id']}).scalar_one() == 2
+            uow.commit()
+        envelope = SyncEnvelope.model_validate(wire)
+        record = envelope.payload['records'][0]
+        pin = {'resource_id': selected['id'], 'revision': 1, 'event_id': selected['event_id']}
+        summary = s.assertion(identifier, value='Selected synthetic event: pump stopped')
+        summary['support'].update(record_key=record['source_record_id'], source_version='1', observed_at=record['sampled_at'],
+            evidence_refs=[pin], raw_value={'source_id': str(source.id), 'record_id': record['id'], 'content_hash': record['content_hash'], 'raw_value': record['raw_value']})
+        s.login('alice')
+        response = s.patch(identifier, 1, additions=[summary])
+        assert response.status_code == 200, response.text
+        value = response.json()['revision']
+        ref = RevisionRef(UUID(value['resource_id']), value['revision'], UUID(value['event_id']))
+        delivery.deliver_once(registry, 'gis', apply_geometry)
+        repository = FusekiRepository(s.config.fuseki_url)
+        with s.transaction() as uow:
+            uow.ontology_settings = s.config
+            with pytest.raises(delivery.DeliveriesPending):
+                ProjectionService(uow, repository, actor=s.actor('alice')).project_revision(ref)
+        assert all(triple.object.value != 'Selected synthetic event: pump stopped' for triple in repository.read_graph(graph_iri(identifier, 'accepted')))
+        with s.transaction() as uow:
+            uow.session.execute(text("UPDATE store_deliveries SET status='failed' WHERE event_id=:id AND target='timeseries'"),
+                {'id': selected['event_id']})
+            uow.commit()
+        with s.transaction() as uow:
+            uow.ontology_settings = s.config
+            with pytest.raises(delivery.DeliveriesFailed):
+                ProjectionService(uow, repository, actor=s.actor('alice')).project_revision(ref)
+            TelemetryService(uow, registry).retry(s.actor('alice'), UUID(selected['id']), 'selected-repair-again')
+            uow.commit()
+        receipt = delivery._apply(registry, envelope, apply_batch)
+        with s.transaction() as uow:
+            uow.ontology_settings = s.config
+            with pytest.raises(delivery.DeliveriesPending):
+                ProjectionService(uow, repository, actor=s.actor('alice')).project_revision(ref)
+        with registry.engine('core').begin() as connection:
+            delivery._acknowledge(connection, receipt)
+        with s.transaction() as uow:
+            uow.ontology_settings = s.config
+            assert ProjectionService(uow, repository, actor=s.actor('alice')).project_revision(ref).state == 'synced'
+            assert uow.session.execute(text("SELECT status FROM store_deliveries WHERE event_id=:id AND target='timeseries'"),
+                {'id': unrelated['event_id']}).scalar_one() == 'pending'
+            snapshot = uow.session.execute(text('SELECT payload FROM revisions WHERE event_id=:id'), {'id': ref.event_id}).scalar_one()
+            assert pin in snapshot['dependency_revisions']
+            stored = next(row for row in snapshot['assertions'] if str(row['id']) == summary['assertion_id'])['supports'][0]['payload']
+            assert stored['record_key'] == 'selected-event' and stored['raw_value']['content_hash'] == record['content_hash']
+            assert uow.session.execute(text('SELECT 1 FROM semantic_object_dependencies WHERE resource_id=:id AND dependency_id=:private'),
+                {'id': identifier, 'private': artifact.version_id}).first()
+            uow.commit()
+        assert any(triple.predicate_iri == 'urn:note' and triple.object.value == 'Selected synthetic event: pump stopped'
+            for triple in repository.read_graph(graph_iri(identifier, 'accepted')))
+        assert s.client.get('/api/v1/objects/'+str(identifier)).status_code == 200
+        s.revoke(regional)
+        s.login('alice')
+        assert s.client.get('/api/v1/objects/'+str(identifier)).status_code == 404
+        with s.transaction() as uow:
+            uow.ontology_settings = s.config
+            with pytest.raises(ApiError):
+                ProjectionService(uow, repository, actor=s.actor('alice')).project_revision(ref)
+    finally:
+        registry._engines.pop('core')
+        registry.close()
+
+
 def test_object_catalog_filter_fills_relevant_document_page(catalog_case):
     from lzo.artifacts.service import ArtifactService
     from lzo.storage.blobs import get_blob_store

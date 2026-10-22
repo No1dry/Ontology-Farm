@@ -100,7 +100,7 @@ def revision_ref(uow, identifier):
 
 def verify_reference(uow, actor, ref):
     authorize(uow, actor, ref.resource_id)
-    found = uow.session.execute(select(revisions.c.event_id).where(
+    found = uow.session.execute(select(revisions.c.event_type).where(
         revisions.c.resource_id == ref.resource_id, revisions.c.revision == ref.revision,
         revisions.c.event_id == ref.event_id)).first()
     if found is None:
@@ -108,6 +108,7 @@ def verify_reference(uow, actor, ref):
     if not hasattr(uow, "facts_explicit_pins"):
         uow.facts_explicit_pins = set()
     uow.facts_explicit_pins.add(ref)
+    return found[0]
 
 
 def visible_objects(actor):
@@ -240,8 +241,13 @@ def support_references(uow, actor, support):
             authorize(uow, actor, identifier)
             refs.add(identifier)
     for ref in support.evidence_refs:
-        verify_reference(uow, actor, ref)
+        event_type = verify_reference(uow, actor, ref)
         refs.add(ref.resource_id)
+        if event_type == 'telemetry.batch.accepted':
+            from lzo.telemetry.service import TelemetryService
+            # Current linked authority follows the selected acceptance event,
+            # not whichever audit revision happens to be its resource head.
+            refs.update(TelemetryService(uow).reference_dependencies(actor, ref))
     if support.snapshot:
         refs.update((support.snapshot.version_id, artifact_reference(uow, actor, support.snapshot)))
     if not hasattr(uow, "facts_full_ids"):

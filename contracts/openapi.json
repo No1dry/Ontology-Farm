@@ -10219,6 +10219,18 @@
             "title": "Aggregate Scope",
             "type": "string"
           },
+          "incomplete_reason": {
+            "anyOf": [
+              {
+                "const": "query_budget",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incomplete Reason"
+          },
           "items": {
             "items": {
               "$ref": "#/components/schemas/ObservationView"
@@ -10237,12 +10249,24 @@
             ],
             "title": "Next Cursor"
           },
+          "query_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Query Url"
+          },
           "status": {
             "enum": [
               "current",
               "pending",
               "failed",
-              "unavailable"
+              "unavailable",
+              "incomplete"
             ],
             "title": "Status",
             "type": "string"
@@ -16183,6 +16207,73 @@
               "format": "uuid",
               "title": "Id",
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "observations_start",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Observations Start"
+            }
+          },
+          {
+            "in": "query",
+            "name": "observations_end",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Observations End"
+            }
+          },
+          {
+            "in": "query",
+            "name": "observations_device_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Observations Device Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "observations_metric_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Observations Metric Id"
             }
           }
         ],
