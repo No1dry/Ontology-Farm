@@ -82,6 +82,24 @@ def _existing_registration(uow,identifier,key,identity,payload):
     return None
 
 
+def _survey_evidence(uow,actor,version_id,*,link_target=None,verified=False):
+    """Evidence authority comes from its controlled owner/version, never JSON shape."""
+    from lzo.ingestion.evidence import EvidenceService
+    from lzo.artifacts.service import ArtifactService
+    from lzo.storage.blobs import get_blob_store
+    from lzo.errors import ApiError
+    settings=settings_for(uow)
+    store=get_blob_store(settings)
+    evidence=EvidenceService(uow,store,settings).read(actor,version_id)
+    if link_target is not None:
+        # Existing linking policy checks evidence.manage, source.manage, the
+        # new target and all pinned targets. Authorization does not mutate evidence.
+        ArtifactService(uow,store,settings).authorize_link(actor,version_id,link_target)
+    if verified and evidence.data_nature!="verified":
+        raise ApiError("SURVEY_NOT_VERIFIED",422,"Survey evidence is not verified")
+    return _artifact(uow,actor,version_id)
+
+
 def register_spatial_asset(uow,actor,command,bundle):
     from types import SimpleNamespace
     from lzo.semantic import facts
@@ -96,12 +114,8 @@ def register_spatial_asset(uow,actor,command,bundle):
     artifact=_artifact(uow,actor,command.artifact_version_id,command.sha256)
     refs={artifact["resource_id"]}
     if command.survey_evidence_version_id:
-        survey=_artifact(uow,actor,command.survey_evidence_version_id)
-        from lzo.ingestion.evidence import metadata_command
-        evidence=metadata_command(survey["metadata"])
+        survey=_survey_evidence(uow,actor,command.survey_evidence_version_id,link_target=command.resource_id,verified=command.quality=="verified")
         refs.add(survey["resource_id"])
-        if command.quality=="verified" and evidence.data_nature!="verified":
-            raise ApiError("SURVEY_NOT_VERIFIED",422,"Survey evidence is not verified")
     if command.quality=="verified" and row["payload"]["data_nature"]!="verified":
         raise ApiError("SPATIAL_SOURCE_NOT_VERIFIED",422,"Verified quality requires verified source nature")
     normalized=normalize(uow,SimpleNamespace(source_crs=command.horizontal_datum,geojson=command.footprint))
@@ -179,7 +193,8 @@ def list_spatial_assets(uow,actor,identifier,*,limit=None,cursor=None):
                 after=UUID(asset['asset_id'])
                 try:
                     _artifact(uow,actor,UUID(asset["artifact_version_id"]),asset["sha256"])
-                    if asset.get("survey_evidence_version_id"):_artifact(uow,actor,UUID(asset["survey_evidence_version_id"]))
+                    if asset.get("survey_evidence_version_id"):
+                        _survey_evidence(uow,actor,UUID(asset["survey_evidence_version_id"]),verified=asset.get("quality")=="verified")
                 except ApiError:continue
                 output.append(asset)
                 if len(output)>size:break
