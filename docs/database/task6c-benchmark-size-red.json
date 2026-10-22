@@ -1,0 +1,97 @@
+{
+  "format_version": 1,
+  "started_at": "2026-10-22T23:33:54.863171+00:00",
+  "source_nature": "synthetic",
+  "transport": "in-process Starlette TestClient ASGI; real SQL/Fuseki/S3 HTTP",
+  "identity_setup": "10 distinct persisted fixture identities and encrypted backend sessions; no auth override; not live OIDC login performance",
+  "seed_boundary": "owner-installed committed synthetic fixture SQL/RDF, real GIS handler/receipts; excluded from API latency",
+  "measurement_boundary": "ASGI request/response including current backend authorization, native store I/O and bounded query children",
+  "namespace_lifecycle": "unique isolated core test schema removed after counts/measurement; synthetic domain/RDF evidence retained",
+  "storage_configuration": {
+    "mode": "split",
+    "blob_provider": "s3"
+  },
+  "runtime_limits": {
+    "list_page_size": 50,
+    "list_max_page_size": 200,
+    "query_timeout_ms": 15000,
+    "query_max_rows": 1000,
+    "query_max_quads": 1000000,
+    "query_work_limit": 1000000,
+    "query_memory_mb": 512,
+    "query_input_bytes": 16777216,
+    "query_output_bytes": 2097152,
+    "query_read_total_bytes": 134217728,
+    "job_batch_timeout_seconds": 240,
+    "job_lease_seconds": 300
+  },
+  "workload": {
+    "entities": 10000,
+    "relations": 100000,
+    "users": 10,
+    "seed": 20261023,
+    "seed_seconds": 900.0,
+    "warmup": 0,
+    "repetitions": 1,
+    "query_timeout_ms": 10000,
+    "operations": [
+      "object",
+      "map",
+      "graph",
+      "sparql",
+      "history",
+      "domain_history",
+      "accept_sync"
+    ],
+    "observations": 100,
+    "media_bytes": 4096,
+    "service_pids": [
+      66356,
+      64356,
+      87208,
+      83376
+    ],
+    "hardware_label": "Intel Core i5-14600KF",
+    "git_executable": "C:/Users/robot/AppData/Local/Programs/Git/cmd/git.exe",
+    "output": ".runtime/benchmark-10000.json",
+    "basetemp": ".runtime/benchmark-10000-01"
+  },
+  "versions": {
+    "httpx": "0.28.1",
+    "SQLAlchemy": "2.0.44",
+    "rdflib": "7.6.0",
+    "fastapi": "0.141.1",
+    "psycopg": "3.2.12",
+    "python": "3.12.7",
+    "pinned_runtime_manifest": {
+      "python": "3.12.7",
+      "node": "24.22.0",
+      "postgresql": "17.11",
+      "postgis": "3.6.2",
+      "keycloak": "26.8.1",
+      "apache_jena_fuseki": "6.2.0",
+      "java": "21",
+      "mysql": "8.4.11",
+      "seaweedfs": "4.48"
+    },
+    "actual_postgresql": "PostgreSQL 17.11 on x86_64-windows, compiled by msvc-19.44.35229, 64-bit",
+    "actual_postgis_extension": "3.6.2"
+  },
+  "hardware": {
+    "cpu_description": "Intel Core i5-14600KF",
+    "physical_cores": 14,
+    "logical_cpus": 20,
+    "memory_gib": 31.851669311523438,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "standard_acceptance": "8 CPU cores/32 GB/SSD; current host is different"
+  },
+  "samples": [],
+  "state": "incomplete",
+  "code": {
+    "revision": "4ca1d620fad5a76e3574748398c1406d5468880e",
+    "dirty": false,
+    "working_tree_content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "failure_type": "IntegrityError",
+  "failure_message": "See private pytest log; no success inferred"
+}

@@ -44,6 +44,9 @@ def install_seed(s, bundle_id, template_id, config, registry, progress=None):
         # synthetic identities before chunked immutable revisions are installed.
         uow.session.execute(insert(resource_scopes), [{'resource_id': identifier, 'scope_id': s.scopes['farm_a'],
             'owner_scope_id': s.scopes['farm_a'], 'related_scope_ids': [], 'security_class': 'data', 'resource_kind': 'object'} for identifier in ids])
+        # As in register_object, revision zero is an unaccepted identity slot.
+        # Cross-chunk dependency FKs require all target heads to exist first.
+        uow.session.execute(insert(resource_heads), [{'resource_id': identifier, 'revision': 0} for identifier in ids])
         uow.commit()
     # Reservation and fixture rows are owner-controlled setup, not runtime
     # outbox processing; failed setup is explicitly incomplete in the report.
@@ -133,8 +136,11 @@ def install_seed(s, bundle_id, template_id, config, registry, progress=None):
             persisted_relations += edges
         # Core fixture rows persist even when a bounded target seed fails.
         with s.transaction() as uow:
+            uow.session.execute(text('UPDATE resource_heads SET revision=1,digest=:digest,event_id=:event '
+                'WHERE resource_id=:resource AND revision=0'), [{'resource': row['resource_id'],
+                    'digest': row['digest'], 'event': row['event_id']} for row in tables[resource_heads]])
             for table, rows in tables.items():
-                if rows and table not in (models.projection_events, models.projection_heads):
+                if rows and table not in (resource_heads, models.projection_events, models.projection_heads):
                     uow.session.execute(insert(table), rows)
             for envelope in envelopes:
                 enqueue_delivery(uow, envelope)
