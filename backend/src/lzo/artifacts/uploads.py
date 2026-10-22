@@ -65,17 +65,18 @@ class UploadService:
         request = dict(resource_id=str(resource_id), filename=filename, media_type=media_type,
             size_bytes=size_bytes, sha256=sha256, metadata=metadata or {},
             previous_version_id=str(previous_version_id) if previous_version_id else None,
-            expected_resource_revision=expected_resource_revision,
-            part_bytes=self.settings.artifact_upload_part_bytes)
-        if math.ceil(size_bytes/request['part_bytes']) > 10000:
-            raise ApiError('UPLOAD_TOO_LARGE', 413, 'Upload exceeds part count budget')
+            expected_resource_revision=expected_resource_revision)
         lock_ledger(self.uow)
         existing = self.uow.session.execute(select(sessions).where(sessions.c.actor_id==actor.subject_id,
             sessions.c.idempotency_key==idempotency_key)).mappings().one_or_none()
         if existing:
-            if existing['request'] != request:
+            client_request = {key: value for key, value in existing['request'].items() if key != 'part_bytes'}
+            if client_request != request:
                 raise Conflict('IDEMPOTENCY_CONFLICT', 'Upload key reused with a different request')
             return self.status(actor, existing['id'])
+        request['part_bytes'] = self.settings.artifact_upload_part_bytes
+        if math.ceil(size_bytes/request['part_bytes']) > 10000:
+            raise ApiError('UPLOAD_TOO_LARGE', 413, 'Upload exceeds part count budget')
         quota_id = scope['scope_id'] or resource_id
         self.artifacts._charge('user', actor.subject_id, size_bytes, self.settings.artifact_user_quota_bytes)
         self.artifacts._charge('scope', quota_id, size_bytes, self.settings.artifact_scope_quota_bytes)

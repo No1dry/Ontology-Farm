@@ -158,7 +158,7 @@ class ArtifactStore:
         from lzo.storage.blobs import parse_range
         parse_range(f'bytes={start}-{end}', blob.size_bytes)
         stream = self.open(blob)
-        output = tempfile.TemporaryFile()
+        output = tempfile.TemporaryFile(dir=self.root / 'staging')
         try:
             stream.seek(start)
             remaining = end - start + 1

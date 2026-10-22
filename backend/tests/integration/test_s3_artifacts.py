@@ -81,6 +81,38 @@ def test_resume_conflicting_part_and_duplicate_finalize(uploads):
         assert stream.read() == b'abcdef'
 
 
+def test_range_output_uses_provider_owned_staging(uploads, monkeypatch):
+    from lzo.artifacts import store as store_module
+    s = uploads
+    ref = s.store.put(io.BytesIO(b'abcdef'), 'application/octet-stream')
+    original = store_module.tempfile.TemporaryFile
+    directories = []
+    def temporary_file(*args, **kwargs):
+        directories.append(kwargs.get('dir'))
+        return original(*args, **kwargs)
+    monkeypatch.setattr(store_module.tempfile, 'TemporaryFile', temporary_file)
+    with s.store.open_range(ref, 1, 3) as stream:
+        assert stream.read() == b'bcd'
+    assert directories == [s.store.root / 'staging']
+
+
+def test_lost_create_response_retry_preserves_original_part_size_and_reservation(uploads):
+    from lzo.artifacts.models import artifact_quotas, artifact_upload_sessions
+    s = uploads
+    identifier = s.create_session()
+    with s.transaction() as uow:
+        before = [dict(row) for row in uow.session.execute(select(artifact_quotas)).mappings()]
+    # The client lost the committed response and therefore does not know this UUID.
+    s.limits = s.limits.model_copy(update={'artifact_upload_part_bytes': 1})
+    assert s.create_session() == identifier
+    with s.transaction() as uow:
+        status = s.upload_service(uow).status(s.actor('alice'), identifier)
+        assert status['part_bytes'] == 4
+        after = [dict(row) for row in uow.session.execute(select(artifact_quotas)).mappings()]
+        assert after == before
+        assert len(uow.session.execute(select(artifact_upload_sessions)).all()) == 1
+
+
 def test_wrong_digest_cannot_publish(uploads):
     s = uploads
     identifier = s.create_session(sha256='0'*64)
