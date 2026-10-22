@@ -48,3 +48,12 @@ def test_envelope_preserves_existing_evidence_data_nature(nature):
     from lzo.synchronization.contracts import SyncEnvelope
     item = SyncEnvelope(aggregate_revision=1, entity_id=uuid4(), target="catalog", operation="update", payload={}, data_nature=nature)
     assert item.wire()["data_nature"] == nature
+
+
+@pytest.mark.parametrize("field,value", [("operation","withdraw"),("evidence_refs",["urn:evidence:new"]),("source_refs",["urn:source:new"]),("observed_at","2026-10-22T00:00:00Z"),("schema_version",2),("mapping_version","v2"),("rule_version","v2"),("clock_basis","device"),("source_cursor","42"),("data_nature","verified")])
+def test_aggregate_content_hash_preserves_semantic_metadata(field, value):
+    from uuid import uuid4
+    from lzo.synchronization.contracts import SyncEnvelope
+    item = SyncEnvelope(aggregate_revision=1, entity_id=uuid4(), target="gis", operation="upsert", payload={}, data_nature="synthetic")
+    changed = SyncEnvelope.model_validate(dict(item.wire(), **{field:value}))
+    assert changed.aggregate_content_hash != item.aggregate_content_hash

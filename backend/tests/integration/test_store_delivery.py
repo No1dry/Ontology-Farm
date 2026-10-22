@@ -29,7 +29,7 @@ def stores():
 
 def envelope(**values):
     from lzo.synchronization.contracts import SyncEnvelope
-    return SyncEnvelope(event_id=values.pop("event_id", uuid4()), entity_id=values.pop("entity_id", uuid4()), aggregate_revision=values.pop("aggregate_revision", 1), target=values.pop("target", "gis"), operation="test", payload=values.pop("payload", {"value": 1}), data_nature="synthetic", **values)
+    return SyncEnvelope(event_id=values.pop("event_id", uuid4()), entity_id=values.pop("entity_id", uuid4()), aggregate_revision=values.pop("aggregate_revision", 1), target=values.pop("target", "gis"), operation=values.pop("operation", "test"), payload=values.pop("payload", {"value": 1}), data_nature="synthetic", **values)
 
 def enqueue(stores, item):
     from lzo.synchronization.delivery import enqueue_delivery
@@ -163,3 +163,83 @@ def test_each_independent_domain_commits_and_pending_is_explicit(stores, target)
     with PgUnitOfWork(stores.engine("core")) as uow:
         require_deliveries(uow, item.event_id, (target,))
         with pytest.raises(DeliveriesPending): require_deliveries(uow, item.event_id, (target,"gis"))
+
+
+@pytest.mark.parametrize("change", [{"operation": "withdraw"}, {"evidence_refs": ("urn:evidence:different",)}, {"observed_at": "2026-10-22T01:00:00Z"}])
+def test_equal_revision_semantic_conflict_cannot_gate_publication(stores, change):
+    from lzo.synchronization.delivery import deliver_once, delivery_status, require_deliveries, DeliveriesPending
+    original = envelope(operation="upsert", evidence_refs=("urn:evidence:original",))
+    enqueue(stores, original)
+    deliver_once(stores, "gis", handler)
+    values = original.wire()
+    values.update(change, event_id=str(uuid4()))
+    from lzo.synchronization.contracts import SyncEnvelope
+    conflict = SyncEnvelope.model_validate(values)
+    enqueue(stores, conflict)
+    deliver_once(stores, "gis", handler)
+    with PgUnitOfWork(stores.engine("core")) as uow:
+        receipt = delivery_status(uow, conflict.event_id)[0]
+        assert receipt.status == "retry" and receipt.error == "DeliveryConflict"
+        with pytest.raises(DeliveriesPending): require_deliveries(uow, conflict.event_id, ("gis",))
+    with stores.engine("gis").connect() as c:
+        assert c.execute(text("SELECT event_id FROM store_heads WHERE entity_id=:id"), {"id":original.entity_id}).scalar_one() == original.event_id
+        assert c.execute(text("SELECT count(*) FROM store_inbox WHERE event_id=:id"), {"id":conflict.event_id}).scalar_one() == 0
+
+
+def test_equal_revision_new_event_same_semantics_has_no_second_effect(stores):
+    from lzo.synchronization.delivery import deliver_once, delivery_status, require_deliveries
+    from lzo.synchronization.contracts import SyncEnvelope
+    from datetime import datetime, timezone, timedelta
+    original = envelope(operation="upsert", observed_at=datetime(2026,10,22,tzinfo=timezone.utc), evidence_refs=("urn:evidence:original",))
+    enqueue(stores, original)
+    deliver_once(stores, "gis", handler)
+    values = original.wire()
+    values.update(event_id=str(uuid4()), recorded_at=(original.recorded_at+timedelta(seconds=1)).isoformat(), received_at=datetime.now(timezone.utc).isoformat())
+    repetition = SyncEnvelope.model_validate(values)
+    enqueue(stores, repetition)
+    deliver_once(stores, "gis", handler)
+    with PgUnitOfWork(stores.engine("core")) as uow:
+        require_deliveries(uow, repetition.event_id, ("gis",))
+        assert delivery_status(uow, repetition.event_id)[0].status == "superseded"
+    with stores.engine("gis").connect() as c:
+        assert c.execute(text("SELECT count(*) FROM delivery_test_effects WHERE event_id IN (:first,:second)"), {"first":original.event_id,"second":repetition.event_id}).scalar_one() == 1
+
+
+
+def test_domain_upgrade_backfills_existing_heads_and_rolls_back_without_history(stores):
+    from pathlib import Path
+    from sqlalchemy import create_engine
+    from lzo.config import Settings
+    from lzo.storage.migrate import migrate_domain
+    item = envelope()
+    enqueue(stores, item)
+    settings = Settings()
+    owner = create_engine(settings.gis_migration_database_url)
+    schema = "delivery_upgrade_" + uuid4().hex
+    url = owner.url.update_query_dict({"options": "-csearch_path=" + schema})
+    isolated = create_engine(url)
+    try:
+        with owner.begin() as c:
+            c.execute(text(f'CREATE SCHEMA "{schema}"'))
+        with isolated.begin() as c:
+            c.execute(text((Path(__file__).resolve().parents[3] / "database/gis/001_inbox.sql").read_text()))
+            c.execute(text("INSERT INTO store_inbox(event_id,envelope_hash,payload_hash,entity_id,aggregate_revision,receipt) VALUES(:id,:envelope,:payload,:entity,1,'{}')"),
+                      {"id":item.event_id,"envelope":item.envelope_hash,"payload":item.payload_hash,"entity":item.entity_id})
+            c.execute(text("INSERT INTO store_heads(entity_id,aggregate_revision,event_id,payload_hash) VALUES(:entity,1,:id,:payload)"),
+                      {"entity":item.entity_id,"id":item.event_id,"payload":item.payload_hash})
+        with pytest.raises(RuntimeError, match="explicit core URL"):
+            migrate_domain("gis", url)
+        with isolated.connect() as c:
+            assert c.execute(text("SELECT version FROM store_schema_version")).scalar_one() == 1
+            assert c.execute(text("SELECT count(*) FROM information_schema.columns WHERE table_schema=:schema AND table_name='store_heads' AND column_name='aggregate_content_hash'"), {"schema":schema}).scalar_one() == 0
+        migrate_domain("gis", url, core_url=settings.database_url)
+        migrate_domain("gis", url, core_url=settings.database_url)
+        with isolated.connect() as c:
+            assert c.execute(text("SELECT version FROM store_schema_version")).scalar_one() == 2
+            assert c.execute(text("SELECT aggregate_content_hash FROM store_heads")).scalar_one() == item.aggregate_content_hash
+            assert c.execute(text("SELECT event_id FROM store_heads")).scalar_one() == item.event_id
+    finally:
+        isolated.dispose()
+        with owner.begin() as c:
+            c.execute(text(f'DROP SCHEMA "{schema}" CASCADE'))
+        owner.dispose()

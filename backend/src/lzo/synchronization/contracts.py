@@ -21,7 +21,7 @@ class SyncEnvelope(BaseModel):
     data_nature: DataNature
     recorded_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     observed_at: datetime | None = None
-    received_at: datetime | None = None
+    received_at: datetime | None = Field(default=None, description="Envelope transport receipt time; source/domain receipt times belong in payload or an included semantic field.")
     clock_basis: str | None = None
     source_cursor: str | None = None
     mapping_version: str | None = None
@@ -53,6 +53,15 @@ class SyncEnvelope(BaseModel):
         value = self.model_dump(mode="json", exclude={"payload_json"})
         value["payload"] = self.payload
         return value
+
+    @property
+    def aggregate_content_hash(self):
+        # Receipt/recording are transport times. Observation time and every
+        # source/evidence/version field remain part of the domain meaning.
+        value = self.wire()
+        for field in ("event_id", "recorded_at", "received_at"):
+            value.pop(field)
+        return digest_change(value)
 
     @property
     def envelope_hash(self):

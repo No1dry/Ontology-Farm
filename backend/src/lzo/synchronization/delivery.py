@@ -43,10 +43,10 @@ def _apply(registry, envelope, handler):
         if previous:
             if previous["envelope_hash"] != envelope.envelope_hash: raise DeliveryConflict("Inbox event content conflict")
             return DomainReceipt.model_validate(previous["receipt"])
-        head = connection.execute(text("SELECT aggregate_revision,payload_hash FROM store_heads WHERE entity_id=:id"), {"id": envelope.entity_id}).mappings().first()
+        head = connection.execute(text("SELECT aggregate_revision,aggregate_content_hash FROM store_heads WHERE entity_id=:id"), {"id": envelope.entity_id}).mappings().first()
         status = "applied"
         if head and head["aggregate_revision"] >= envelope.aggregate_revision:
-            if head["aggregate_revision"] == envelope.aggregate_revision and head["payload_hash"] != envelope.payload_hash:
+            if head["aggregate_revision"] == envelope.aggregate_revision and head["aggregate_content_hash"] != envelope.aggregate_content_hash:
                 raise DeliveryConflict("Aggregate revision content conflict")
             status = "superseded"
         expected = dict(event_id=envelope.event_id, target=envelope.target, payload_hash=envelope.payload_hash, aggregate_revision=envelope.aggregate_revision, status=status)
@@ -56,8 +56,8 @@ def _apply(registry, envelope, handler):
         connection.execute(text("""INSERT INTO store_inbox(event_id,envelope_hash,payload_hash,entity_id,aggregate_revision,receipt)
           VALUES(:id,:digest,:payload,:entity,:revision,CAST(:receipt AS jsonb))"""), dict(id=envelope.event_id,digest=envelope.envelope_hash,payload=envelope.payload_hash,entity=envelope.entity_id,revision=envelope.aggregate_revision,receipt=receipt.model_dump_json()))
         if status == "applied":
-            connection.execute(text("""INSERT INTO store_heads(entity_id,aggregate_revision,event_id,payload_hash) VALUES(:entity,:revision,:id,:payload)
-             ON CONFLICT(entity_id) DO UPDATE SET aggregate_revision=EXCLUDED.aggregate_revision,event_id=EXCLUDED.event_id,payload_hash=EXCLUDED.payload_hash"""), dict(entity=envelope.entity_id,revision=envelope.aggregate_revision,id=envelope.event_id,payload=envelope.payload_hash))
+            connection.execute(text("""INSERT INTO store_heads(entity_id,aggregate_revision,event_id,payload_hash,aggregate_content_hash) VALUES(:entity,:revision,:id,:payload,:content)
+             ON CONFLICT(entity_id) DO UPDATE SET aggregate_revision=EXCLUDED.aggregate_revision,event_id=EXCLUDED.event_id,payload_hash=EXCLUDED.payload_hash,aggregate_content_hash=EXCLUDED.aggregate_content_hash"""), dict(entity=envelope.entity_id,revision=envelope.aggregate_revision,id=envelope.event_id,payload=envelope.payload_hash,content=envelope.aggregate_content_hash))
         return receipt
 
 
