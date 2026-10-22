@@ -8360,7 +8360,6 @@
             "type": "array"
           },
           "reference_versions": {
-            "default": [],
             "items": {
               "$ref": "#/components/schemas/RevisionRef"
             },

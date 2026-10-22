@@ -5011,11 +5011,8 @@ export interface components {
              * @default []
              */
             properties: components["schemas"]["PropertyDef"][];
-            /**
-             * Reference Versions
-             * @default []
-             */
-            reference_versions: components["schemas"]["RevisionRef"][];
+            /** Reference Versions */
+            reference_versions?: components["schemas"]["RevisionRef"][];
             /**
              * Relations
              * @default []

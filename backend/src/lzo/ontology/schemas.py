@@ -47,7 +47,7 @@ class SchemaDocument(Model):
     shapes: str = ""
     ui_metadata: JsonObject = Field(default_factory=dict)
     dependencies: tuple[BlobRef, ...] = ()
-    reference_versions: tuple[RevisionRef, ...] = ()
+    reference_versions: tuple[RevisionRef, ...] = Field(default_factory=tuple)
 
     @model_serializer(mode='wrap')
     def preserve_existing_document_digest(self, handler):
