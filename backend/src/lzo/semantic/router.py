@@ -27,6 +27,16 @@ from lzo.gis.schemas import SpatialAssetRequest, LocationObservationRequest, Spa
 router = APIRouter(prefix="/api/v1", tags=["Objects"])
 
 
+@router.post('/objects/{object_id}/evidence/reconcile', response_model=RevisionRef,
+             operation_id='reconcileObjectEvidence')
+def reconcile_object_evidence(object_id: UUID, request: Request, auth: AuthRequest = Depends(authenticated)):
+    from lzo.semantic.evidence import reconcile_legacy_evidence
+    facts.get_object_row(setup(auth), auth.actor, object_id, 'edit')
+    expected = parse_if_match(request.headers.get('If-Match'))
+    return write(auth, request, 'object.evidence.reconcile', {'id': str(object_id), 'expected': expected},
+        lambda: reconcile_legacy_evidence(auth.uow, auth.actor, object_id, expected))
+
+
 @router.post("/spatial-assets",response_model=RevisionRef,status_code=201,operation_id="registerSpatialAsset")
 def spatial_asset_post(body:SpatialAssetRequest,request:Request,auth:AuthRequest=Depends(authenticated)):
     from lzo.gis.service import register_spatial_asset

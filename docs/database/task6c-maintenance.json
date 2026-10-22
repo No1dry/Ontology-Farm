@@ -1,0 +1,18 @@
+{
+  "session_user": "maintenance_member_7520973188",
+  "current_user": "lzo_timeseries_maintainer",
+  "cli_partition": "telemetry_samples_202604",
+  "denied_sqlstates": {
+    "ddl": "42501",
+    "data": "42501",
+    "calendar": "P0001"
+  },
+  "synthetic_owned_login": true,
+  "role_selection": "connection options -c role=lzo_timeseries_maintainer",
+  "retained_native_maintainer_role": {
+    "rolcanlogin": true,
+    "rolsuper": false,
+    "rolcreatedb": false,
+    "rolcreaterole": false
+  }
+}

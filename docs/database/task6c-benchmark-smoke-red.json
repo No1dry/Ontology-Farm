@@ -1,0 +1,141 @@
+{
+  "format_version": 1,
+  "started_at": "2026-10-22T23:26:01.742279+00:00",
+  "source_nature": "synthetic",
+  "transport": "in-process Starlette TestClient ASGI; real SQL/Fuseki/S3 HTTP",
+  "identity_setup": "10 distinct persisted fixture identities and encrypted backend sessions; no auth override; not live OIDC login performance",
+  "seed_boundary": "owner-installed committed synthetic fixture SQL/RDF, real GIS handler/receipts; excluded from API latency",
+  "measurement_boundary": "ASGI request/response including current backend authorization, native store I/O and bounded query children",
+  "namespace_lifecycle": "unique isolated core test schema removed after counts/measurement; synthetic domain/RDF evidence retained",
+  "storage_configuration": {
+    "mode": "split",
+    "blob_provider": "s3"
+  },
+  "runtime_limits": {
+    "list_page_size": 50,
+    "list_max_page_size": 200,
+    "query_timeout_ms": 15000,
+    "query_max_rows": 1000,
+    "query_max_quads": 1000000,
+    "query_work_limit": 1000000,
+    "query_memory_mb": 512,
+    "query_input_bytes": 16777216,
+    "query_output_bytes": 2097152,
+    "query_read_total_bytes": 134217728,
+    "job_batch_timeout_seconds": 240,
+    "job_lease_seconds": 300
+  },
+  "workload": {
+    "entities": 20,
+    "relations": 40,
+    "users": 10,
+    "seed": 20261023,
+    "seed_seconds": 120.0,
+    "warmup": 0,
+    "repetitions": 1,
+    "query_timeout_ms": 10000,
+    "operations": [
+      "object",
+      "map",
+      "graph",
+      "sparql",
+      "history",
+      "domain_history",
+      "accept_sync"
+    ],
+    "observations": 3,
+    "media_bytes": 64,
+    "service_pids": [],
+    "hardware_label": "Intel Core i5-14600KF",
+    "git_executable": "C:/Users/robot/AppData/Local/Programs/Git/cmd/git.exe",
+    "output": ".runtime/benchmark-smoke.json",
+    "basetemp": ".runtime/benchmark-smoke-01"
+  },
+  "versions": {
+    "httpx": "0.28.1",
+    "SQLAlchemy": "2.0.44",
+    "rdflib": "7.6.0",
+    "fastapi": "0.141.1",
+    "psycopg": "3.2.12",
+    "python": "3.12.7",
+    "pinned_runtime_manifest": {
+      "python": "3.12.7",
+      "node": "24.22.0",
+      "postgresql": "17.11",
+      "postgis": "3.6.2",
+      "keycloak": "26.8.1",
+      "apache_jena_fuseki": "6.2.0",
+      "java": "21",
+      "mysql": "8.4.11",
+      "seaweedfs": "4.48"
+    },
+    "actual_postgresql": "PostgreSQL 17.11 on x86_64-windows, compiled by msvc-19.44.35229, 64-bit",
+    "actual_postgis_extension": "3.6.2"
+  },
+  "hardware": {
+    "cpu_description": "Intel Core i5-14600KF",
+    "physical_cores": 14,
+    "logical_cpus": 20,
+    "memory_gib": 31.851669311523438,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "standard_acceptance": "8 CPU cores/32 GB/SSD; current host is different"
+  },
+  "samples": [],
+  "state": "incomplete",
+  "code": {
+    "revision": "fefefc0ad11a7ef76255d98905c740991632b74e",
+    "dirty": true,
+    "working_tree_content_sha256": "0e9999a1f677805a8853e81995b25fe07ac902650643a205d2f2037de5f2a290"
+  },
+  "seed": {
+    "namespace_uuid": "e3194379-f090-5d44-8685-fd04a9323315",
+    "first_entity_id": "cf8b3fff-95af-5bc8-8876-390ae5ed4daa",
+    "last_entity_id": "ecad52eb-8578-5486-b87a-f5866e614b81",
+    "requested_entities": 20,
+    "requested_relations": 40,
+    "persisted_entities": 20,
+    "persisted_accepted_relations": 40,
+    "projected_entities": 20,
+    "real_gis_receipts": 20,
+    "actual_gis_versions": 20,
+    "actual_rdf_counts": {
+      "instances": 20,
+      "relations": 40
+    },
+    "projection_failure_or_limit": null,
+    "full_baseline_ready": true,
+    "rdf_verification": "first/last complete generation in each seeded chunk; all SQL projection head counts, actual RDF count below",
+    "setup_seconds": 1.0792307001538575,
+    "observation_media_input": {
+      "requested_observations": 3,
+      "requested_media_bytes": 64,
+      "sample_object_read_status": "current",
+      "sample_object_visible_records": 1,
+      "non_playable_synthetic_media": true,
+      "persisted_by_kind": {
+        "media": 1,
+        "observation": 3
+      },
+      "artifact": {
+        "version_id": "0e11efe0-f347-4f1a-973e-2beb73f9c372",
+        "sha256": "7ce100971f64e7001e8fe5a51973ecdfe1ced42befe7ee8d5fd6219506b5393c",
+        "size_bytes": 64
+      }
+    },
+    "observation_media_setup_seconds": 1.1026291004382074
+  },
+  "authorized_subject_ids": [
+    "9a36f625-edba-4b97-920a-8951ead3872d",
+    "a95d2612-7879-435e-b740-3e6e31c698ae",
+    "06305d85-06b3-4f2a-8aa6-ab79eb052620",
+    "65de33a7-7d5d-4a03-b991-620a11c05809",
+    "bc15a772-d38f-4797-8d33-85e8ab0f513f",
+    "4b644b86-5f49-4bba-b48b-7c792ee76376",
+    "04d08ec4-a379-4db7-b56c-c37bac806fa4",
+    "49c75660-03b5-4cdd-bf76-555d8819b743",
+    "dc20cd7c-122d-44b5-920f-cc867be53953",
+    "7fa36aef-d044-434d-b34d-d3368ca93107"
+  ],
+  "failure_type": "ValidationError",
+  "failure_message": "See private pytest log; no success inferred"
+}

@@ -95,7 +95,8 @@ def owned_source_servers(*,tls_enabled):
     wrong_key=rsa.generate_private_key(public_exponent=65537,key_size=2048)
     wrong=x509.CertificateBuilder().subject_name(name).issuer_name(name).public_key(wrong_key.public_key()).serial_number(x509.random_serial_number()).not_valid_before(now-timedelta(days=1)).not_valid_after(now+timedelta(days=2)).add_extension(x509.BasicConstraints(ca=True,path_length=None),critical=True).sign(wrong_key,hashes.SHA256())
     (work/'wrong-ca.pem').write_bytes(wrong.public_bytes(serialization.Encoding.PEM))
-    pg=root/'.tools/postgres/pgsql/bin';mysql=root/'.tools/mysql/mysql-8.4.11-winx64/bin/mysqld.exe'
+    tools=Path(os.environ.get('LZO_TEST_TOOL_ROOT', root/'.tools')).resolve()
+    pg=tools/'postgres/pgsql/bin';mysql=tools/'mysql/mysql-8.4.11-winx64/bin/mysqld.exe'
     assert hashlib.sha256(mysql.read_bytes()).hexdigest()=='b83561f885785133b79cfe53f225dffbdbdec160ea54b5245cfb30cc7a440fa7'
     secret=secrets.token_urlsafe(32);(work/'pg-password').write_text(secret)
     flags=subprocess.CREATE_NO_WINDOW

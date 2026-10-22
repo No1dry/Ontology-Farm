@@ -308,6 +308,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/catalog/documents/{id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retry Document */
+        post: operations["retryCatalogDocument"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/catalog/documents/{id}/versions": {
         parameters: {
             query?: never;
@@ -407,6 +424,23 @@ export interface paths {
         put?: never;
         /** Preview Model */
         post: operations["previewCatalogModelVersion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/models/{id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retry Model */
+        post: operations["retryCatalogModel"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1285,6 +1319,23 @@ export interface paths {
         get: operations["getObjectFormSchema"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/objects/{object_id}/evidence/reconcile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reconcile Object Evidence */
+        post: operations["reconcileObjectEvidence"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2783,6 +2834,23 @@ export interface components {
              * @enum {string}
              */
             projection_status: "current" | "pending" | "failed" | "unavailable";
+        };
+        /** CatalogRetry */
+        CatalogRetry: {
+            accepted_revision: components["schemas"]["RevisionRef"];
+            /** Expected Revision */
+            expected_revision: number;
+        };
+        /** CatalogRetryReceipt */
+        CatalogRetryReceipt: {
+            accepted_revision: components["schemas"]["RevisionRef"];
+            audit: components["schemas"]["RevisionRef"];
+            /**
+             * Status
+             * @default pending
+             * @constant
+             */
+            status: "pending";
         };
         /** CatalogView */
         CatalogView: {
@@ -7388,6 +7456,41 @@ export interface operations {
             };
         };
     };
+    retryCatalogDocument: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CatalogRetry"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogRetryReceipt"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     listCatalogDocumentVersions: {
         parameters: {
             query?: {
@@ -7674,6 +7777,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PreviewDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    retryCatalogModel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CatalogRetry"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogRetryReceipt"];
                 };
             };
             /** @description Validation Error */
@@ -9717,6 +9855,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FormSchemaView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reconcileObjectEvidence: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                object_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevisionRef"];
                 };
             };
             /** @description Validation Error */

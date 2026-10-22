@@ -1411,6 +1411,48 @@
         "title": "CatalogPage",
         "type": "object"
       },
+      "CatalogRetry": {
+        "additionalProperties": false,
+        "properties": {
+          "accepted_revision": {
+            "$ref": "#/components/schemas/RevisionRef"
+          },
+          "expected_revision": {
+            "minimum": 1.0,
+            "title": "Expected Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "expected_revision",
+          "accepted_revision"
+        ],
+        "title": "CatalogRetry",
+        "type": "object"
+      },
+      "CatalogRetryReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "accepted_revision": {
+            "$ref": "#/components/schemas/RevisionRef"
+          },
+          "audit": {
+            "$ref": "#/components/schemas/RevisionRef"
+          },
+          "status": {
+            "const": "pending",
+            "default": "pending",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accepted_revision",
+          "audit"
+        ],
+        "title": "CatalogRetryReceipt",
+        "type": "object"
+      },
       "CatalogView": {
         "additionalProperties": false,
         "properties": {
@@ -12711,6 +12753,59 @@
         ]
       }
     },
+    "/api/v1/catalog/documents/{id}/retry": {
+      "post": {
+        "operationId": "retryCatalogDocument",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatalogRetry"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogRetryReceipt"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Retry Document",
+        "tags": [
+          "Catalog"
+        ]
+      }
+    },
     "/api/v1/catalog/documents/{id}/versions": {
       "get": {
         "operationId": "listCatalogDocumentVersions",
@@ -13186,6 +13281,59 @@
           }
         },
         "summary": "Preview Model",
+        "tags": [
+          "Catalog"
+        ]
+      }
+    },
+    "/api/v1/catalog/models/{id}/retry": {
+      "post": {
+        "operationId": "retryCatalogModel",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatalogRetry"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogRetryReceipt"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Retry Model",
         "tags": [
           "Catalog"
         ]
@@ -16412,6 +16560,49 @@
           }
         },
         "summary": "Object Form",
+        "tags": [
+          "Objects"
+        ]
+      }
+    },
+    "/api/v1/objects/{object_id}/evidence/reconcile": {
+      "post": {
+        "operationId": "reconcileObjectEvidence",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "object_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Object Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevisionRef"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reconcile Object Evidence",
         "tags": [
           "Objects"
         ]

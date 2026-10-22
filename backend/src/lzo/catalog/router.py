@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Request
 from lzo.auth.router import AuthRequest, authenticated
 from lzo.errors import ApiError, parse_if_match, require_idempotency_key
 from lzo.catalog.schemas import (CreateModel, CreateDocument, VersionModel, VersionDocument,
-    CatalogView, CatalogPage, DeviceBinding, DeviceModelView)
+    CatalogView, CatalogPage, DeviceBinding, DeviceModelView, CatalogRetry, CatalogRetryReceipt)
 from lzo.catalog.service import CatalogService
 from lzo.governance.approval_router import PreviewDetail
 from lzo.governance.risk import classify
@@ -45,6 +45,24 @@ def create_document(body: CreateDocument, request: Request, auth: AuthRequest = 
     value = service(request, auth).create_document(auth.actor, body, key(request))
     auth.uow.commit()
     return value
+
+
+@router.post('/models/{id}/retry', response_model=CatalogRetryReceipt, status_code=202, operation_id='retryCatalogModel')
+def retry_model(id: UUID, body: CatalogRetry, request: Request, auth: AuthRequest = Depends(authenticated)):
+    return retry_version(id, 'model', body, request, auth)
+
+
+@router.post('/documents/{id}/retry', response_model=CatalogRetryReceipt, status_code=202, operation_id='retryCatalogDocument')
+def retry_document(id: UUID, body: CatalogRetry, request: Request, auth: AuthRequest = Depends(authenticated)):
+    return retry_version(id, 'document', body, request, auth)
+
+
+def retry_version(id, kind, body, request, auth):
+    from lzo.catalog.recovery import retry
+    precondition(request, body)
+    result = retry(service(request, auth), auth.actor, id, kind, body, key(request))
+    auth.uow.commit()
+    return result
 
 
 @router.get('/models', response_model=CatalogPage, operation_id='listCatalogModels')

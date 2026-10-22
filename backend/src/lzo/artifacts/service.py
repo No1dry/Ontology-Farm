@@ -53,7 +53,7 @@ def _permission(uow: UnitOfWork, actor: ActorContext, resource_id: UUID, action:
 def _catalog_write_guard(scope):
     if scope['resource_kind'] == 'telemetry.batch':
         raise Forbidden('TELEMETRY_COMMAND_REQUIRED', 'Use immutable telemetry manifests and explicit retry')
-    if scope['resource_kind'] in {'catalog.model', 'catalog.document', 'catalog.device'}:
+    if scope['resource_kind'] in {'catalog.model', 'catalog.document', 'catalog.device', 'catalog.delivery_retry'}:
         raise Forbidden('CATALOG_COMMAND_REQUIRED', 'Use versioned catalog attachment references')
 
 
@@ -97,10 +97,10 @@ def _attach_evidence(uow, actor, resource_id, blob, metadata, *, action):
     existing = uow.session.execute(select(revisions).join(revision_metadata,
         revisions.c.event_id == revision_metadata.c.event_id).where(
         revisions.c.resource_id == resource_id,
-        revisions.c.event_type == "evidence.attached",
+        revisions.c.event_type.in_(("evidence.attached", "object.evidence_attached")),
         revision_metadata.c.evidence_refs.contains([str(blob.version_id)]))).mappings().one_or_none()
     if existing is not None:
-        if existing["payload"].get("metadata") != metadata:
+        if existing["payload"].get("metadata", existing["payload"].get("effect", {}).get("metadata")) != metadata:
             raise Conflict("EVIDENCE_CONFLICT", "Evidence was attached with different metadata")
         return RevisionRef(resource_id, existing["revision"], existing["event_id"])
     current = uow.session.execute(select(resource_heads.c.revision).where(
@@ -110,9 +110,12 @@ def _attach_evidence(uow, actor, resource_id, blob, metadata, *, action):
     protected = uow.session.execute(select(revision_visibility_dependencies.c.resource_id).join(
         resource_heads, resource_heads.c.event_id == revision_visibility_dependencies.c.event_id).where(
         resource_heads.c.resource_id == resource_id)).scalars().all()
-    ref = append_revision(uow, actor, resource_id, current,
-        {"evidence_version_id": str(blob.version_id), "sha256": blob.sha256,
-         "size_bytes": blob.size_bytes, "metadata": metadata}, "evidence.attached")
+    payload = {"evidence_version_id": str(blob.version_id), "sha256": blob.sha256,
+               "size_bytes": blob.size_bytes, "metadata": metadata}
+    from lzo.semantic.evidence import attach_to_object
+    ref = attach_to_object(uow, actor, resource_id, current, payload)
+    if ref is None:
+        ref = append_revision(uow, actor, resource_id, current, payload, "evidence.attached")
     uow.session.execute(insert(revision_metadata).values(
         event_id=ref.event_id, evidence_refs=[str(blob.version_id)], proof_refs=[]))
     for dependency in set(protected):
@@ -128,6 +131,8 @@ class ArtifactService:
         self.uow = uow
         self.store = store
         self.settings = settings
+        if getattr(uow, 'ontology_settings', None) is None:
+            uow.ontology_settings = settings
 
     def authorize_upload(self, actor: ActorContext, resource_id: UUID) -> None:
         scope = _permission(self.uow, actor, resource_id, self._upload_action(resource_id))

@@ -273,7 +273,7 @@ class KernelSceneResult:
 
 
 @pytest.fixture
-def kernel_case(schema_case):
+def kernel_case(schema_case, monkeypatch, tmp_path):
     from lzo.auth.permissions import permission_context
     from lzo.governance.approvals import ApprovalService
     from lzo.semantic import inference
@@ -282,6 +282,17 @@ def kernel_case(schema_case):
     from lzo.ontology.releases import current_execution_bundle
     from sqlalchemy import select
     s = schema_case
+    diagnostics = []
+    finish = Runner.finish
+    def observed_finish(runner, ctx, error=None):
+        if error is not None:
+            import traceback
+            diagnostics.append({'kind': ctx._row['kind'], 'job_id': str(ctx.job_id),
+                'type': type(error).__name__, 'code': getattr(error, 'code', None),
+                'traceback': ''.join(traceback.format_exception(error))})
+            (tmp_path/'kernel-worker-diagnostics.json').write_text(json.dumps(diagnostics, indent=2))
+        return finish(runner, ctx, error)
+    monkeypatch.setattr(Runner, 'finish', observed_finish)
     # Explicit S06 workstation correctness budget; default 10s request / 15s
     # server timed out on this complete package. D04 owns latency acceptance.
     s.config = s.config.model_copy(update={"query_timeout_ms": 60000})
@@ -303,7 +314,23 @@ def kernel_case(schema_case):
         from lzo.worker.models import jobs
         with s.transaction() as uow:
             failed = uow.session.execute(select(jobs.c.kind, jobs.c.status).where(jobs.c.status == "failed")).all()
-            assert not failed, failed
+            if failed:
+                from sqlalchemy import text
+                rows = list(uow.session.execute(select(jobs).where(jobs.c.status == 'failed')).mappings())
+                authority = []
+                for job in rows:
+                    try:
+                        runner.authorize(uow, job)
+                        state = 'current'
+                    except Exception as error:
+                        state = getattr(error, 'code', type(error).__name__)
+                    authority.append({'job_id': str(job['id']), 'kind': job['kind'],
+                        'error_code': job['error_code'], 'current_authority': state, 'payload': job['payload']})
+                deliveries = [dict(row) for row in uow.session.execute(text(
+                    'SELECT event_id,entity_id,aggregate_revision,target,status,attempts,error FROM store_deliveries')).mappings()]
+                (tmp_path/'kernel-failed-jobs.json').write_text(json.dumps(
+                    {'jobs': authority, 'deliveries': deliveries}, indent=2, default=str))
+            assert not failed, (failed, [(item['kind'], item['type'], item['code']) for item in diagnostics])
             assert set(uow.session.execute(select(jobs.c.kind)).scalars()) <= {
                 "rdf.project", "inference.compute", "inference.dispatch", "facts.validity"}
     s.drain = drain
@@ -467,6 +494,11 @@ def test_scene_semantic_kernel(scene, kernel_case):
 
 def test_shared_identity_and_dynamic_extension(kernel_case):
     s = kernel_case
+    # Only this slow two-scene correctness case uses the measured acceptance
+    # profile. Original120s batches exhausted at about162s; production30/60
+    # defaults remain unchanged and are not qualified by this larger budget.
+    s.config = s.config.model_copy(update={'job_batch_timeout_seconds': 240, 'job_lease_seconds': 300})
+    s.client.app.state.settings = s.config
     s.load_scene("field")
     s.load_scene("pond")
     field = s.scene_fixture("field")

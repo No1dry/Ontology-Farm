@@ -99,22 +99,32 @@ def test_current_time_expiry_without_projection_or_new_event(inference_case):
     s = inference_case
     for name in ("a", "b", "c"):
         s.create_node(name)
-    with s.transaction() as uow:
-        end = uow.session.execute(select(func.clock_timestamp())).scalar_one() + timedelta(seconds=45)
-    s.edge("a", "b", valid_to=end.isoformat())
+    # Establish the non-expiring part before starting the finite validity
+    # measurement. Native split-store projection can exceed the old 45s window.
     s.edge("b", "c")
     s.recompute()
+    with s.transaction() as uow:
+        end = uow.session.execute(select(func.clock_timestamp())).scalar_one() + timedelta(seconds=180)
+    s.edge("a", "b", valid_to=end.isoformat())
+    s.recompute()
+    assert s.client.get(f'/api/v1/objects/{s.ids["a"]}').json()['projection_state'] == 'synced'
     query = f'ASK {{ <urn:lzo:object:{s.ids["a"]}> <urn:connects> <urn:lzo:object:{s.ids["c"]}> }}'
     result = s.client.post('/api/v1/query/sparql', headers=s.headers(), json={"query": query})
     assert result.status_code == 200, result.text
     assert result.json()["boolean"] is True
+    from lzo.governance.models import platform_watermarks
     with s.transaction() as uow:
+        before = tuple(uow.session.execute(select(platform_watermarks.c.event_position,
+            platform_watermarks.c.projection_watermark)).one())
         delay = (end-uow.session.execute(select(func.clock_timestamp())).scalar_one()).total_seconds()
     if delay > 0:
         time.sleep(delay+.1)
     expired = s.client.post('/api/v1/query/sparql', headers=s.headers(), json={"query": query})
     assert expired.status_code == 200, expired.text
     assert expired.json()["boolean"] is False
+    with s.transaction() as uow:
+        assert tuple(uow.session.execute(select(platform_watermarks.c.event_position,
+            platform_watermarks.c.projection_watermark)).one()) == before
 
 
 def test_revocation_commits_while_owned_child_runs_and_result_is_rebuilt(query_case, monkeypatch):

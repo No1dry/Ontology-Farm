@@ -1,0 +1,6362 @@
+{
+  "format_version": 1,
+  "started_at": "2026-10-22T23:27:41.733934+00:00",
+  "source_nature": "synthetic",
+  "transport": "in-process Starlette TestClient ASGI; real SQL/Fuseki/S3 HTTP",
+  "identity_setup": "10 distinct persisted fixture identities and encrypted backend sessions; no auth override; not live OIDC login performance",
+  "seed_boundary": "owner-installed committed synthetic fixture SQL/RDF, real GIS handler/receipts; excluded from API latency",
+  "measurement_boundary": "ASGI request/response including current backend authorization, native store I/O and bounded query children",
+  "namespace_lifecycle": "unique isolated core test schema removed after counts/measurement; synthetic domain/RDF evidence retained",
+  "storage_configuration": {
+    "mode": "split",
+    "blob_provider": "s3"
+  },
+  "runtime_limits": {
+    "list_page_size": 50,
+    "list_max_page_size": 200,
+    "query_timeout_ms": 15000,
+    "query_max_rows": 1000,
+    "query_max_quads": 1000000,
+    "query_work_limit": 1000000,
+    "query_memory_mb": 512,
+    "query_input_bytes": 16777216,
+    "query_output_bytes": 2097152,
+    "query_read_total_bytes": 134217728,
+    "job_batch_timeout_seconds": 240,
+    "job_lease_seconds": 300
+  },
+  "workload": {
+    "entities": 20,
+    "relations": 40,
+    "users": 10,
+    "seed": 20261023,
+    "seed_seconds": 120.0,
+    "warmup": 0,
+    "repetitions": 1,
+    "query_timeout_ms": 10000,
+    "operations": [
+      "object",
+      "map",
+      "graph",
+      "sparql",
+      "history",
+      "domain_history",
+      "accept_sync"
+    ],
+    "observations": 3,
+    "media_bytes": 64,
+    "service_pids": [
+      66356,
+      64356,
+      87208,
+      83376
+    ],
+    "hardware_label": "Intel Core i5-14600KF",
+    "git_executable": "C:/Users/robot/AppData/Local/Programs/Git/cmd/git.exe",
+    "output": ".runtime/benchmark-smoke-02.json",
+    "basetemp": ".runtime/benchmark-smoke-02"
+  },
+  "versions": {
+    "httpx": "0.28.1",
+    "SQLAlchemy": "2.0.44",
+    "rdflib": "7.6.0",
+    "fastapi": "0.141.1",
+    "psycopg": "3.2.12",
+    "python": "3.12.7",
+    "pinned_runtime_manifest": {
+      "python": "3.12.7",
+      "node": "24.22.0",
+      "postgresql": "17.11",
+      "postgis": "3.6.2",
+      "keycloak": "26.8.1",
+      "apache_jena_fuseki": "6.2.0",
+      "java": "21",
+      "mysql": "8.4.11",
+      "seaweedfs": "4.48"
+    },
+    "actual_postgresql": "PostgreSQL 17.11 on x86_64-windows, compiled by msvc-19.44.35229, 64-bit",
+    "actual_postgis_extension": "3.6.2"
+  },
+  "hardware": {
+    "cpu_description": "Intel Core i5-14600KF",
+    "physical_cores": 14,
+    "logical_cpus": 20,
+    "memory_gib": 31.851669311523438,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "standard_acceptance": "8 CPU cores/32 GB/SSD; current host is different"
+  },
+  "samples": [
+    {
+      "seconds": 6.5049915998242795,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "object",
+      "user": "27822dba-e1e2-4d12-a35f-ffa50373786b",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.8084766999818385,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "map",
+      "user": "27822dba-e1e2-4d12-a35f-ffa50373786b",
+      "repetition": 0
+    },
+    {
+      "seconds": 17.40168619994074,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "graph",
+      "user": "27822dba-e1e2-4d12-a35f-ffa50373786b",
+      "repetition": 0
+    },
+    {
+      "seconds": 10.49063149979338,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "sparql",
+      "user": "27822dba-e1e2-4d12-a35f-ffa50373786b",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.4701713998802006,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "history",
+      "user": "27822dba-e1e2-4d12-a35f-ffa50373786b",
+      "repetition": 0
+    },
+    {
+      "seconds": 3.3295662999153137,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "domain_history",
+      "user": "27822dba-e1e2-4d12-a35f-ffa50373786b",
+      "repetition": 0
+    },
+    {
+      "seconds": 53.42648100014776,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "accept_sync",
+      "user": "27822dba-e1e2-4d12-a35f-ffa50373786b",
+      "repetition": 0
+    },
+    {
+      "seconds": 6.909787400159985,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "object",
+      "user": "a8526a3f-d377-4daf-9077-e3d6829ddb11",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.5139832003042102,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "map",
+      "user": "a8526a3f-d377-4daf-9077-e3d6829ddb11",
+      "repetition": 0
+    },
+    {
+      "seconds": 17.389905199874192,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "graph",
+      "user": "a8526a3f-d377-4daf-9077-e3d6829ddb11",
+      "repetition": 0
+    },
+    {
+      "seconds": 10.409272199962288,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "sparql",
+      "user": "a8526a3f-d377-4daf-9077-e3d6829ddb11",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.45312599977478385,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "history",
+      "user": "a8526a3f-d377-4daf-9077-e3d6829ddb11",
+      "repetition": 0
+    },
+    {
+      "seconds": 3.344095599837601,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "domain_history",
+      "user": "a8526a3f-d377-4daf-9077-e3d6829ddb11",
+      "repetition": 0
+    },
+    {
+      "seconds": 52.73248609993607,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "accept_sync",
+      "user": "a8526a3f-d377-4daf-9077-e3d6829ddb11",
+      "repetition": 0
+    },
+    {
+      "seconds": 6.791217100340873,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "object",
+      "user": "728ec630-6a09-42eb-a25d-da9fde9c3280",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.5262890001758933,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "map",
+      "user": "728ec630-6a09-42eb-a25d-da9fde9c3280",
+      "repetition": 0
+    },
+    {
+      "seconds": 17.432302499655634,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "graph",
+      "user": "728ec630-6a09-42eb-a25d-da9fde9c3280",
+      "repetition": 0
+    },
+    {
+      "seconds": 10.376379699911922,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "sparql",
+      "user": "728ec630-6a09-42eb-a25d-da9fde9c3280",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.3847153000533581,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "history",
+      "user": "728ec630-6a09-42eb-a25d-da9fde9c3280",
+      "repetition": 0
+    },
+    {
+      "seconds": 3.1638223002664745,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "domain_history",
+      "user": "728ec630-6a09-42eb-a25d-da9fde9c3280",
+      "repetition": 0
+    },
+    {
+      "seconds": 46.860927999950945,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "accept_sync",
+      "user": "728ec630-6a09-42eb-a25d-da9fde9c3280",
+      "repetition": 0
+    },
+    {
+      "seconds": 6.72102290019393,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "object",
+      "user": "a9d19846-f839-4eb3-9891-4c65257e693d",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.5146985002793372,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "map",
+      "user": "a9d19846-f839-4eb3-9891-4c65257e693d",
+      "repetition": 0
+    },
+    {
+      "seconds": 17.472119000274688,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "graph",
+      "user": "a9d19846-f839-4eb3-9891-4c65257e693d",
+      "repetition": 0
+    },
+    {
+      "seconds": 10.361569100059569,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "sparql",
+      "user": "a9d19846-f839-4eb3-9891-4c65257e693d",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.37055990006774664,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "history",
+      "user": "a9d19846-f839-4eb3-9891-4c65257e693d",
+      "repetition": 0
+    },
+    {
+      "seconds": 3.387074399739504,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "domain_history",
+      "user": "a9d19846-f839-4eb3-9891-4c65257e693d",
+      "repetition": 0
+    },
+    {
+      "seconds": 50.70852769957855,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "accept_sync",
+      "user": "a9d19846-f839-4eb3-9891-4c65257e693d",
+      "repetition": 0
+    },
+    {
+      "seconds": 6.644086199812591,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "object",
+      "user": "5e29b798-a5a7-43a0-a921-535490898fa9",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.5914616002701223,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "map",
+      "user": "5e29b798-a5a7-43a0-a921-535490898fa9",
+      "repetition": 0
+    },
+    {
+      "seconds": 17.483792200218886,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "graph",
+      "user": "5e29b798-a5a7-43a0-a921-535490898fa9",
+      "repetition": 0
+    },
+    {
+      "seconds": 20.356656199786812,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "sparql",
+      "user": "5e29b798-a5a7-43a0-a921-535490898fa9",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.04475759994238615,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "history",
+      "user": "5e29b798-a5a7-43a0-a921-535490898fa9",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.7982491999864578,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "domain_history",
+      "user": "5e29b798-a5a7-43a0-a921-535490898fa9",
+      "repetition": 0
+    },
+    {
+      "seconds": 46.82380759995431,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "accept_sync",
+      "user": "5e29b798-a5a7-43a0-a921-535490898fa9",
+      "repetition": 0
+    },
+    {
+      "seconds": 6.846853700000793,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "object",
+      "user": "0c303987-3abe-43cd-aad7-a424e61ffeb5",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.479999499861151,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "map",
+      "user": "0c303987-3abe-43cd-aad7-a424e61ffeb5",
+      "repetition": 0
+    },
+    {
+      "seconds": 17.381269899662584,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "graph",
+      "user": "0c303987-3abe-43cd-aad7-a424e61ffeb5",
+      "repetition": 0
+    },
+    {
+      "seconds": 10.351594500243664,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "sparql",
+      "user": "0c303987-3abe-43cd-aad7-a424e61ffeb5",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.34703689999878407,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "history",
+      "user": "0c303987-3abe-43cd-aad7-a424e61ffeb5",
+      "repetition": 0
+    },
+    {
+      "seconds": 3.4804410999640822,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "domain_history",
+      "user": "0c303987-3abe-43cd-aad7-a424e61ffeb5",
+      "repetition": 0
+    },
+    {
+      "seconds": 52.60524800000712,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "accept_sync",
+      "user": "0c303987-3abe-43cd-aad7-a424e61ffeb5",
+      "repetition": 0
+    },
+    {
+      "seconds": 6.699865499977022,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "object",
+      "user": "245c09fd-8572-4571-92fb-f7cbf09e4c70",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.5329524003900588,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "map",
+      "user": "245c09fd-8572-4571-92fb-f7cbf09e4c70",
+      "repetition": 0
+    },
+    {
+      "seconds": 17.543196799699217,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "graph",
+      "user": "245c09fd-8572-4571-92fb-f7cbf09e4c70",
+      "repetition": 0
+    },
+    {
+      "seconds": 20.705974799580872,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "sparql",
+      "user": "245c09fd-8572-4571-92fb-f7cbf09e4c70",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.05158339999616146,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "history",
+      "user": "245c09fd-8572-4571-92fb-f7cbf09e4c70",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.57573870010674,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "domain_history",
+      "user": "245c09fd-8572-4571-92fb-f7cbf09e4c70",
+      "repetition": 0
+    },
+    {
+      "seconds": 45.7776347999461,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "accept_sync",
+      "user": "245c09fd-8572-4571-92fb-f7cbf09e4c70",
+      "repetition": 0
+    },
+    {
+      "seconds": 6.776003300212324,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "object",
+      "user": "156001fa-356e-43e6-ad5f-5234ef48ce83",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.4727402999997139,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "map",
+      "user": "156001fa-356e-43e6-ad5f-5234ef48ce83",
+      "repetition": 0
+    },
+    {
+      "seconds": 17.4208251000382,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "graph",
+      "user": "156001fa-356e-43e6-ad5f-5234ef48ce83",
+      "repetition": 0
+    },
+    {
+      "seconds": 10.414211499970406,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "sparql",
+      "user": "156001fa-356e-43e6-ad5f-5234ef48ce83",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.36442510038614273,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "history",
+      "user": "156001fa-356e-43e6-ad5f-5234ef48ce83",
+      "repetition": 0
+    },
+    {
+      "seconds": 3.0924264998175204,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "domain_history",
+      "user": "156001fa-356e-43e6-ad5f-5234ef48ce83",
+      "repetition": 0
+    },
+    {
+      "seconds": 52.400615099817514,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "accept_sync",
+      "user": "156001fa-356e-43e6-ad5f-5234ef48ce83",
+      "repetition": 0
+    },
+    {
+      "seconds": 6.447211599908769,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "object",
+      "user": "bd3e16d0-95ec-41f3-9ac1-bd7008f863b2",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.7548324000090361,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "map",
+      "user": "bd3e16d0-95ec-41f3-9ac1-bd7008f863b2",
+      "repetition": 0
+    },
+    {
+      "seconds": 16.98188060009852,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "graph",
+      "user": "bd3e16d0-95ec-41f3-9ac1-bd7008f863b2",
+      "repetition": 0
+    },
+    {
+      "seconds": 10.8296596002765,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "sparql",
+      "user": "bd3e16d0-95ec-41f3-9ac1-bd7008f863b2",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.42745900014415383,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "history",
+      "user": "bd3e16d0-95ec-41f3-9ac1-bd7008f863b2",
+      "repetition": 0
+    },
+    {
+      "seconds": 3.0936069996096194,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "domain_history",
+      "user": "bd3e16d0-95ec-41f3-9ac1-bd7008f863b2",
+      "repetition": 0
+    },
+    {
+      "seconds": 53.44042469980195,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "accept_sync",
+      "user": "bd3e16d0-95ec-41f3-9ac1-bd7008f863b2",
+      "repetition": 0
+    },
+    {
+      "seconds": 6.954437700100243,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "object",
+      "user": "7152e77d-6d4c-4b76-a326-9031b58bae62",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.4676638999953866,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "map",
+      "user": "7152e77d-6d4c-4b76-a326-9031b58bae62",
+      "repetition": 0
+    },
+    {
+      "seconds": 17.395154600031674,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "graph",
+      "user": "7152e77d-6d4c-4b76-a326-9031b58bae62",
+      "repetition": 0
+    },
+    {
+      "seconds": 10.448184699751437,
+      "status": 422,
+      "outcome": "error",
+      "error_code": "SPARQL_TIMEOUT",
+      "operation": "sparql",
+      "user": "7152e77d-6d4c-4b76-a326-9031b58bae62",
+      "repetition": 0
+    },
+    {
+      "seconds": 0.41970379976555705,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "history",
+      "user": "7152e77d-6d4c-4b76-a326-9031b58bae62",
+      "repetition": 0
+    },
+    {
+      "seconds": 3.353963900357485,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "domain_history",
+      "user": "7152e77d-6d4c-4b76-a326-9031b58bae62",
+      "repetition": 0
+    },
+    {
+      "seconds": 52.67369499988854,
+      "status": 200,
+      "outcome": "complete",
+      "error_code": null,
+      "operation": "accept_sync",
+      "user": "7152e77d-6d4c-4b76-a326-9031b58bae62",
+      "repetition": 0
+    }
+  ],
+  "state": "measured",
+  "code": {
+    "revision": "fefefc0ad11a7ef76255d98905c740991632b74e",
+    "dirty": true,
+    "working_tree_content_sha256": "86733d7880c0575e52aa46bddd7661352886da935f1e3660ac4383fcceb15048"
+  },
+  "seed": {
+    "namespace_uuid": "7589d0c4-ce46-523f-8fb4-dcf5979b5ed9",
+    "first_entity_id": "5996917b-66ff-5ec0-8c6f-429c289fd9f4",
+    "last_entity_id": "6b8da6ff-36cb-5af8-ae83-34fe217cc08c",
+    "requested_entities": 20,
+    "requested_relations": 40,
+    "persisted_entities": 20,
+    "persisted_accepted_relations": 40,
+    "projected_entities": 20,
+    "real_gis_receipts": 20,
+    "actual_gis_versions": 20,
+    "actual_rdf_counts": {
+      "instances": 20,
+      "relations": 40
+    },
+    "projection_failure_or_limit": null,
+    "full_baseline_ready": true,
+    "rdf_verification": "first/last complete generation in each seeded chunk; all SQL projection head counts, actual RDF count below",
+    "setup_seconds": 1.0919466000050306,
+    "observation_media_input": {
+      "requested_observations": 3,
+      "requested_media_bytes": 64,
+      "sample_object_read_status": "current",
+      "sample_object_visible_records": 1,
+      "non_playable_synthetic_media": true,
+      "persisted_by_kind": {
+        "media": 1,
+        "observation": 3
+      },
+      "artifact": {
+        "version_id": "992afa8e-a641-49e5-9fee-3d26a77203cd",
+        "sha256": "7ce100971f64e7001e8fe5a51973ecdfe1ced42befe7ee8d5fd6219506b5393c",
+        "size_bytes": 64
+      }
+    },
+    "observation_media_setup_seconds": 1.1977739003486931
+  },
+  "authorized_subject_ids": [
+    "27822dba-e1e2-4d12-a35f-ffa50373786b",
+    "a8526a3f-d377-4daf-9077-e3d6829ddb11",
+    "728ec630-6a09-42eb-a25d-da9fde9c3280",
+    "a9d19846-f839-4eb3-9891-4c65257e693d",
+    "5e29b798-a5a7-43a0-a921-535490898fa9",
+    "0c303987-3abe-43cd-aad7-a424e61ffeb5",
+    "245c09fd-8572-4571-92fb-f7cbf09e4c70",
+    "156001fa-356e-43e6-ad5f-5234ef48ce83",
+    "bd3e16d0-95ec-41f3-9ac1-bd7008f863b2",
+    "7152e77d-6d4c-4b76-a326-9031b58bae62"
+  ],
+  "operation_definitions": {
+    "object": "GET /api/v1/objects/{id}",
+    "map": "GET /api/v1/geometry?bbox=113,29,116,32; first authorized page at recorded list_page_size",
+    "graph": "GET /api/v1/graph/neighborhood?resource_id={id}&hops=1",
+    "sparql": "POST /api/v1/query/sparql ASK { <id> <urn:benchmark:next> ?target } with configured bounded timeout",
+    "history": "GET /api/v1/history/{id}/revisions/1",
+    "domain_history": "GET /api/v1/objects/{id}/data",
+    "accept_sync": "POST a synthetic semantic object; real GIS delivery and one normal RDF worker tick; GET its map result"
+  },
+  "elapsed_seconds": 92.9955877000466,
+  "summary": {
+    "attempts": 70,
+    "complete": 50,
+    "incomplete": 0,
+    "http_or_transport_errors": 20,
+    "error_rate": 0.2857142857142857,
+    "incomplete_rate": 0.0,
+    "p50_seconds": 6.72102290019393,
+    "p95_seconds": 52.67369499988854,
+    "latency_by_outcome": {
+      "complete": {
+        "attempts": 50,
+        "p50_seconds": 3.1638223002664745,
+        "p95_seconds": 52.73248609993607
+      },
+      "incomplete": {
+        "attempts": 0,
+        "p50_seconds": null,
+        "p95_seconds": null
+      },
+      "error": {
+        "attempts": 20,
+        "p50_seconds": 17.381269899662584,
+        "p95_seconds": 20.356656199786812
+      }
+    },
+    "attempt_throughput_per_second": 0.7527238843393527,
+    "complete_throughput_per_second": 0.5376599173852519
+  },
+  "operations": {
+    "object": {
+      "attempts": 10,
+      "complete": 10,
+      "incomplete": 0,
+      "http_or_transport_errors": 0,
+      "error_rate": 0.0,
+      "incomplete_rate": 0.0,
+      "p50_seconds": 6.72102290019393,
+      "p95_seconds": 6.954437700100243,
+      "latency_by_outcome": {
+        "complete": {
+          "attempts": 10,
+          "p50_seconds": 6.72102290019393,
+          "p95_seconds": 6.954437700100243
+        },
+        "incomplete": {
+          "attempts": 0,
+          "p50_seconds": null,
+          "p95_seconds": null
+        },
+        "error": {
+          "attempts": 0,
+          "p50_seconds": null,
+          "p95_seconds": null
+        }
+      },
+      "attempt_throughput_per_second": 0.10753198347705037,
+      "complete_throughput_per_second": 0.10753198347705037
+    },
+    "map": {
+      "attempts": 10,
+      "complete": 10,
+      "incomplete": 0,
+      "http_or_transport_errors": 0,
+      "error_rate": 0.0,
+      "incomplete_rate": 0.0,
+      "p50_seconds": 0.5146985002793372,
+      "p95_seconds": 0.8084766999818385,
+      "latency_by_outcome": {
+        "complete": {
+          "attempts": 10,
+          "p50_seconds": 0.5146985002793372,
+          "p95_seconds": 0.8084766999818385
+        },
+        "incomplete": {
+          "attempts": 0,
+          "p50_seconds": null,
+          "p95_seconds": null
+        },
+        "error": {
+          "attempts": 0,
+          "p50_seconds": null,
+          "p95_seconds": null
+        }
+      },
+      "attempt_throughput_per_second": 0.10753198347705037,
+      "complete_throughput_per_second": 0.10753198347705037
+    },
+    "graph": {
+      "attempts": 10,
+      "complete": 0,
+      "incomplete": 0,
+      "http_or_transport_errors": 10,
+      "error_rate": 1.0,
+      "incomplete_rate": 0.0,
+      "p50_seconds": 17.40168619994074,
+      "p95_seconds": 17.543196799699217,
+      "latency_by_outcome": {
+        "complete": {
+          "attempts": 0,
+          "p50_seconds": null,
+          "p95_seconds": null
+        },
+        "incomplete": {
+          "attempts": 0,
+          "p50_seconds": null,
+          "p95_seconds": null
+        },
+        "error": {
+          "attempts": 10,
+          "p50_seconds": 17.40168619994074,
+          "p95_seconds": 17.543196799699217
+        }
+      },
+      "attempt_throughput_per_second": 0.10753198347705037,
+      "complete_throughput_per_second": 0.0
+    },
+    "sparql": {
+      "attempts": 10,
+      "complete": 0,
+      "incomplete": 0,
+      "http_or_transport_errors": 10,
+      "error_rate": 1.0,
+      "incomplete_rate": 0.0,
+      "p50_seconds": 10.414211499970406,
+      "p95_seconds": 20.705974799580872,
+      "latency_by_outcome": {
+        "complete": {
+          "attempts": 0,
+          "p50_seconds": null,
+          "p95_seconds": null
+        },
+        "incomplete": {
+          "attempts": 0,
+          "p50_seconds": null,
+          "p95_seconds": null
+        },
+        "error": {
+          "attempts": 10,
+          "p50_seconds": 10.414211499970406,
+          "p95_seconds": 20.705974799580872
+        }
+      },
+      "attempt_throughput_per_second": 0.10753198347705037,
+      "complete_throughput_per_second": 0.0
+    },
+    "history": {
+      "attempts": 10,
+      "complete": 10,
+      "incomplete": 0,
+      "http_or_transport_errors": 0,
+      "error_rate": 0.0,
+      "incomplete_rate": 0.0,
+      "p50_seconds": 0.37055990006774664,
+      "p95_seconds": 0.4701713998802006,
+      "latency_by_outcome": {
+        "complete": {
+          "attempts": 10,
+          "p50_seconds": 0.37055990006774664,
+          "p95_seconds": 0.4701713998802006
+        },
+        "incomplete": {
+          "attempts": 0,
+          "p50_seconds": null,
+          "p95_seconds": null
+        },
+        "error": {
+          "attempts": 0,
+          "p50_seconds": null,
+          "p95_seconds": null
+        }
+      },
+      "attempt_throughput_per_second": 0.10753198347705037,
+      "complete_throughput_per_second": 0.10753198347705037
+    },
+    "domain_history": {
+      "attempts": 10,
+      "complete": 10,
+      "incomplete": 0,
+      "http_or_transport_errors": 0,
+      "error_rate": 0.0,
+      "incomplete_rate": 0.0,
+      "p50_seconds": 3.1638223002664745,
+      "p95_seconds": 3.4804410999640822,
+      "latency_by_outcome": {
+        "complete": {
+          "attempts": 10,
+          "p50_seconds": 3.1638223002664745,
+          "p95_seconds": 3.4804410999640822
+        },
+        "incomplete": {
+          "attempts": 0,
+          "p50_seconds": null,
+          "p95_seconds": null
+        },
+        "error": {
+          "attempts": 0,
+          "p50_seconds": null,
+          "p95_seconds": null
+        }
+      },
+      "attempt_throughput_per_second": 0.10753198347705037,
+      "complete_throughput_per_second": 0.10753198347705037
+    },
+    "accept_sync": {
+      "attempts": 10,
+      "complete": 10,
+      "incomplete": 0,
+      "http_or_transport_errors": 0,
+      "error_rate": 0.0,
+      "incomplete_rate": 0.0,
+      "p50_seconds": 52.400615099817514,
+      "p95_seconds": 53.44042469980195,
+      "latency_by_outcome": {
+        "complete": {
+          "attempts": 10,
+          "p50_seconds": 52.400615099817514,
+          "p95_seconds": 53.44042469980195
+        },
+        "incomplete": {
+          "attempts": 0,
+          "p50_seconds": null,
+          "p95_seconds": null
+        },
+        "error": {
+          "attempts": 0,
+          "p50_seconds": null,
+          "p95_seconds": null
+        }
+      },
+      "attempt_throughput_per_second": 0.10753198347705037,
+      "complete_throughput_per_second": 0.10753198347705037
+    }
+  },
+  "resource_measurement": {
+    "scope": "client Python process plus explicit service PIDs; host CPU/memory includes unrelated workloads; warmup plus measured operations, .5s sampling",
+    "service_pids": [
+      66356,
+      64356,
+      87208,
+      83376
+    ],
+    "samples": [
+      {
+        "host_cpu_percent": 0.0,
+        "host_used_memory_bytes": 28597809152,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 215015424,
+            "cpu_percent": 117.7
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 5.9
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957759488,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 65.6,
+        "host_used_memory_bytes": 28692525056,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 218218496,
+            "cpu_percent": 102.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957759488,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 41.3,
+        "host_used_memory_bytes": 28682711040,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 219869184,
+            "cpu_percent": 97.5
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957759488,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 40.0,
+        "host_used_memory_bytes": 28679581696,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 220073984,
+            "cpu_percent": 102.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957759488,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 20.3,
+        "host_used_memory_bytes": 28679151616,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 220037120,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 2.9
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957759488,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 20.1,
+        "host_used_memory_bytes": 28647997440,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 220139520,
+            "cpu_percent": 100.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957702144,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 28.5,
+        "host_used_memory_bytes": 28682641408,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 220315648,
+            "cpu_percent": 103.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957702144,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 25.6,
+        "host_used_memory_bytes": 28714545152,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 220504064,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957702144,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 18.4,
+        "host_used_memory_bytes": 28744101888,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 222035968,
+            "cpu_percent": 103.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957702144,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 24.6,
+        "host_used_memory_bytes": 28642455552,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 222076928,
+            "cpu_percent": 103.2
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957702144,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 18.2,
+        "host_used_memory_bytes": 28673409024,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 222085120,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957702144,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 19.0,
+        "host_used_memory_bytes": 28688019456,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 221954048,
+            "cpu_percent": 103.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957702144,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 16.6,
+        "host_used_memory_bytes": 28678705152,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 221900800,
+            "cpu_percent": 108.2
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957702144,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 23.7,
+        "host_used_memory_bytes": 28725809152,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 224677888,
+            "cpu_percent": 122.3
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 2.8
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957702144,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 28.6,
+        "host_used_memory_bytes": 28617326592,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 225259520,
+            "cpu_percent": 96.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957702144,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 24.2,
+        "host_used_memory_bytes": 28643770368,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 225316864,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957702144,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 18.9,
+        "host_used_memory_bytes": 28688830464,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 225570816,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957702144,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 14.3,
+        "host_used_memory_bytes": 28695609344,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 227799040,
+            "cpu_percent": 105.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 957702144,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 25.3,
+        "host_used_memory_bytes": 28737531904,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 227934208,
+            "cpu_percent": 102.4
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 958095360,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 57.5,
+        "host_used_memory_bytes": 28978180096,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 228642816,
+            "cpu_percent": 75.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 3.1
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1084583936,
+            "cpu_percent": 56.2
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 46.3,
+        "host_used_memory_bytes": 28154802176,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 228122624,
+            "cpu_percent": 88.3
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 435367936,
+            "cpu_percent": 188.3
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 15.1,
+        "host_used_memory_bytes": 28144357376,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 228179968,
+            "cpu_percent": 103.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401960960,
+            "cpu_percent": 9.4
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 26.8,
+        "host_used_memory_bytes": 28189446144,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 228192256,
+            "cpu_percent": 102.5
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 2.5
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 5.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401960960,
+            "cpu_percent": 2.5
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 25.2,
+        "host_used_memory_bytes": 28221349888,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 228192256,
+            "cpu_percent": 99.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401960960,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 20.8,
+        "host_used_memory_bytes": 28100575232,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 228192256,
+            "cpu_percent": 100.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401960960,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 14.4,
+        "host_used_memory_bytes": 28139368448,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 228204544,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 2.5
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401960960,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 2.5
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 28.7,
+        "host_used_memory_bytes": 28159983616,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 228204544,
+            "cpu_percent": 99.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 3.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401960960,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 15.5,
+        "host_used_memory_bytes": 28191719424,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 228204544,
+            "cpu_percent": 103.2
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401960960,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 23.6,
+        "host_used_memory_bytes": 28224106496,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 228204544,
+            "cpu_percent": 99.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401960960,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 20.1,
+        "host_used_memory_bytes": 28129812480,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 228274176,
+            "cpu_percent": 100.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190414848,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401960960,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 22.1,
+        "host_used_memory_bytes": 28183736320,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231084032,
+            "cpu_percent": 96.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190423040,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401887232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 33.1,
+        "host_used_memory_bytes": 28189474816,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231084032,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190423040,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401887232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 27.5,
+        "host_used_memory_bytes": 28155125760,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231084032,
+            "cpu_percent": 97.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190423040,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401887232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 19.5,
+        "host_used_memory_bytes": 28175212544,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231084032,
+            "cpu_percent": 102.6
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190423040,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401887232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 25.4,
+        "host_used_memory_bytes": 28068802560,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231084032,
+            "cpu_percent": 106.2
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190423040,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401887232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 19.3,
+        "host_used_memory_bytes": 28085268480,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231084032,
+            "cpu_percent": 99.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190423040,
+            "cpu_percent": 2.9
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401887232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 18.6,
+        "host_used_memory_bytes": 28107767808,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231084032,
+            "cpu_percent": 103.2
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190423040,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401887232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512196608,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 14.4,
+        "host_used_memory_bytes": 28136325120,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231084032,
+            "cpu_percent": 99.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190423040,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401887232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 20.5,
+        "host_used_memory_bytes": 28175855616,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231084032,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190423040,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401887232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 23.4,
+        "host_used_memory_bytes": 28081713152,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231120896,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190423040,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401850368,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512303104,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 23.3,
+        "host_used_memory_bytes": 28100931584,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231120896,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190423040,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401850368,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512303104,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 13.9,
+        "host_used_memory_bytes": 28123148288,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231120896,
+            "cpu_percent": 97.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190423040,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401850368,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512303104,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 24.6,
+        "host_used_memory_bytes": 28168355840,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231120896,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190427136,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401850368,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 16.9,
+        "host_used_memory_bytes": 28187303936,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231120896,
+            "cpu_percent": 106.2
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190427136,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401850368,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 21.8,
+        "host_used_memory_bytes": 28093558784,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230993920,
+            "cpu_percent": 97.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190427136,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401850368,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 23.4,
+        "host_used_memory_bytes": 28111007744,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230719488,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 5.9
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190427136,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401850368,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 17.9,
+        "host_used_memory_bytes": 28114821120,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230768640,
+            "cpu_percent": 106.2
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190427136,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401850368,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 26.4,
+        "host_used_memory_bytes": 28132540416,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230768640,
+            "cpu_percent": 99.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190427136,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401850368,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 77.0,
+        "host_used_memory_bytes": 28221747200,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230772736,
+            "cpu_percent": 96.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 3.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 401768448,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 50.5,
+        "host_used_memory_bytes": 28254339072,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230780928,
+            "cpu_percent": 100.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 413388800,
+            "cpu_percent": 3.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 44.3,
+        "host_used_memory_bytes": 28302622720,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231186432,
+            "cpu_percent": 99.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 497070080,
+            "cpu_percent": 26.4
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 35.3,
+        "host_used_memory_bytes": 28333801472,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230821888,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 549433344,
+            "cpu_percent": 75.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 15.7,
+        "host_used_memory_bytes": 28348051456,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230821888,
+            "cpu_percent": 100.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 565809152,
+            "cpu_percent": 7.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 17.9,
+        "host_used_memory_bytes": 28381872128,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 229740544,
+            "cpu_percent": 102.3
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 565809152,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 21.7,
+        "host_used_memory_bytes": 28381655040,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230285312,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 565809152,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 18.4,
+        "host_used_memory_bytes": 28293615616,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230285312,
+            "cpu_percent": 105.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 565809152,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 22.9,
+        "host_used_memory_bytes": 28346945536,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230285312,
+            "cpu_percent": 97.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 565809152,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 31.9,
+        "host_used_memory_bytes": 28380876800,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230285312,
+            "cpu_percent": 100.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 565809152,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 20.7,
+        "host_used_memory_bytes": 28355682304,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230285312,
+            "cpu_percent": 102.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 547704832,
+            "cpu_percent": 2.9
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 20.7,
+        "host_used_memory_bytes": 28239421440,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230285312,
+            "cpu_percent": 103.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 547704832,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 14.6,
+        "host_used_memory_bytes": 28251656192,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230285312,
+            "cpu_percent": 96.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 547704832,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 20.4,
+        "host_used_memory_bytes": 28274417664,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230572032,
+            "cpu_percent": 97.5
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 547704832,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 28.5,
+        "host_used_memory_bytes": 28295614464,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230621184,
+            "cpu_percent": 99.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 3.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 547704832,
+            "cpu_percent": 3.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 19.5,
+        "host_used_memory_bytes": 28286095360,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230662144,
+            "cpu_percent": 97.3
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 547704832,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 23.7,
+        "host_used_memory_bytes": 28180758528,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230674432,
+            "cpu_percent": 99.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 547704832,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 27.1,
+        "host_used_memory_bytes": 28160466944,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 230780928,
+            "cpu_percent": 118.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 547704832,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512253952,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 30.5,
+        "host_used_memory_bytes": 28257648640,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231366656,
+            "cpu_percent": 109.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 2.4
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 2.4
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 547704832,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 21.9,
+        "host_used_memory_bytes": 28303577088,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 231362560,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 547704832,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 20.7,
+        "host_used_memory_bytes": 28350824448,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232824832,
+            "cpu_percent": 102.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 569925632,
+            "cpu_percent": 5.7
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 22.6,
+        "host_used_memory_bytes": 28266131456,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233132032,
+            "cpu_percent": 97.7
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 2.4
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 584654848,
+            "cpu_percent": 2.4
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 29.5,
+        "host_used_memory_bytes": 28282478592,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232443904,
+            "cpu_percent": 93.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 596819968,
+            "cpu_percent": 3.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 16.2,
+        "host_used_memory_bytes": 28304543744,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232976384,
+            "cpu_percent": 102.6
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 596819968,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 20.9,
+        "host_used_memory_bytes": 28330254336,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233144320,
+            "cpu_percent": 100.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 596819968,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 28.2,
+        "host_used_memory_bytes": 28363292672,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233140224,
+            "cpu_percent": 99.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 3.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190431232,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 596819968,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 22.2,
+        "host_used_memory_bytes": 28258377728,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233140224,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190435328,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 596819968,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 20.8,
+        "host_used_memory_bytes": 28341358592,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233213952,
+            "cpu_percent": 103.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190435328,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 596819968,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 21.7,
+        "host_used_memory_bytes": 28412649472,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233213952,
+            "cpu_percent": 93.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190435328,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 31.0,
+        "host_used_memory_bytes": 28320096256,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233140224,
+            "cpu_percent": 97.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190435328,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 18.8,
+        "host_used_memory_bytes": 28337225728,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233140224,
+            "cpu_percent": 99.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190435328,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 3.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 18.8,
+        "host_used_memory_bytes": 28262838272,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233140224,
+            "cpu_percent": 102.6
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190435328,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 25.7,
+        "host_used_memory_bytes": 28275085312,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233140224,
+            "cpu_percent": 99.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190435328,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 28.0,
+        "host_used_memory_bytes": 28302467072,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233140224,
+            "cpu_percent": 97.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190435328,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 17.4,
+        "host_used_memory_bytes": 28335726592,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233140224,
+            "cpu_percent": 102.6
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190435328,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 14.7,
+        "host_used_memory_bytes": 28355379200,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233140224,
+            "cpu_percent": 103.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190435328,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 22.9,
+        "host_used_memory_bytes": 28385636352,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233029632,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190435328,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 21.8,
+        "host_used_memory_bytes": 28296224768,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233103360,
+            "cpu_percent": 72.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 19.9,
+        "host_used_memory_bytes": 28314992640,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233103360,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 3.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 32.3,
+        "host_used_memory_bytes": 28370030592,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233103360,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 15.8,
+        "host_used_memory_bytes": 28298117120,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233029632,
+            "cpu_percent": 27.3
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 24.3,
+        "host_used_memory_bytes": 28331110400,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233029632,
+            "cpu_percent": 82.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 22.9,
+        "host_used_memory_bytes": 28352258048,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232919040,
+            "cpu_percent": 91.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 20.6,
+        "host_used_memory_bytes": 28277813248,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232992768,
+            "cpu_percent": 43.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 19.3,
+        "host_used_memory_bytes": 28345425920,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232992768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 15.8,
+        "host_used_memory_bytes": 28415627264,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232992768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 23.4,
+        "host_used_memory_bytes": 28329660416,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232919040,
+            "cpu_percent": 59.4
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 19.5,
+        "host_used_memory_bytes": 28351954944,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232919040,
+            "cpu_percent": 73.4
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 17.7,
+        "host_used_memory_bytes": 28250693632,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232808448,
+            "cpu_percent": 82.4
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 24.6,
+        "host_used_memory_bytes": 28311650304,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232882176,
+            "cpu_percent": 34.4
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 3.1
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 26.9,
+        "host_used_memory_bytes": 28383035392,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232882176,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 28.0,
+        "host_used_memory_bytes": 28466618368,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232882176,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 14.4,
+        "host_used_memory_bytes": 28358606848,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232808448,
+            "cpu_percent": 36.3
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 3.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 23.0,
+        "host_used_memory_bytes": 28261453824,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232808448,
+            "cpu_percent": 76.3
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 32.9,
+        "host_used_memory_bytes": 28263124992,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232697856,
+            "cpu_percent": 75.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 3.1
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 17.2,
+        "host_used_memory_bytes": 28334116864,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232771584,
+            "cpu_percent": 12.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 14.2,
+        "host_used_memory_bytes": 28415578112,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232771584,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 21.4,
+        "host_used_memory_bytes": 28339826688,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232697856,
+            "cpu_percent": 6.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 15.8,
+        "host_used_memory_bytes": 28354686976,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232697856,
+            "cpu_percent": 81.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190447616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 28.7,
+        "host_used_memory_bytes": 28270964736,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232697856,
+            "cpu_percent": 78.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190464000,
+            "cpu_percent": 3.1
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 27.1,
+        "host_used_memory_bytes": 28324016128,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232587264,
+            "cpu_percent": 80.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190464000,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 27.7,
+        "host_used_memory_bytes": 28393803776,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232660992,
+            "cpu_percent": 12.5
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190492672,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 17.8,
+        "host_used_memory_bytes": 28432809984,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232660992,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190492672,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 15.5,
+        "host_used_memory_bytes": 28393836544,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232587264,
+            "cpu_percent": 12.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190492672,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 18.9,
+        "host_used_memory_bytes": 28291739648,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232587264,
+            "cpu_percent": 60.6
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190492672,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 19.1,
+        "host_used_memory_bytes": 28293898240,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232476672,
+            "cpu_percent": 77.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28717056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190492672,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 15.6,
+        "host_used_memory_bytes": 28360376320,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232550400,
+            "cpu_percent": 53.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512487424,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 19.9,
+        "host_used_memory_bytes": 28436574208,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232550400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 40.4,
+        "host_used_memory_bytes": 28458037248,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232550400,
+            "cpu_percent": 6.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 81.0,
+        "host_used_memory_bytes": 28490633216,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232550400,
+            "cpu_percent": 3.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 30.5,
+        "host_used_memory_bytes": 28320129024,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232480768,
+            "cpu_percent": 65.6
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 3.1
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 6.2
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 16.2,
+        "host_used_memory_bytes": 28340264960,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232480768,
+            "cpu_percent": 75.7
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 15.2,
+        "host_used_memory_bytes": 28373991424,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232370176,
+            "cpu_percent": 69.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 23.9,
+        "host_used_memory_bytes": 28457897984,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232431616,
+            "cpu_percent": 12.5
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 3.1
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 19.8,
+        "host_used_memory_bytes": 28539719680,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232431616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 23.4,
+        "host_used_memory_bytes": 28472750080,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232431616,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 35.1,
+        "host_used_memory_bytes": 28386459648,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232353792,
+            "cpu_percent": 85.3
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 19.9,
+        "host_used_memory_bytes": 28365164544,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232353792,
+            "cpu_percent": 76.5
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 16.5,
+        "host_used_memory_bytes": 28376752128,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232243200,
+            "cpu_percent": 68.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 21.5,
+        "host_used_memory_bytes": 28445151232,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232316928,
+            "cpu_percent": 34.4
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 3.1
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590786560,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 19.6,
+        "host_used_memory_bytes": 28382445568,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232316928,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 13.6,
+        "host_used_memory_bytes": 28417548288,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232316928,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 19.1,
+        "host_used_memory_bytes": 28326846464,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232243200,
+            "cpu_percent": 50.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 17.3,
+        "host_used_memory_bytes": 28353835008,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232243200,
+            "cpu_percent": 75.7
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 16.1,
+        "host_used_memory_bytes": 28379430912,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232140800,
+            "cpu_percent": 90.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 25.6,
+        "host_used_memory_bytes": 28413026304,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232140800,
+            "cpu_percent": 97.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 30.1,
+        "host_used_memory_bytes": 28358660096,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232214528,
+            "cpu_percent": 6.2
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 16.6,
+        "host_used_memory_bytes": 28441956352,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232214528,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 13.0,
+        "host_used_memory_bytes": 28385878016,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232140800,
+            "cpu_percent": 12.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 18.7,
+        "host_used_memory_bytes": 28383662080,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232140800,
+            "cpu_percent": 78.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 14.4,
+        "host_used_memory_bytes": 28409323520,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232140800,
+            "cpu_percent": 64.7
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 25.2,
+        "host_used_memory_bytes": 28323024896,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232046592,
+            "cpu_percent": 93.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 16.8,
+        "host_used_memory_bytes": 28324900864,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232062976,
+            "cpu_percent": 100.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 18.8,
+        "host_used_memory_bytes": 28369502208,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232075264,
+            "cpu_percent": 99.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 33.6,
+        "host_used_memory_bytes": 28384215040,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232042496,
+            "cpu_percent": 96.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 27.3
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 3.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 22.6,
+        "host_used_memory_bytes": 28415840256,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232050688,
+            "cpu_percent": 93.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512495616,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 18.6,
+        "host_used_memory_bytes": 28303601664,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232058880,
+            "cpu_percent": 102.3
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 590950400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512659456,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 15.9,
+        "host_used_memory_bytes": 28315127808,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232058880,
+            "cpu_percent": 93.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 6.2
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 596275200,
+            "cpu_percent": 3.1
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512659456,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 22.4,
+        "host_used_memory_bytes": 28568924160,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232079360,
+            "cpu_percent": 46.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 873574400,
+            "cpu_percent": 65.6
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512659456,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 17.0,
+        "host_used_memory_bytes": 28587491328,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232079360,
+            "cpu_percent": 94.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 873574400,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512659456,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 19.6,
+        "host_used_memory_bytes": 28903284736,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232087552,
+            "cpu_percent": 46.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1158299648,
+            "cpu_percent": 38.4
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512659456,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 24.2,
+        "host_used_memory_bytes": 29179207680,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232087552,
+            "cpu_percent": 45.5
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1405001728,
+            "cpu_percent": 81.9
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512659456,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 29.5,
+        "host_used_memory_bytes": 29128818688,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232087552,
+            "cpu_percent": 90.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1453580288,
+            "cpu_percent": 12.1
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512659456,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 21.1,
+        "host_used_memory_bytes": 28349898752,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232087552,
+            "cpu_percent": 54.6
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 660267008,
+            "cpu_percent": 78.9
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512659456,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 26.9,
+        "host_used_memory_bytes": 28644360192,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232087552,
+            "cpu_percent": 75.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 938491904,
+            "cpu_percent": 62.5
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512970752,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 17.9,
+        "host_used_memory_bytes": 28910452736,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232091648,
+            "cpu_percent": 79.4
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1172234240,
+            "cpu_percent": 35.9
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512970752,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 79.9,
+        "host_used_memory_bytes": 29130559488,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232091648,
+            "cpu_percent": 66.7
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1304649728,
+            "cpu_percent": 36.4
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512970752,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 53.9,
+        "host_used_memory_bytes": 28134494208,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232091648,
+            "cpu_percent": 53.6
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 383893504,
+            "cpu_percent": 39.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 18.9,
+        "host_used_memory_bytes": 28428324864,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232103936,
+            "cpu_percent": 57.5
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 3.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 662945792,
+            "cpu_percent": 36.3
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 17.1,
+        "host_used_memory_bytes": 28738973696,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232251392,
+            "cpu_percent": 60.6
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 940240896,
+            "cpu_percent": 36.9
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 22.1,
+        "host_used_memory_bytes": 28725899264,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232259584,
+            "cpu_percent": 100.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190496768,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 940240896,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 24.4,
+        "host_used_memory_bytes": 29016629248,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232103936,
+            "cpu_percent": 81.8
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190504960,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1217679360,
+            "cpu_percent": 36.3
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 3.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 39.3,
+        "host_used_memory_bytes": 28966850560,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232591360,
+            "cpu_percent": 93.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190509056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1217679360,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 83.9,
+        "host_used_memory_bytes": 28967780352,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232656896,
+            "cpu_percent": 97.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190509056,
+            "cpu_percent": 3.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1217679360,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 34.2,
+        "host_used_memory_bytes": 28976316416,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232894464,
+            "cpu_percent": 99.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190509056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1217679360,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 15.8,
+        "host_used_memory_bytes": 28989161472,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 232894464,
+            "cpu_percent": 108.4
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190509056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1193558016,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 16.1,
+        "host_used_memory_bytes": 29024043008,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233181184,
+            "cpu_percent": 109.0
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190509056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1193558016,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 16.2,
+        "host_used_memory_bytes": 29028335616,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233246720,
+            "cpu_percent": 99.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190509056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1193558016,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 33.1,
+        "host_used_memory_bytes": 28923613184,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233279488,
+            "cpu_percent": 100.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190509056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1193558016,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 20.9,
+        "host_used_memory_bytes": 28946898944,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 233332736,
+            "cpu_percent": 102.5
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190509056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1193558016,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 16.0,
+        "host_used_memory_bytes": 28952805376,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 235716608,
+            "cpu_percent": 100.1
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190509056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1193558016,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 30.8,
+        "host_used_memory_bytes": 28960948224,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 235851776,
+            "cpu_percent": 97.5
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190509056,
+            "cpu_percent": 2.5
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1193558016,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 25.9,
+        "host_used_memory_bytes": 28987592704,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 235544576,
+            "cpu_percent": 99.9
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190509056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1193558016,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 0.0
+          }
+        ]
+      },
+      {
+        "host_cpu_percent": 20.7,
+        "host_used_memory_bytes": 28834856960,
+        "selected_processes": [
+          {
+            "pid": 84700,
+            "rss_bytes": 235159552,
+            "cpu_percent": 102.5
+          },
+          {
+            "pid": 66356,
+            "rss_bytes": 28835840,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 64356,
+            "rss_bytes": 190509056,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 87208,
+            "rss_bytes": 1193558016,
+            "cpu_percent": 0.0
+          },
+          {
+            "pid": 83376,
+            "rss_bytes": 512921600,
+            "cpu_percent": 0.0
+          }
+        ]
+      }
+    ]
+  }
+}

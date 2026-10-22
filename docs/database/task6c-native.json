@@ -1,0 +1,261 @@
+{
+  "format_version": 1,
+  "state": "passed",
+  "source_nature": "synthetic",
+  "provider": "s3",
+  "before": {
+    "probe_id": "7c47329c-6772-46a6-a355-d89e7c4f434f",
+    "synthetic": true,
+    "action": "seed",
+    "scope": "normal public core/domain deployment, actual HTTP semantic/GIS/history/S3/catalog/telemetry reads and managed RDF after real worker progress; fixture sessions, not live OIDC browser login",
+    "api_ready": true,
+    "current_authorized_history": true,
+    "private_artifact_sha256": "48dd11fa5f96a35ce5699178c9626979e429234b6f7d2357dacb26b00898ff95",
+    "object_revision": 3,
+    "gis_coordinates": [
+      114.25,
+      30.25
+    ],
+    "catalog_revision": {
+      "resource_id": "9b062dae-4be9-4026-aaa5-450db2deaffa",
+      "revision": 1,
+      "event_id": "8632f670-a08c-435e-833e-9c66f75f15bd"
+    },
+    "observation_ids": [
+      "279ecada-e336-597c-958b-60c474f45a2e"
+    ],
+    "managed_rdf_generation": {
+      "revision": 3,
+      "digest": "1cab2ab3f090ec0839756359a975cc1e01897157e2ffe481fc152ffb7a2b730a",
+      "accepted_triples": 2
+    },
+    "identity_service": {
+      "persistence_backend": "owned native Keycloak dev-file database; not Compose PostgreSQL identity DB",
+      "jwks_sha256": "ae29fd8ae1f35743bebf38f33b5e1689a5020cfad6b2a77a364f162cd7f28b04",
+      "service_account_token_issued": true,
+      "client_administration_denied": true,
+      "fixture_session_preserved": true
+    },
+    "worker_budgets": {
+      "batch_seconds": 240,
+      "lease_seconds": 300,
+      "production_defaults": {
+        "batch_seconds": 30,
+        "lease_seconds": 60
+      }
+    },
+    "owned_processes": {
+      "api": {
+        "pid": 75144,
+        "created_unix": 1792711247.4807854,
+        "declared_batch_seconds": 240,
+        "declared_lease_seconds": 300
+      },
+      "worker": {
+        "pid": 56088,
+        "created_unix": 1792711247.4861438,
+        "declared_batch_seconds": 240,
+        "declared_lease_seconds": 300
+      },
+      "keycloak": {
+        "pid": 19700,
+        "created_unix": 1792703735.5081303,
+        "java_children": [
+          {
+            "pid": 87500,
+            "created_unix": 1792703750.9613273
+          }
+        ]
+      },
+      "s3": {
+        "pid": 64872,
+        "created_unix": 1792678846.9102733
+      },
+      "fuseki": {
+        "pid": 33892,
+        "created_unix": 1792679827.0851212
+      }
+    },
+    "stores": {
+      "core": {
+        "database": "lzo",
+        "postmaster_started_at": "2026-10-22T21:54:33.077010+08:00",
+        "schema_version": "0406_storage_backups"
+      },
+      "gis": {
+        "database": "lzo_gis",
+        "postmaster_started_at": "2026-10-22T21:54:33.077010+08:00",
+        "schema_version": 4
+      },
+      "timeseries": {
+        "database": "lzo_timeseries",
+        "postmaster_started_at": "2026-10-22T21:54:33.077010+08:00",
+        "schema_version": 3
+      },
+      "catalog": {
+        "database": "lzo_catalog",
+        "postmaster_started_at": "2026-10-22T21:54:33.077010+08:00",
+        "schema_version": 3
+      }
+    }
+  },
+  "after": {
+    "probe_id": "7c47329c-6772-46a6-a355-d89e7c4f434f",
+    "synthetic": true,
+    "action": "check",
+    "scope": "normal public core/domain deployment, actual HTTP semantic/GIS/history/S3/catalog/telemetry reads and managed RDF after real worker progress; fixture sessions, not live OIDC browser login",
+    "api_ready": true,
+    "current_authorized_history": true,
+    "private_artifact_sha256": "48dd11fa5f96a35ce5699178c9626979e429234b6f7d2357dacb26b00898ff95",
+    "object_revision": 3,
+    "gis_coordinates": [
+      114.25,
+      30.25
+    ],
+    "catalog_revision": {
+      "resource_id": "9b062dae-4be9-4026-aaa5-450db2deaffa",
+      "revision": 1,
+      "event_id": "8632f670-a08c-435e-833e-9c66f75f15bd"
+    },
+    "observation_ids": [
+      "279ecada-e336-597c-958b-60c474f45a2e"
+    ],
+    "managed_rdf_generation": {
+      "revision": 3,
+      "digest": "1cab2ab3f090ec0839756359a975cc1e01897157e2ffe481fc152ffb7a2b730a",
+      "accepted_triples": 2
+    },
+    "identity_service": {
+      "persistence_backend": "owned native Keycloak dev-file database; not Compose PostgreSQL identity DB",
+      "jwks_sha256": "ae29fd8ae1f35743bebf38f33b5e1689a5020cfad6b2a77a364f162cd7f28b04",
+      "service_account_token_issued": true,
+      "client_administration_denied": true,
+      "fixture_session_preserved": true
+    },
+    "worker_budgets": {
+      "batch_seconds": 240,
+      "lease_seconds": 300,
+      "production_defaults": {
+        "batch_seconds": 30,
+        "lease_seconds": 60
+      }
+    },
+    "owned_processes": {
+      "api": {
+        "pid": 83960,
+        "created_unix": 1792711512.7321863,
+        "declared_batch_seconds": 240,
+        "declared_lease_seconds": 300
+      },
+      "worker": {
+        "pid": 35024,
+        "created_unix": 1792711512.738662,
+        "declared_batch_seconds": 240,
+        "declared_lease_seconds": 300
+      },
+      "keycloak": {
+        "pid": 51268,
+        "created_unix": 1792711494.3307643,
+        "java_children": [
+          {
+            "pid": 83376,
+            "created_unix": 1792711494.4000006
+          }
+        ]
+      },
+      "s3": {
+        "pid": 64356,
+        "created_unix": 1792711413.743946
+      },
+      "fuseki": {
+        "pid": 87208,
+        "created_unix": 1792711486.1562219
+      },
+      "writers": {
+        "api": {
+          "pid": 55516,
+          "created_unix": 1792711512.7579966
+        },
+        "worker": {
+          "pid": 84520,
+          "created_unix": 1792711512.7712076
+        }
+      }
+    },
+    "stores": {
+      "core": {
+        "database": "lzo",
+        "postmaster_started_at": "2026-10-23T07:24:38.791570+08:00",
+        "schema_version": "0406_storage_backups"
+      },
+      "gis": {
+        "database": "lzo_gis",
+        "postmaster_started_at": "2026-10-23T07:24:38.791570+08:00",
+        "schema_version": 4
+      },
+      "timeseries": {
+        "database": "lzo_timeseries",
+        "postmaster_started_at": "2026-10-23T07:24:38.791570+08:00",
+        "schema_version": 3
+      },
+      "catalog": {
+        "database": "lzo_catalog",
+        "postmaster_started_at": "2026-10-23T07:24:38.791570+08:00",
+        "schema_version": 3
+      }
+    }
+  },
+  "writer_records_before_restart": {
+    "api": {
+      "service": "api",
+      "pid": 82600,
+      "created": 1792711247.5010989
+    },
+    "worker": {
+      "service": "worker",
+      "pid": 24696,
+      "created": 1792711247.5056229
+    }
+  },
+  "outages": {
+    "core": {
+      "synthetic": true,
+      "expected_unavailable": "core",
+      "ready_http_status": 503,
+      "dependencies": {
+        "postgres": "unavailable",
+        "fuseki": "ready",
+        "oidc": "ready",
+        "files": "ready",
+        "store_core": "unavailable",
+        "store_gis": "unavailable",
+        "store_timeseries": "unavailable",
+        "store_catalog": "unavailable"
+      },
+      "probe_seconds": 15.272071599960327
+    },
+    "s3": {
+      "synthetic": true,
+      "expected_unavailable": "s3",
+      "ready_http_status": 503,
+      "dependencies": {
+        "postgres": "ready",
+        "fuseki": "ready",
+        "oidc": "ready",
+        "files": "unavailable",
+        "store_core": "ready",
+        "store_gis": "ready",
+        "store_timeseries": "ready",
+        "store_catalog": "ready"
+      },
+      "private_artifact_http_status": 503,
+      "probe_seconds": 14.848794899880886
+    }
+  },
+  "comparison": "same persisted data/current reads/digests/identity key; changed actual writer/service process incarnations and SQL postmaster start",
+  "not_covered": [
+    "Compose containers",
+    "network OIDC browser-login performance",
+    "production HA/RPO/RTO"
+  ]
+}

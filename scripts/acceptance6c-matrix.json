@@ -1,0 +1,18 @@
+[
+  "backend/tests/integration/test_semantic_kernel.py::test_scene_semantic_kernel",
+  "backend/tests/integration/test_semantic_kernel.py::test_shared_identity_and_dynamic_extension",
+  "backend/tests/integration/test_inference_retraction.py::test_real_cycle_multiple_support_retraction_and_immutable_proofs",
+  "backend/tests/integration/test_authorized_queries.py",
+  "backend/tests/integration/test_revision_transactions.py::test_two_writers_same_head_only_one_succeeds",
+  "backend/tests/integration/test_revision_transactions.py::test_stale_edit_and_failed_outbox_do_not_half_commit",
+  "backend/tests/integration/test_revision_transactions.py::test_runtime_role_cannot_change_history",
+  "backend/tests/integration/test_scoped_permissions.py",
+  "backend/tests/integration/test_ingestion_rule_versions.py",
+  "backend/tests/integration/test_ingestion_database_sources.py::test_full_and_incremental_read_use_stable_composite_cursor",
+  "backend/tests/integration/test_ingestion_database_sources.py::test_snapshot_is_held_across_pages_and_lost_connection_cannot_resume",
+  "backend/tests/integration/test_ingestion_database_sources.py::test_tls_verifies_certificate_and_hostname_without_fallback",
+  "backend/tests/integration/test_ingestion_scan_deletes.py::test_complete_same_scope_scan_generates_only_missing_keys",
+  "backend/tests/integration/test_ingestion_scan_deletes.py::test_old_event_cannot_overwrite_new_source_revision",
+  "backend/tests/integration/test_map_tiles.py",
+  "backend/tests/integration/test_oidc_security.py"
+]

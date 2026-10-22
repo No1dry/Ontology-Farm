@@ -322,6 +322,9 @@ class TelemetryService:
                 if len(cursor) > 4096:
                     raise ValueError()
                 value = json.loads(base64.b64decode(cursor + '=' * (-len(cursor) % 4), altchars=b'-_', validate=True))
+                if (not isinstance(value, dict) or not isinstance(value.get('after'), list) or
+                        len(value['after']) != 2 or any(not isinstance(v, str) for v in value['after'])):
+                    raise ValueError()
                 if value['context'] != context:
                     raise Conflict('TELEMETRY_CURSOR_STALE', 'Query or authorization changed')
                 after = (datetime.fromisoformat(value['after'][0]), UUID(value['after'][1]))

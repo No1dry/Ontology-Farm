@@ -62,7 +62,7 @@ nonsemantic = {name: "foundation-v1" for name in (
     "identity.pending", "identity.provider_pending", "identity.provider_created", "identity.sending",
     "identity.delivery_unknown", "identity.failed", "identity.completed",
     "approval.submitted", "approval.decided", "artifact.uploaded", "artifact.linked",
-    "artifact.reviewed", "evidence.attached", "source.created", "source.upload.registered",
+    "artifact.reviewed", "evidence.attached", "catalog.delivery.retried", "source.created", "source.upload.registered",
     "source.record.registered", "evidence.created", "job.enqueued", "job.started", "job.checkpoint",
     "job.result", "job.queued", "job.paused", "job.failed", "job.succeeded", "job.cancelled")}
 _context = ContextVar("semantic_projection")
@@ -227,17 +227,30 @@ class ProjectionService:
             return ProjectionReceipt(revision.resource_id, revision.revision, "retired", digest)
         from lzo.gis.service import split
         if split(self.uow):
-            from lzo.synchronization.delivery import require_deliveries
+            from lzo.synchronization.delivery import require_deliveries, DeliveriesPending, DeliveriesFailed
             from lzo.semantic.facts import OBJECT_EVENTS
+            dependency_pending = False
             for dependency in (revision,*content.dependency_revisions):
                 dependent=_revision(self.uow,dependency)
+                target = None
                 if dependent["event_type"] in OBJECT_EVENTS:
-                    require_deliveries(self.uow,dependency.event_id,("gis",))
+                    target = 'gis'
                 elif dependent['event_type'] == 'telemetry.batch.accepted':
                     if self.actor is not None:
                         from lzo.telemetry.service import TelemetryService
                         TelemetryService(self.uow).reference_dependencies(self.actor, dependency)
-                    require_deliveries(self.uow, dependency.event_id, ('timeseries',))
+                    target = 'timeseries'
+                elif dependent['event_type'] == 'catalog.version.accepted':
+                    target = 'catalog'
+                if target:
+                    try:
+                        require_deliveries(self.uow, dependency.event_id, (target,))
+                    except DeliveriesFailed:
+                        raise
+                    except DeliveriesPending:
+                        dependency_pending = True
+            if dependency_pending:
+                raise DeliveriesPending('Required domain deliveries are pending')
         if producer.before_publish is not None:
             try:
                 producer.before_publish(self.uow, self.actor, row)

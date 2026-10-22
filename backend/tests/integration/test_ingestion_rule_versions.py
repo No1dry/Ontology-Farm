@@ -70,12 +70,12 @@ def activate(s):
 
 def raw_change(s, area="2.5", note="platform note", extra="one", *, temporal=None, fields=None):
     import io,json
-    from lzo.artifacts.store import ArtifactStore
+    from lzo.storage.blobs import get_blob_store
     from lzo.artifacts.service import ArtifactService
     from lzo.ingestion.sources import UploadService
     from lzo.ingestion.files import FileParser
     from lzo.ingestion.schemas import FileOptions
-    store=ArtifactStore(s.config.file_root/"artifacts",max_upload_bytes=s.config.artifact_max_upload_bytes)
+    store=get_blob_store(s.config)
     blob=store.put(io.BytesIO(json.dumps([{"code":"P001","name":"Pond","area":area,"note":note,"extra":extra,**(temporal or {}),**(fields or {})}]).encode()),"application/json")
     options=FileOptions(format="json",encoding="utf-8",delimiter=",",sheet=None,header_row=1,records_path="",
         key_paths=("code",),source_crs=None,source_timezone="Asia/Shanghai",data_nature="synthetic")
@@ -93,7 +93,7 @@ def raw_change(s, area="2.5", note="platform note", extra="one", *, temporal=Non
     return parsed.changes[0]
 
 
-def test_pre_adoption_publication_is_blocked_by_real_accepted_history(configuration_case,rdf_repo):
+def test_pre_adoption_publication_is_blocked_by_real_accepted_history(configuration_case,rdf_repo,gis_tick):
     from lzo.ingestion.identity import IdentityService
     from lzo.ingestion.mapping import MappingService
     from lzo.ingestion.rulings import RulingService
@@ -166,6 +166,7 @@ def test_pre_adoption_publication_is_blocked_by_real_accepted_history(configurat
     from lzo.semantic.projection import ProjectionService
     from lzo.semantic.fuseki import graph_iri
     from lzo.semantic import facts
+    gis_tick(s)  # The deployed split worker delivers GIS before the exact RDF event.
     with s.transaction() as uow:
         stored=facts.current_assertions(uow,identity.resource_id)[0]
         assert stored["payload"]["valid_from"].startswith("0001-01-01")

@@ -1,0 +1,203 @@
+{
+  "format_version": 1,
+  "task": "6C",
+  "state": "implementation_verified_requested_benchmark_pending",
+  "base_revision": "fefefc0ad11a7ef76255d98905c740991632b74e",
+  "scope": "Integrated multi-store acceptance; distinct batches are not additive whole-product certification",
+  "representative_matrix": {
+    "selection": "scripts/acceptance6c-matrix.json",
+    "state": "completed_with_failures",
+    "storage_mode": "split",
+    "blob_provider": "local",
+    "transport": "in-process ASGI with native SQL/Fuseki and live loopback IdP checks",
+    "pytest_basetemp": ".runtime/test6c-functional-matrix-01",
+    "additional_nodes": [
+      "backend/tests/integration/test_multistore_boundaries.py::test_catalog_reference_publication_waits_for_exact_acknowledged_version"
+    ],
+    "collected_tests": 53,
+    "collection_only_seconds": 0.9,
+    "passed": 50,
+    "failed": 3,
+    "seconds": 3435.08,
+    "failed_nodes": [
+      "test_shared_identity_and_dynamic_extension",
+      "test_current_time_expiry_without_projection_or_new_event",
+      "test_pre_adoption_publication_is_blocked_by_real_accepted_history"
+    ],
+    "follow_through": "Shared covering1 pass at240/300; real expiry and pre-adoption amendments covered separately in S3/offline batches; original50/3 retained"
+  },
+  "focused_s3_offline": {
+    "state": "covered_after_fixture_amendments",
+    "storage_mode": "split",
+    "blob_provider": "s3",
+    "selection": "scripts/acceptance6c-focused.json",
+    "python_socket_guard": "nonloopback DNS/connect denied in current process and Python children; no OS/native-service sandbox claim",
+    "basetemp": ".runtime/test6c-s3-offline-01",
+    "first_run": {
+      "passed": 9,
+      "failed": 2,
+      "setup_errors": 1,
+      "seconds": 690.47,
+      "classification": "unknown-head response was pending/empty before snapshot selection; two ingestion fixtures hardcoded local bytes under S3"
+    },
+    "affected_follow_through": {
+      "passed": 3,
+      "seconds": 223.36,
+      "basetemp": ".runtime/test6c-s3-amended-01",
+      "scope": "legacy repair/preflight/backfill/unknown refusal; geometry withdrawal; pre-adoption GIS delivery"
+    }
+  },
+  "native_public_deployment": {
+    "state": "passed",
+    "storage_mode": "split",
+    "blob_provider": "s3",
+    "pre_start_public_core_inventory": {
+      "checked_at": "2026-10-22T23:20:34.570149+00:00",
+      "database": "lzo",
+      "artifact_versions": 0,
+      "semantic_objects": 0
+    },
+    "evidence": "task6c-native.json",
+    "actual_daemon_restart": true,
+    "identity_persistence": "native Keycloak dev-file; not Compose identity PostgreSQL"
+  },
+  "schema_inventory": {
+    "path": "schema-inventory.json",
+    "core_version": "0406_storage_backups",
+    "gis_version": 4,
+    "timeseries_version": 3,
+    "catalog_version": 3,
+    "table_counts": {
+      "core": 104,
+      "gis": 9,
+      "timeseries": 20,
+      "catalog": 6
+    },
+    "count_scope": "DDL inventory includes retained test tables and twelve precreated 2026 telemetry partitions, not entity counts"
+  },
+  "gates": {
+    "openapi_snapshot": "passed",
+    "generated_client_check": "passed",
+    "typescript_no_emit": "passed",
+    "production_vite_build": "passed",
+    "compose_config": "passed; no container daemon execution",
+    "maintainer_member_role_selection": "passed; see task6c-maintenance.json"
+  },
+  "benchmark": {
+    "state": "smoke_measured_with_errors_baseline_pending",
+    "requested_entities": 10000,
+    "requested_relations": 100000,
+    "requested_distinct_authorized_users": 10,
+    "source_nature": "synthetic",
+    "transport": "in-process ASGI; fixture users/sessions with real current authorization; native stores",
+    "smoke_evidence": "task6c-benchmark-smoke.json",
+    "smoke_seed_failure_evidence": "task6c-benchmark-smoke-red.json",
+    "smoke_attempts": 70,
+    "smoke_complete": 50,
+    "smoke_incomplete_200": 0,
+    "smoke_errors": 20,
+    "graph_sparql_capacity_qualified": false,
+    "warmup_repetitions_note": "No extra warmup pass; one repetition, ten samples per operation; caches not cleared"
+  },
+  "unexecuted_dimensions": [
+    "Docker engine and disconnected container deployment",
+    "standard 8-core/32GB/SSD acceptance machine",
+    "real ONVIF/DJI/media/device/survey validation",
+    "production source-verification promotion",
+    "production HA and RPO/RTO certification"
+  ],
+  "remaining_implementation_limits": [
+    "S3 Range verifies whole object before serving",
+    "Upload part/orphan garbage collection remains unimplemented",
+    "Logical quota is not physical capacity",
+    "Catalog search and core-history scans have finite limits",
+    "Telemetry query budgets can return incomplete",
+    "Four domain databases share one PostgreSQL process in this native deployment"
+  ],
+  "intermediate_results": [
+    {
+      "batch": "valid attachment RED",
+      "provider": "local",
+      "failed": 1,
+      "seconds": 51.82,
+      "detail": "Public upload succeeded but semantic object revision remained 2 instead of 3"
+    },
+    {
+      "batch": "initial attachment GREEN",
+      "provider": "local",
+      "passed": 2,
+      "seconds": 123.46
+    },
+    {
+      "batch": "boundary RED",
+      "provider": "local",
+      "failed": 4,
+      "passed": 2,
+      "seconds": 54.77
+    },
+    {
+      "batch": "terminal catalog retry RED",
+      "provider": "local",
+      "failed": 1,
+      "deselected": 6,
+      "seconds": 8.66,
+      "detail": "Missing public retry route; actual refused target exhausted in three attempts"
+    },
+    {
+      "batch": "combined focused intermediate",
+      "provider": "local",
+      "passed": 8,
+      "failed": 2,
+      "seconds": 231.02,
+      "detail": "Both failures were fixture reuse of stale CSRF after login; fixed to use current CSRF with original idempotency key"
+    },
+    {
+      "batch": "three amended cases intermediate",
+      "provider": "local",
+      "passed": 2,
+      "failed": 1,
+      "deselected": 7,
+      "seconds": 104.7,
+      "detail": "Legacy repair and terminal retry passed; newer-version catalog reference revealed pending-before-terminal masking"
+    },
+    {
+      "batch": "catalog dependency follow-through",
+      "provider": "local",
+      "failed": 1,
+      "deselected": 6,
+      "seconds": 46.54,
+      "detail": "Local pending variable shadow corrected; covering final check pending"
+    }
+  ],
+  "scenario_timeout_evidence": "task6c-timeout.json",
+  "declared_native_profile": {
+    "path": "infra/native/acceptance-workload.env.example",
+    "batch_seconds": 240,
+    "lease_seconds": 300,
+    "production_defaults": {
+      "batch_seconds": 30,
+      "lease_seconds": 60
+    },
+    "actual_startup": "verified API/worker environment and resolved Settings240/300; same values before and after actual restart"
+  },
+  "shared_scenario_follow_through": {
+    "provider": "local",
+    "original_schema_fixture": {
+      "batch_seconds": 120,
+      "lease_seconds": 180
+    },
+    "diagnostic": {
+      "failed": 1,
+      "seconds": 994.8,
+      "evidence": "task6c-timeout.json"
+    },
+    "covering": {
+      "passed": 1,
+      "seconds": 857.04,
+      "batch_seconds": 240,
+      "lease_seconds": 300,
+      "worker_errors": 0
+    },
+    "interpretation": "Functional correctness only under declared profile; production30/60 defaults not qualified"
+  }
+}

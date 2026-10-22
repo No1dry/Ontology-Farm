@@ -1,0 +1,299 @@
+{
+  "synthetic": true,
+  "scope": "Owned native split stores, local private bytes; diagnostic correctness limit, not capacity certification",
+  "result": "shared diagnostic failed in994.80seconds with three JOB_BATCH_TIMEOUT attempts; downstream INFERENCE_PROJECTION_PENDING",
+  "production_defaults": {
+    "batch_seconds": 30,
+    "lease_seconds": 60
+  },
+  "failed_fixture": {
+    "batch_seconds": 120,
+    "lease_seconds": 180
+  },
+  "declared_acceptance_profile": {
+    "batch_seconds": 240,
+    "lease_seconds": 300,
+    "status": "shared-scene covering1passed/857.04s; native startup pending"
+  },
+  "timed_operation": "Entire rdf.project ctx.batch: fresh authorization/fence, exact dependency checks, RDF publication, SQL projection/watermark/inference scheduling and checkpoint; no narrower timing attribution",
+  "accepted_ref": {
+    "resource_id": "9650945a-7a1b-5ee0-b60e-b13eb09a5e0a",
+    "revision": 3,
+    "event_id": "4bd5016b-a1e6-4b27-ab7f-c29b6c784444"
+  },
+  "fresh_authority": "current",
+  "pinned_deliveries": [
+    {
+      "resource_id": "d7ded66b-918f-4aad-a98b-964915038926",
+      "revision": 1,
+      "event_id": "fe4230a0-e68d-47ee-9369-bd26c8af810f",
+      "event_type": "object.created",
+      "target": "gis",
+      "status": "applied",
+      "attempts": 1,
+      "error": null
+    },
+    {
+      "resource_id": "9650945a-7a1b-5ee0-b60e-b13eb09a5e0a",
+      "revision": 3,
+      "event_id": "4bd5016b-a1e6-4b27-ab7f-c29b6c784444",
+      "event_type": "object.facts_changed",
+      "target": "gis",
+      "status": "applied",
+      "attempts": 1,
+      "error": null
+    },
+    {
+      "resource_id": "495480e9-273d-52fe-834c-3798b13635ec",
+      "revision": 1,
+      "event_id": "800f043f-67ca-4d31-a98b-b1223e7866cb",
+      "event_type": "object.created",
+      "target": "gis",
+      "status": "applied",
+      "attempts": 1,
+      "error": null
+    },
+    {
+      "resource_id": "7df1b2ea-8dd9-4190-b5ac-1049ee09efbf",
+      "revision": 2,
+      "event_id": "08a9aa9f-05c1-498d-997e-7cf56ebf651a",
+      "event_type": "schema.draft.published",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "ea692c2b-d439-422c-bfd0-8d1af38893c5",
+      "revision": 1,
+      "event_id": "71f7bb09-c1bf-4827-992c-0446298219bc",
+      "event_type": "schema.bundle.created",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "5ebe2dc3-1289-4b55-b21c-022ef099ee4c",
+      "revision": 1,
+      "event_id": "c530d1e2-65ba-48c4-819c-cde1908a47b8",
+      "event_type": "artifact.uploaded",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "c1bf8903-5aaa-4215-8f7c-1a6b86466b9c",
+      "revision": 1,
+      "event_id": "cfb59c94-27b1-4e66-80da-c917227c7761",
+      "event_type": "artifact.uploaded",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "7731662c-f7d1-4fcf-bc85-aa3794078ec0",
+      "revision": 1,
+      "event_id": "7704ee39-71a5-4405-9dd7-7c1d72f96d3a",
+      "event_type": "schema.genesis.created",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "c1dab41c-0c2d-402c-bb42-9e971f2ef8a9",
+      "revision": 7,
+      "event_id": "bdca6475-70ae-46c5-aff0-470c0d68b272",
+      "event_type": "evidence.attached",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "ebd7a49c-abf7-40fb-9220-d8c6f47c36ca",
+      "revision": 1,
+      "event_id": "152b5a62-510b-492a-95a6-edcf11c836ee",
+      "event_type": "artifact.uploaded",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "99ad02f6-e3b8-4507-9c0e-c739a1d35a73",
+      "revision": 1,
+      "event_id": "37f9685d-d51c-4af0-a63c-350b9b3e7278",
+      "event_type": "schema.genesis.created",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "b5077692-4a35-44d2-ba54-58cde0f41c5f",
+      "revision": 1,
+      "event_id": "9bce3b1b-f4bc-409f-ada3-3928a1214fd7",
+      "event_type": "artifact.uploaded",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "e542d911-51c6-43cb-a27d-bef8d4c1e1f6",
+      "revision": 1,
+      "event_id": "72aabefb-0f86-4f60-94c3-9e43c74376d6",
+      "event_type": "artifact.uploaded",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "5811839a-b3a9-423a-a670-4c5b8cddc290",
+      "revision": 1,
+      "event_id": "3d4ca17b-1f3b-47b1-bfd5-6055ae34ac45",
+      "event_type": "artifact.uploaded",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "ccdec1ce-5166-4b74-a047-7d96fde6db6f",
+      "revision": 1,
+      "event_id": "e699edff-d7e3-4fb5-bdb5-bfc187673aa3",
+      "event_type": "schema.genesis.created",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "caa8fd19-3429-4c10-b267-8f1fd6945e95",
+      "revision": 1,
+      "event_id": "2d3b779b-3eeb-4a01-9cc5-17b1ebc417d7",
+      "event_type": "artifact.uploaded",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "cb6c1bde-a1cc-47f4-8254-5f695222b0c0",
+      "revision": 1,
+      "event_id": "fb3a22a7-36b8-40cb-8865-e8943f9aa663",
+      "event_type": "artifact.uploaded",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "f97c1a53-e4ea-4682-a9de-e1b229dfaada",
+      "revision": 1,
+      "event_id": "9dea7069-6eb7-4c5b-b123-3cd93c093f1a",
+      "event_type": "inference.profile.created",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "7d8453b3-54c3-4fed-8bda-c236fe3fcb8f",
+      "revision": 1,
+      "event_id": "38c76757-c711-4e04-aa81-440df22b9c4c",
+      "event_type": "schema.bundle.created",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "3da99a8c-29b2-4cd2-9cb0-add4a5f0ed57",
+      "revision": 6,
+      "event_id": "7fe47ebf-1d87-46ee-997d-a779ac18af9f",
+      "event_type": "schema.release.published",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    },
+    {
+      "resource_id": "0d6f6987-fa35-47ca-aa1f-150a9ab5ebe2",
+      "revision": 1,
+      "event_id": "c6adb5c1-5b6e-41f1-97ad-36b0ef7b6585",
+      "event_type": "artifact.uploaded",
+      "target": null,
+      "status": null,
+      "attempts": null,
+      "error": null
+    }
+  ],
+  "remote_generation": {
+    "resource_id": "9650945a-7a1b-5ee0-b60e-b13eb09a5e0a",
+    "revision": 3,
+    "position": 226,
+    "digest": "0e6ce9c358bdfbff3046a396b3e7ceddd4c266d6dd867b92ec7d37f4af1a9075"
+  },
+  "core_projection_head": {
+    "revision": 2,
+    "digest": "a42132bd85b626bfd1db4bf15caba64f80c2e5031432b6336645045f93c17d21"
+  },
+  "watermarks": {
+    "event_position": 322,
+    "projection_watermark": 225
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "phase": "started",
+      "error_code": null,
+      "recorded_at": "2026-10-23 06:34:59.263198+08:00"
+    },
+    {
+      "attempt": 1,
+      "phase": "queued",
+      "error_code": "HANDLER_FAILED",
+      "recorded_at": "2026-10-23 06:37:41.907831+08:00"
+    },
+    {
+      "attempt": 2,
+      "phase": "started",
+      "error_code": null,
+      "recorded_at": "2026-10-23 06:37:55.064434+08:00"
+    },
+    {
+      "attempt": 2,
+      "phase": "queued",
+      "error_code": "HANDLER_FAILED",
+      "recorded_at": "2026-10-23 06:40:36.971848+08:00"
+    },
+    {
+      "attempt": 3,
+      "phase": "started",
+      "error_code": null,
+      "recorded_at": "2026-10-23 06:40:50.167198+08:00"
+    }
+  ],
+  "completed_attempt_seconds": [
+    162.644633,
+    161.907414
+  ],
+  "original_diagnostic_failure_snapshot": {
+    "rdf_project_failed": 1,
+    "inference_dispatch_failed": 9,
+    "all_failed_job_authority": "current",
+    "gis_receipts_applied": 22
+  },
+  "existing_accepted_reconciliation_coverage": [
+    "backend/tests/integration/test_projection.py::test_remote_success_pg_rollback_reconciles",
+    "backend/tests/integration/test_projection.py::test_contiguous_prefix_blocks_gap_and_unknown"
+  ],
+  "interpretation": "Target success did not advance SQL across the failed exact event. Original timeout/retry behavior and evidence are preserved; increasing a fixture budget is not a production performance fix.",
+  "actual_native_profile_evidence": "task6c-native.json"
+}

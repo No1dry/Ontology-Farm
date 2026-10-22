@@ -1,0 +1,12 @@
+[
+  "backend/tests/integration/test_attachment_heads.py",
+  "backend/tests/integration/test_multistore_boundaries.py::test_gis_decoded_numeric_and_object_cursor_uuids_are_governed",
+  "backend/tests/integration/test_multistore_boundaries.py::test_catalog_reference_publication_waits_for_exact_acknowledged_version",
+  "backend/tests/integration/test_multistore_boundaries.py::test_catalog_terminal_retry_is_exact_audited_current_authorized_and_recovers",
+  "backend/tests/integration/test_offline_process.py",
+  "backend/tests/integration/test_map_tiles.py::test_pmtiles_range_is_exact_and_authorized_after_revocation",
+  "backend/tests/integration/test_map_resources.py::test_complete_local_chinese_pack_uses_registered_authorized_assets",
+  "backend/tests/integration/test_ingestion_geometry_quality.py::test_last_required_geometry_withdrawal_commits_with_honest_quality[nonconforming]",
+  "backend/tests/integration/test_authorized_queries.py::test_current_time_expiry_without_projection_or_new_event",
+  "backend/tests/integration/test_ingestion_rule_versions.py::test_pre_adoption_publication_is_blocked_by_real_accepted_history"
+]

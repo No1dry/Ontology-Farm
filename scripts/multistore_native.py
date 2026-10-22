@@ -16,6 +16,21 @@ RUNTIME = ROOT / ".runtime" / "multistore"
 FLAGS = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
 DOMAINS = ("core", "gis", "timeseries", "catalog")
 
+
+def owned_state(root, path):
+    """New acceptance processes can only adopt a marked worktree runtime."""
+    root, path = Path(root).resolve(), Path(path).resolve()
+    if not path.is_relative_to(root / '.runtime') or path == root / '.runtime':
+        raise ValueError('Runtime must be a named child of this worktree .runtime')
+    marker = path / 'ownership.json'
+    if path.exists():
+        if not marker.exists() or json.loads(marker.read_text())['worktree'] != str(root):
+            raise ValueError('Refusing an unmarked or foreign runtime')
+    else:
+        path.mkdir(parents=True)
+        marker.write_text(json.dumps({'worktree': str(root)}))
+    return path
+
 def run(command, **kwargs):
     return subprocess.run([str(x) for x in command], check=True, creationflags=FLAGS, **kwargs)
 

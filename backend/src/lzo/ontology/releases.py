@@ -425,6 +425,12 @@ def publish_release(uow, actor, draft_id, approval_id, expected_revision):
         graphs[role] = ordered(Triple(str(s), str(p), term_from_node(o)) for s, p, o, _ in normalized.dataset.quads())
     pinned = [RevisionRef(ref, head(uow, ref)["revision"], head(uow, ref)["event_id"])
               for ref in sorted(governance_refs, key=str)]
+    # Publication depends on the exact retained reference version, even when a
+    # newer catalog metadata version exists at acceptance/retry time.
+    exact = {(pin.resource_id, pin.revision, pin.event_id): pin for pin in document.reference_versions}
+    explicit_ids = {pin.resource_id for pin in exact.values()}
+    pinned = [pin for pin in pinned if pin.resource_id not in explicit_ids] + list(exact.values())
+    pinned.sort(key=lambda pin: (str(pin.resource_id), pin.revision, str(pin.event_id)))
     payload = {"graphs": {role: [asdict(t) for t in triples] for role, triples in graphs.items()},
                "references": [str(identifier), *map(str, sorted(governance_refs, key=str))],
                "dependency_revisions": _json([asdict(ref) for ref in pinned]),

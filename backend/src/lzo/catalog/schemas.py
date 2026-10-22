@@ -80,6 +80,17 @@ class VersionDocument(DTO):
     approval_id: UUID | None = None
 
 
+class CatalogRetry(DTO):
+    expected_revision: int = Field(ge=1)
+    accepted_revision: RevisionRef
+
+
+class CatalogRetryReceipt(DTO):
+    accepted_revision: RevisionRef
+    audit: RevisionRef
+    status: Literal['pending'] = 'pending'
+
+
 class CatalogView(DTO):
     id: UUID
     kind: Literal['model', 'document']

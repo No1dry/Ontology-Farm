@@ -16,8 +16,18 @@ def split(uow):
 
 def accepted_geometry(uow, identifier):
     if split(uow):
-        payload = uow.session.execute(select(revisions.c.payload).where(revisions.c.resource_id == identifier)
-            .order_by(revisions.c.revision.desc()).limit(1)).scalar_one_or_none()
+        from lzo.semantic.facts import objects, OBJECT_EVENTS
+        from lzo.errors import Conflict
+        # The stored object revision is the snapshot boundary. A recognized
+        # legacy attachment tail has no spatial effect; unknown newer events
+        # must never make us silently resurrect an older geometry.
+        rows = uow.session.execute(select(revisions).where(revisions.c.resource_id == identifier,
+            revisions.c.revision >= select(objects.c.revision).where(objects.c.id == identifier).scalar_subquery())
+            .order_by(revisions.c.revision)).mappings().all()
+        if rows and (rows[0]['event_type'] not in OBJECT_EVENTS or
+                any(row['event_type'] != 'evidence.attached' for row in rows[1:])):
+            raise Conflict('OBJECT_SNAPSHOT_INCONSISTENT', 'Object history requires governed reconciliation')
+        payload = rows[0]['payload'] if rows else None
         return payload.get("geometry") if payload else None
     return uow.session.execute(text("SELECT payload FROM semantic_geometry WHERE resource_id=:id AND active"),
                                {"id":identifier}).scalar_one_or_none()

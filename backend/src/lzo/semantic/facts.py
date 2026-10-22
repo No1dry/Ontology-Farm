@@ -942,6 +942,7 @@ from lzo.governance.risk import register_policy
 register_policy("object.deactivate", _deactivate_descriptor)
 register_handler("facts.validity", _validity_boundary, references=_validity_references, action="edit")
 OBJECT_EVENTS=("object.created", "object.facts_changed", "object.geometry_changed", "object.deactivated",
-               "object.validity_changed", "object.spatial_asset_registered", "object.location_observed")
+               "object.validity_changed", "object.spatial_asset_registered", "object.location_observed",
+               "object.evidence_attached", "object.evidence_reconciled")
 for _event in OBJECT_EVENTS:
     register_projection(_event, _projection, version="objects-v1", dirty_kind="facts", action="edit")
