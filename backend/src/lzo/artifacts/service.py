@@ -38,7 +38,7 @@ def _permission(uow: UnitOfWork, actor: ActorContext, resource_id: UUID, action:
         require_permission(actor, "view", scope, uow=uow)
     except Forbidden:
         raise ApiError("NOT_FOUND", 404, "Resource not found") from None
-    if row["resource_kind"] in {"schema.draft", "schema.release", "schema.bundle", "schema.catalog"}:
+    if row["resource_kind"] in {"schema.draft", "schema.release", "schema.bundle", "schema.catalog", "catalog.model", "catalog.document", "catalog.device"}:
         hidden = uow.session.execute(select(revision_visibility_dependencies.c.resource_id).join(
             resource_heads, resource_heads.c.event_id == revision_visibility_dependencies.c.event_id).where(
             resource_heads.c.resource_id == resource_id,
@@ -48,6 +48,11 @@ def _permission(uow: UnitOfWork, actor: ActorContext, resource_id: UUID, action:
     if action != "view":
         require_permission(actor, action, scope, uow=uow)
     return row
+
+
+def _catalog_write_guard(scope):
+    if scope['resource_kind'] in {'catalog.model', 'catalog.document', 'catalog.device'}:
+        raise Forbidden('CATALOG_COMMAND_REQUIRED', 'Use versioned catalog attachment references')
 
 
 def attach_evidence(uow: UnitOfWork, actor: ActorContext, resource_id: UUID,
@@ -62,7 +67,8 @@ def attach_evidence(uow: UnitOfWork, actor: ActorContext, resource_id: UUID,
 
 def _attach_evidence(uow, actor, resource_id, blob, metadata, *, action):
     """Trusted producer primitive; public evidence retains its edit action."""
-    _permission(uow, actor, resource_id, action)
+    scope = _permission(uow, actor, resource_id, action)
+    _catalog_write_guard(scope)
     lock_ledger(uow)
     version = uow.session.execute(select(artifact_versions).where(
         artifact_versions.c.id == blob.version_id)).mappings().one_or_none()
@@ -122,7 +128,8 @@ class ArtifactService:
         self.settings = settings
 
     def authorize_upload(self, actor: ActorContext, resource_id: UUID) -> None:
-        _permission(self.uow, actor, resource_id, self._upload_action(resource_id))
+        scope = _permission(self.uow, actor, resource_id, self._upload_action(resource_id))
+        _catalog_write_guard(scope)
         if _scope(self.uow, resource_id)["resource_kind"] in {"evidence", "evidence.pending"}:
             raise Forbidden("EVIDENCE_PRODUCER_REQUIRED", "Use the controlled evidence operation")
 
@@ -260,6 +267,7 @@ class ArtifactService:
         staged = blob if isinstance(blob, StagedBlob) else None
         blob = staged.ref if staged is not None else blob
         scope = _permission(self.uow, actor, resource_id, action)
+        _catalog_write_guard(scope)
         if (scope["resource_kind"] in {"evidence", "evidence.pending"}) != (evidence_references is not None):
             raise Forbidden("EVIDENCE_PRODUCER_REQUIRED", "Use the controlled evidence operation")
         if scope["resource_kind"] == "semantic.export":

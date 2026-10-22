@@ -103,7 +103,7 @@ def authorized_statement(actor: ActorContext, action: str):
     if action != "view":
         return _base_authorized_statement(actor, action)
     from lzo.artifacts.models import artifact_versions
-    from lzo.governance.models import revisions
+    from lzo.governance.models import revisions, resource_heads
     from lzo.governance.history import revision_visibility_dependencies as deps
     owner, version = resource_scopes.alias(), artifact_versions.alias()
     classified = select(owner.c.resource_id.label("id"), owner.c.resource_id.label("owner_id")).where(
@@ -157,11 +157,15 @@ def authorized_statement(actor: ActorContext, action: str):
     # footprint. Actual job dependencies remain authoritative if jobs evolve.
     from lzo.semantic.models import export_dependencies, export_outputs
     from lzo.worker.models import job_dependencies
-    protected = select(classified.c.id).union(generated_resource_ids()).cte()
+    catalog_ids = select(resource_scopes.c.resource_id).where(resource_scopes.c.resource_kind.in_(
+        ('catalog.model', 'catalog.document', 'catalog.device'))).cte()
+    protected = select(classified.c.id).union(generated_resource_ids(), select(catalog_ids.c.resource_id)).cte()
     edges = select(revisions.c.resource_id.label("root"), deps.c.resource_id.label("dependency")).join(
         deps, deps.c.event_id == revisions.c.event_id).where(or_(
             revisions.c.resource_id.in_(select(classified.c.id)),
-            revisions.c.event_type == "artifact.uploaded")).union(
+            revisions.c.event_type == "artifact.uploaded",
+            and_(revisions.c.resource_id.in_(select(catalog_ids.c.resource_id)),
+                 revisions.c.event_id.in_(select(resource_heads.c.event_id))))).union(
         select(export_dependencies.c.export_id, export_dependencies.c.resource_id),
         select(export_outputs.c.version_id, export_outputs.c.export_id),
         select(job_dependencies.c.job_id, job_dependencies.c.resource_id)).cte()

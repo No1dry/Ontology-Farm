@@ -159,6 +159,14 @@ def document_refs(uow, actor, document, base_release_id):
         refs.append(base_release_id)
     for blob in document.dependencies:
         refs.extend((blob.version_id, artifact_reference(uow, actor, blob)))
+    if document.reference_versions:
+        from lzo.catalog.service import CatalogService, _dependencies
+        for pin in document.reference_versions:
+            reference = CatalogService(uow).get(actor, pin.resource_id, revision=pin.revision, kind='document')
+            if reference.revision != pin or reference.metadata.document_type not in ('ontology', 'reference'):
+                raise ApiError('INVALID_REFERENCE_PIN', 422, 'Exact ontology reference version required')
+            refs.append(pin.resource_id)
+            refs.extend(_dependencies(uow, reference.metadata))
     return refs
 
 

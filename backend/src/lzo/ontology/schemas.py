@@ -1,8 +1,8 @@
 """Public S02 DTOs; revision preconditions are supplied by HTTP If-Match."""
 from typing import Literal
 from uuid import UUID
-from pydantic import BaseModel, ConfigDict, Field, field_validator
-from lzo.contracts import BlobRef, JsonObject
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_serializer
+from lzo.contracts import BlobRef, JsonObject, RevisionRef
 from lzo.semantic.rdf import RdfTerm, Triple, iri
 from lzo.semantic.validation import ValidationIssue
 
@@ -47,6 +47,14 @@ class SchemaDocument(Model):
     shapes: str = ""
     ui_metadata: JsonObject = Field(default_factory=dict)
     dependencies: tuple[BlobRef, ...] = ()
+    reference_versions: tuple[RevisionRef, ...] = ()
+
+    @model_serializer(mode='wrap')
+    def preserve_existing_document_digest(self, handler):
+        value = handler(self)
+        if not self.reference_versions:
+            value.pop('reference_versions', None)
+        return value
 
 
 class CurrentSchemaBaseline(Model):

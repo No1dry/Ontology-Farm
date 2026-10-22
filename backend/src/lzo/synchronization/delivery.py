@@ -98,7 +98,8 @@ handlers = {}
 history_handlers = {}
 def register_delivery_handler(target, handler, *, history_handler=None):
     if target not in ("gis", "timeseries", "catalog"): raise ValueError("Unknown target")
-    if history_handler is not None and target != "gis":raise ValueError("History delivery is currently GIS-only")
+    if history_handler is not None and target not in ("gis", "catalog"):
+        raise ValueError("History delivery is currently GIS/catalog-only")
     handlers[target] = handler
     if history_handler is not None:history_handlers[target]=history_handler
     else:history_handlers.pop(target,None)
