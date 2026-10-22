@@ -32,7 +32,7 @@ def owned():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=("init", "start", "restart", "stop", "status"))
+    parser.add_argument("action", choices=("init", "start", "restart", "stop", "status", "provision-telemetry-maintenance"))
     parser.add_argument("--tool-cache", type=Path)
     parser.add_argument("--port", type=int, default=25432)
     args = parser.parse_args()
@@ -78,10 +78,32 @@ def main():
                     if domain in ("core","gis"): domain_c.execute("CREATE EXTENSION postgis")
                     domain_c.execute("REVOKE CREATE ON SCHEMA public FROM PUBLIC")
                     domain_c.execute(sql.SQL("GRANT USAGE ON SCHEMA public TO {}").format(sql.Identifier(app)))
+        with psycopg.connect(**admin,dbname='lzo_timeseries',autocommit=True) as maintenance_c:
+            maintenance_c.execute('CREATE ROLE lzo_timeseries_maintainer NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE')
+            maintenance_c.execute('GRANT CONNECT ON DATABASE lzo_timeseries TO lzo_timeseries_maintainer')
         (RUNTIME / "services.env").write_text("".join(f"{k}={v}\n" for k,v in env.items()))
         print(f"Provisioned four independent stores on loopback port {args.port}")
         return
     values = owned()
+    if args.action == 'provision-telemetry-maintenance':
+        import psycopg
+        from psycopg import sql
+        role = 'lzo_timeseries_maintainer'
+        target = RUNTIME / 'maintenance.env'
+        if target.exists():
+            print('Owned telemetry maintenance account already provisioned')
+            return
+        secret = secrets.token_urlsafe(32)
+        admin = json.loads((RUNTIME / 'admin.json').read_text())
+        with psycopg.connect(host='127.0.0.1', port=values['port'], dbname='lzo_timeseries',
+                user='postgres', password=admin['password'], autocommit=True) as connection:
+            if not connection.execute('SELECT 1 FROM pg_roles WHERE rolname=%s', (role,)).fetchone():
+                connection.execute(sql.SQL('CREATE ROLE {} NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE').format(sql.Identifier(role)))
+            connection.execute(sql.SQL('ALTER ROLE {} LOGIN PASSWORD {}').format(sql.Identifier(role), sql.Literal(secret)))
+            connection.execute(sql.SQL('GRANT CONNECT ON DATABASE lzo_timeseries TO {}').format(sql.Identifier(role)))
+        target.write_text(f"LZO_TIMESERIES_MAINTENANCE_DATABASE_URL=postgresql+psycopg://{role}:{secret}@127.0.0.1:{values['port']}/lzo_timeseries\n")
+        print('Provisioned restricted owned telemetry maintenance account; credentials saved privately')
+        return
     command = [Path(values["bin"]) / "pg_ctl.exe", "-D", values["data"]]
     if args.action in ("start","restart"): command += ["-l",RUNTIME/"postgres.log","-w",args.action]
     elif args.action == "stop": command += ["-m","fast","-w","stop"]

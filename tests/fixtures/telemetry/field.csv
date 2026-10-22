@@ -1,0 +1,2 @@
+source_record_id,object_id,device_id,point_id,metric_id,raw_value,raw_unit,normalized_value,normalized_unit,sampled_at,reported_at,data_nature
+field-zero,00000000-0000-0000-0000-000000000001,00000000-0000-0000-0000-000000000002,field-pump,power,0,W,0,W,2026-01-15T12:00:00Z,2026-01-15T12:00:02Z,synthetic

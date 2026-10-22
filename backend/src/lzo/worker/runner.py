@@ -248,6 +248,7 @@ def load_handlers(settings):
     """Only trusted deployment configuration can load handler modules."""
     import lzo.gis.service
     import lzo.catalog.service
+    import lzo.telemetry.service
     for module in filter(None, (name.strip() for name in settings.worker_handler_modules.split(","))):
         importlib.import_module(module)
 

@@ -1240,6 +1240,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/objects/{id}/data": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Object Data */
+        get: operations["getObjectData"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/objects/{id}/deactivate": {
         parameters: {
             query?: never;
@@ -1895,6 +1912,176 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/telemetry/batches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Accept Batch */
+        post: operations["acceptTelemetryBatch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/telemetry/batches/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Batch Status */
+        get: operations["getTelemetryBatch"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/telemetry/batches/{id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retry Batch */
+        post: operations["retryTelemetryBatch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/telemetry/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Capabilities */
+        get: operations["getTelemetryCapabilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/telemetry/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Endpoint */
+        get: operations["listTelemetryEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/telemetry/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Endpoint */
+        get: operations["listTelemetryMedia"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/telemetry/observations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Endpoint */
+        get: operations["listTelemetryObservations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/telemetry/replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Replay File */
+        post: operations["replayTelemetryFile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/telemetry/retention-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Retention */
+        get: operations["previewTelemetryRetention"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/telemetry/tracks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Endpoint */
+        get: operations["listTelemetryTracks"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/users": {
         parameters: {
             query?: never;
@@ -2001,6 +2188,19 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** Aggregate */
+        Aggregate: {
+            /** Count */
+            count: number;
+            /** Max */
+            max: string | null;
+            /** Min */
+            min: string | null;
+            /** Numeric Count */
+            numeric_count: number;
+            /** Sum */
+            sum: string | null;
+        };
         /** AlignmentRule */
         "AlignmentRule-Input": {
             /** Class Iri */
@@ -2426,6 +2626,75 @@ export interface components {
              * @default []
              */
             source_priority: string[];
+        };
+        /** BatchAccepted */
+        BatchAccepted: {
+            /** Accepted Count */
+            accepted_count: number;
+            /**
+             * Event Id
+             * Format: uuid
+             */
+            event_id: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Record Count */
+            record_count: number;
+            /**
+             * Status
+             * @constant
+             */
+            status: "pending";
+        };
+        /** BatchInput */
+        BatchInput: {
+            /**
+             * Adapter
+             * @default incremental-v1
+             * @enum {string}
+             */
+            adapter: "incremental-v1" | "csv-v1" | "json-v1" | "geojson-v1";
+            /** Input Artifact Version Id */
+            input_artifact_version_id?: string | null;
+            /** Mapping Version Id */
+            mapping_version_id?: string | null;
+            /** Records */
+            records: components["schemas"]["ObservationInput"][];
+            /**
+             * Source Id
+             * Format: uuid
+             */
+            source_id: string;
+        };
+        /** BatchStatus */
+        BatchStatus: {
+            /** Attempts */
+            attempts: number;
+            /**
+             * Delivery Status
+             * @enum {string}
+             */
+            delivery_status: "pending" | "retry" | "failed" | "applied" | "superseded";
+            /** Error */
+            error: string | null;
+            /**
+             * Event Id
+             * Format: uuid
+             */
+            event_id: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "current" | "pending" | "failed" | "unavailable";
         };
         /** BlobRef */
         BlobRef: {
@@ -3244,6 +3513,26 @@ export interface components {
             /** Source Timezone */
             source_timezone: string | null;
             temporal_fields?: components["schemas"]["TemporalFields"] | null;
+        };
+        /** FileReplayInput */
+        FileReplayInput: {
+            /**
+             * Artifact Version Id
+             * Format: uuid
+             */
+            artifact_version_id: string;
+            /**
+             * Format
+             * @enum {string}
+             */
+            format: "csv" | "json" | "geojson";
+            /** Mapping Version Id */
+            mapping_version_id?: string | null;
+            /**
+             * Source Id
+             * Format: uuid
+             */
+            source_id: string;
         };
         /** FormField */
         FormField: {
@@ -4095,6 +4384,24 @@ export interface components {
              */
             synthetic: boolean;
         };
+        /** ObjectDataView */
+        ObjectDataView: {
+            /** Catalog */
+            catalog: {
+                [key: string]: unknown;
+            };
+            /** Gis */
+            gis: {
+                [key: string]: unknown;
+            };
+            /** Identity */
+            identity: {
+                [key: string]: unknown;
+            };
+            media: components["schemas"]["TelemetryPage"];
+            observations: components["schemas"]["TelemetryPage"];
+            tracks: components["schemas"]["TelemetryPage"];
+        };
         /** ObjectView */
         ObjectView: {
             /**
@@ -4149,6 +4456,197 @@ export interface components {
              * @enum {string}
              */
             validation_state: "conforms" | "needs_review" | "pending";
+        };
+        /** ObservationInput */
+        ObservationInput: {
+            /** Artifact Version Id */
+            artifact_version_id?: string | null;
+            /** Channel Id */
+            channel_id?: string | null;
+            /**
+             * Clock Basis
+             * @default device
+             * @enum {string}
+             */
+            clock_basis: "device" | "server" | "imported";
+            /**
+             * Data Nature
+             * @enum {string}
+             */
+            data_nature: "synthetic" | "test" | "imported_unverified" | "verified";
+            device_binding_ref?: components["schemas"]["RevisionRef"] | null;
+            /**
+             * Device Id
+             * Format: uuid
+             */
+            device_id: string;
+            /** End At */
+            end_at?: string | null;
+            /** Event Type */
+            event_type?: string | null;
+            /**
+             * Evidence Version Ids
+             * @default []
+             */
+            evidence_version_ids: string[];
+            /**
+             * Kind
+             * @default observation
+             * @enum {string}
+             */
+            kind: "observation" | "event" | "media" | "track";
+            location_ref?: components["schemas"]["RevisionRef"] | null;
+            /** Metric Id */
+            metric_id?: string | null;
+            /** Mission Id */
+            mission_id?: string | null;
+            model_ref?: components["schemas"]["RevisionRef"] | null;
+            /** Normalized Unit */
+            normalized_unit?: string | null;
+            /** Normalized Value */
+            normalized_value: number | string | null;
+            /**
+             * Object Id
+             * Format: uuid
+             */
+            object_id: string;
+            /**
+             * Operation
+             * @default upsert
+             * @enum {string}
+             */
+            operation: "upsert" | "withdraw";
+            /** Point Id */
+            point_id: string;
+            position?: components["schemas"]["PositionInput"] | null;
+            /**
+             * Quality
+             * @default valid
+             * @enum {string}
+             */
+            quality: "valid" | "suspect" | "invalid" | "unknown";
+            /** Raw Unit */
+            raw_unit?: string | null;
+            /** Raw Value */
+            raw_value: string | null;
+            /** Reported At */
+            reported_at?: string | null;
+            /**
+             * Sampled At
+             * Format: date-time
+             */
+            sampled_at: string;
+            /** Source Record Id */
+            source_record_id: string;
+            supersedes?: components["schemas"]["Supersedes"] | null;
+            /**
+             * Version
+             * @default 1
+             */
+            version: number;
+        };
+        /** ObservationView */
+        ObservationView: {
+            /** Artifact Version Id */
+            artifact_version_id?: string | null;
+            /** Channel Id */
+            channel_id?: string | null;
+            /**
+             * Clock Basis
+             * @default device
+             * @enum {string}
+             */
+            clock_basis: "device" | "server" | "imported";
+            /** Content Hash */
+            content_hash: string;
+            /**
+             * Data Nature
+             * @enum {string}
+             */
+            data_nature: "synthetic" | "test" | "imported_unverified" | "verified";
+            device_binding_ref?: components["schemas"]["RevisionRef"] | null;
+            /**
+             * Device Id
+             * Format: uuid
+             */
+            device_id: string;
+            /** End At */
+            end_at?: string | null;
+            /** Event Type */
+            event_type?: string | null;
+            /**
+             * Evidence Version Ids
+             * @default []
+             */
+            evidence_version_ids: string[];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @default observation
+             * @enum {string}
+             */
+            kind: "observation" | "event" | "media" | "track";
+            location_ref?: components["schemas"]["RevisionRef"] | null;
+            /** Metric Id */
+            metric_id?: string | null;
+            /** Mission Id */
+            mission_id?: string | null;
+            model_ref?: components["schemas"]["RevisionRef"] | null;
+            /** Normalized Unit */
+            normalized_unit?: string | null;
+            /** Normalized Value */
+            normalized_value: string | null;
+            /**
+             * Object Id
+             * Format: uuid
+             */
+            object_id: string;
+            /**
+             * Operation
+             * @default upsert
+             * @enum {string}
+             */
+            operation: "upsert" | "withdraw";
+            /** Point Id */
+            point_id: string;
+            position?: components["schemas"]["PositionInput"] | null;
+            /**
+             * Quality
+             * @default valid
+             * @enum {string}
+             */
+            quality: "valid" | "suspect" | "invalid" | "unknown";
+            /** Raw Unit */
+            raw_unit?: string | null;
+            /** Raw Value */
+            raw_value: string | null;
+            /**
+             * Received At
+             * Format: date-time
+             */
+            received_at: string;
+            /** Reported At */
+            reported_at?: string | null;
+            /**
+             * Sampled At
+             * Format: date-time
+             */
+            sampled_at: string;
+            source_namespace: components["schemas"]["SourceNamespace"];
+            /** Source Record Id */
+            source_record_id: string;
+            supersedes?: components["schemas"]["Supersedes"] | null;
+            /** Supersedes Id */
+            supersedes_id: string | null;
+            /**
+             * Version
+             * @default 1
+             */
+            version: number;
         };
         /** Page */
         Page_ApprovalDetail_: {
@@ -5199,6 +5697,20 @@ export interface components {
             /** Source System */
             source_system: string;
         };
+        /** SourceNamespace */
+        SourceNamespace: {
+            /** Collection */
+            collection: string;
+            /**
+             * Source Id
+             * Format: uuid
+             */
+            source_id: string;
+            /** Source Instance */
+            source_instance: string;
+            /** Source System */
+            source_system: string;
+        };
         /** SourceSupport */
         SourceSupport: {
             /**
@@ -5320,6 +5832,33 @@ export interface components {
         SubmitDraftRequest: {
             /** Impact Digest */
             impact_digest: string;
+        };
+        /** Supersedes */
+        Supersedes: {
+            /** Source Record Id */
+            source_record_id: string;
+            /** Version */
+            version: number;
+        };
+        /** TelemetryPage */
+        TelemetryPage: {
+            aggregate: components["schemas"]["Aggregate"];
+            /**
+             * Aggregate Scope
+             * @constant
+             */
+            aggregate_scope: "page";
+            /** Items */
+            items: components["schemas"]["ObservationView"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "current" | "pending" | "failed" | "unavailable";
+            /** Watermark */
+            watermark: string | null;
         };
         /**
          * TemporalFields
@@ -9083,6 +9622,37 @@ export interface operations {
             };
         };
     };
+    getObjectData: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectDataView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     deactivateObject: {
         parameters: {
             query?: never;
@@ -10558,6 +11128,350 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RevisionRef"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    acceptTelemetryBatch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BatchInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BatchAccepted"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getTelemetryBatch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BatchStatus"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    retryTelemetryBatch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getTelemetryCapabilities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    listTelemetryEvents: {
+        parameters: {
+            query?: {
+                object_id?: string | null;
+                start?: string | null;
+                end?: string | null;
+                cursor?: string | null;
+                limit?: number;
+                history?: boolean;
+                latest?: boolean;
+                device_id?: string | null;
+                channel_id?: string | null;
+                mission_id?: string | null;
+                metric_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TelemetryPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listTelemetryMedia: {
+        parameters: {
+            query?: {
+                object_id?: string | null;
+                start?: string | null;
+                end?: string | null;
+                cursor?: string | null;
+                limit?: number;
+                history?: boolean;
+                latest?: boolean;
+                device_id?: string | null;
+                channel_id?: string | null;
+                mission_id?: string | null;
+                metric_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TelemetryPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listTelemetryObservations: {
+        parameters: {
+            query?: {
+                object_id?: string | null;
+                start?: string | null;
+                end?: string | null;
+                cursor?: string | null;
+                limit?: number;
+                history?: boolean;
+                latest?: boolean;
+                device_id?: string | null;
+                channel_id?: string | null;
+                mission_id?: string | null;
+                metric_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TelemetryPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    replayTelemetryFile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FileReplayInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BatchAccepted"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    previewTelemetryRetention: {
+        parameters: {
+            query: {
+                object_id: string;
+                before: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listTelemetryTracks: {
+        parameters: {
+            query?: {
+                object_id?: string | null;
+                start?: string | null;
+                end?: string | null;
+                cursor?: string | null;
+                limit?: number;
+                history?: boolean;
+                latest?: boolean;
+                device_id?: string | null;
+                channel_id?: string | null;
+                mission_id?: string | null;
+                metric_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TelemetryPage"];
                 };
             };
             /** @description Validation Error */

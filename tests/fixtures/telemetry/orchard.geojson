@@ -1,0 +1,19 @@
+{
+  "type": "FeatureCollection",
+  "features": [{
+    "type": "Feature",
+    "geometry": {"type": "Point", "coordinates": [114.5, 30.2]},
+    "properties": {
+      "kind": "track",
+      "source_record_id": "orchard-flight-1",
+      "object_id": "00000000-0000-0000-0000-000000000001",
+      "device_id": "00000000-0000-0000-0000-000000000002",
+      "point_id": "orchard-drone",
+      "mission_id": "synthetic-mission-1",
+      "raw_value": null,
+      "normalized_value": null,
+      "sampled_at": "2026-01-15T12:00:00Z",
+      "data_nature": "synthetic"
+    }
+  }]
+}

@@ -12,6 +12,7 @@ CREATE ROLE lzo_gis_owner LOGIN PASSWORD :'gis_owner';
 CREATE ROLE lzo_gis_app LOGIN PASSWORD :'gis_app';
 CREATE ROLE lzo_timeseries_owner LOGIN PASSWORD :'timeseries_owner';
 CREATE ROLE lzo_timeseries_app LOGIN PASSWORD :'timeseries_app';
+CREATE ROLE lzo_timeseries_maintainer NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE;
 CREATE ROLE lzo_catalog_owner LOGIN PASSWORD :'catalog_owner';
 CREATE ROLE lzo_catalog_app LOGIN PASSWORD :'catalog_app';
 CREATE ROLE keycloak LOGIN PASSWORD :'keycloak_password';
@@ -28,6 +29,7 @@ REVOKE ALL ON DATABASE keycloak FROM PUBLIC;
 GRANT CONNECT ON DATABASE lzo TO lzo_owner,lzo_app;
 GRANT CONNECT ON DATABASE lzo_gis TO lzo_gis_owner,lzo_gis_app;
 GRANT CONNECT ON DATABASE lzo_timeseries TO lzo_timeseries_owner,lzo_timeseries_app;
+GRANT CONNECT ON DATABASE lzo_timeseries TO lzo_timeseries_maintainer;
 GRANT CONNECT ON DATABASE lzo_catalog TO lzo_catalog_owner,lzo_catalog_app;
 GRANT CONNECT ON DATABASE keycloak TO keycloak;
 \connect lzo

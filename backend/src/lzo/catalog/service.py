@@ -330,7 +330,7 @@ class CatalogService:
         return [DeviceModelView(entity_id=r['entity_id'], model_id=model_id, revision=RevisionRef(r['resource_id'], r['revision'], r['event_id']))
             for r in self.uow.session.execute(statement).mappings()]
 
-    def list(self, actor, kind, *, cursor=None, limit=50, text=None, document_type=None, model_id=None, start=None, end=None):
+    def list(self, actor, kind, *, cursor=None, limit=50, text=None, document_type=None, model_id=None, start=None, end=None, entity_id=None):
         validate_actor(self.uow, actor)
         if type(limit) is not int or not 1 <= limit <= min(self.settings.list_max_page_size, 1000):
             raise ApiError('INVALID_LIMIT', 422, 'Invalid catalog page size')
@@ -342,6 +342,7 @@ class CatalogService:
         context = {'actor': str(actor.subject_id), 'authorization': actor.authorization_version,
             'snapshot': digest_change([[str(identifier), str(event)] for identifier, event in snapshot]),
             'kind': kind, 'text': text, 'type': document_type, 'model': str(model_id) if model_id else None,
+            'entity': str(entity_id) if entity_id else None,
             'start': str(start) if start else None, 'end': str(end) if end else None}
         after = None
         if cursor:
@@ -374,6 +375,8 @@ class CatalogService:
             if document_type and metadata.get('document_type') != document_type:
                 continue
             if model_id and str(model_id) not in metadata.get('model_ids', []):
+                continue
+            if entity_id and str(entity_id) not in metadata.get('entity_ids', []) and 'urn:lzo:object:'+str(entity_id) not in metadata.get('entity_iris', []):
                 continue
             date = metadata.get('publication_date')
             if (start and (not date or date < str(start))) or (end and (not date or date > str(end))):

@@ -51,6 +51,8 @@ def _permission(uow: UnitOfWork, actor: ActorContext, resource_id: UUID, action:
 
 
 def _catalog_write_guard(scope):
+    if scope['resource_kind'] == 'telemetry.batch':
+        raise Forbidden('TELEMETRY_COMMAND_REQUIRED', 'Use immutable telemetry manifests and explicit retry')
     if scope['resource_kind'] in {'catalog.model', 'catalog.document', 'catalog.device'}:
         raise Forbidden('CATALOG_COMMAND_REQUIRED', 'Use versioned catalog attachment references')
 
