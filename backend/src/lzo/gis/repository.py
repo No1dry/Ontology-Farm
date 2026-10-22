@@ -67,8 +67,8 @@ class GisRepository:
     def __init__(self, registry):
         self.registry = registry
 
-    def assets(self, authorized_ids):
-        return self._metadata("gis_spatial_assets",authorized_ids)
+    def assets(self, authorized_ids, *, cursor=None, limit=100):
+        return self._metadata("gis_spatial_assets",authorized_ids,cursor=cursor,limit=limit)
 
     def observations(self, authorized_ids, *, start=None, end=None, cursor=None, limit=100):
         rows=self._metadata("gis_location_observations",authorized_ids,start=start,end=end,cursor=cursor,limit=limit)
@@ -85,8 +85,12 @@ class GisRepository:
         if end is not None:
             query+="AND observed_at<:end ";params["end"]=end
         if cursor:
-            query+="AND (observed_at,resource_id,observation_id)>(:time,:id,:observation) "
-            params.update(zip(("time","id","observation"),cursor))
+            if historical:
+                query+="AND (observed_at,resource_id,observation_id)>(:time,:id,:observation) "
+                params.update(zip(("time","id","observation"),cursor))
+            else:
+                query+="AND asset_id>:cursor "
+                params["cursor"]=cursor
         query+="ORDER BY "+("observed_at,resource_id,observation_id" if historical else "asset_id")+" LIMIT :limit"
         with self.registry.engine("gis").connect() as connection:
             rows=connection.execute(text(query).bindparams(bindparam("ids",expanding=True)),params).mappings()

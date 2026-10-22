@@ -134,34 +134,64 @@ def register_location_observation(uow,actor,command,bundle):
     return facts.record_state(uow,actor,row,command.expected_revision,bundle,refs,"object.location_observed",effect).revision
 
 
-def list_spatial_assets(uow,actor,identifier):
+def list_spatial_assets(uow,actor,identifier,*,limit=None,cursor=None):
     from lzo.semantic import facts
     from lzo.storage.registry import StorageRegistry
     from lzo.gis.repository import GisRepository
     from lzo.synchronization.delivery import require_deliveries, DeliveriesPending, DeliveriesFailed
     from lzo.governance.models import resource_heads
-    from lzo.errors import ApiError
+    from lzo.errors import ApiError,Conflict
+    import base64
+    import binascii
     facts.get_object_row(uow,actor,identifier)
     if not split(uow):raise ApiError("GIS_SPLIT_REQUIRED",409,"Spatial registration requires split GIS storage")
     event=uow.session.execute(select(resource_heads.c.event_id).where(resource_heads.c.resource_id==identifier)).scalar_one()
+    settings=settings_for(uow)
+    size=limit if limit is not None else min(settings.list_page_size,settings.list_max_page_size,1000)
+    if type(size) is not int or not 1<=size<=min(settings.list_max_page_size,1000):
+        raise ApiError("INVALID_LIMIT",422,"Invalid asset page size")
+    after=None
+    if cursor is not None:
+        try:
+            if len(cursor)>1024:raise ValueError()
+            value=json.loads(base64.b64decode(cursor+'='*(-len(cursor)%4),altchars=b'-_',validate=True))
+            if not isinstance(value,dict) or set(value)!={'version','resource','event','actor','authorization','after'} or type(value['version']) is not int or value['version']!=1:raise ValueError()
+            if any(not isinstance(value[key],str) for key in ('resource','actor','event','after')):raise ValueError()
+            if UUID(value['resource'])!=identifier or UUID(value['actor'])!=actor.subject_id:raise ValueError()
+            after=UUID(value['after'])
+            cursor_event=UUID(value['event'])
+            if type(value['authorization']) is not int:raise ValueError()
+        except (ValueError,TypeError,KeyError,binascii.Error):
+            raise ApiError("INVALID_CURSOR",422,"Invalid asset cursor") from None
+        if cursor_event!=event or value['authorization']!=actor.authorization_version:
+            raise Conflict("GIS_CURSOR_STALE","Object or authorization changed; restart asset pagination")
     try:
         require_deliveries(uow,event,("gis",))
         _require_history(uow,identifier,"object.spatial_asset_registered")
-    except DeliveriesFailed:return {"status":"failed","assets":[]}
-    except DeliveriesPending:return {"status":"pending","assets":[]}
-    registry=StorageRegistry.from_settings(settings_for(uow))
-    try:rows=GisRepository(registry).assets([identifier])
-    except DBAPIError:return {"status":"unavailable","assets":[]}
-    finally:registry.close()
+    except DeliveriesFailed:return {"status":"failed","assets":[],"next_cursor":None}
+    except DeliveriesPending:return {"status":"pending","assets":[],"next_cursor":None}
+    registry=StorageRegistry.from_settings(settings)
     output=[]
-    for asset in rows:
-        try:
-            _artifact(uow,actor,UUID(asset["artifact_version_id"]),asset["sha256"])
-            if asset.get("survey_evidence_version_id"):_artifact(uow,actor,UUID(asset["survey_evidence_version_id"]))
-        except ApiError:
-            continue
-        output.append(asset)
-    return {"status":"current","assets":output}
+    try:
+        while len(output)<=size:
+            rows=GisRepository(registry).assets([identifier],cursor=after,limit=size+1)
+            for asset in rows:
+                after=UUID(asset['asset_id'])
+                try:
+                    _artifact(uow,actor,UUID(asset["artifact_version_id"]),asset["sha256"])
+                    if asset.get("survey_evidence_version_id"):_artifact(uow,actor,UUID(asset["survey_evidence_version_id"]))
+                except ApiError:continue
+                output.append(asset)
+                if len(output)>size:break
+            if len(rows)<size+1:break
+    except DBAPIError:return {"status":"unavailable","assets":[],"next_cursor":None}
+    finally:registry.close()
+    next_cursor=None
+    if len(output)>size:
+        value={'version':1,'resource':str(identifier),'event':str(event),'actor':str(actor.subject_id),
+            'authorization':actor.authorization_version,'after':output[size-1]['asset_id']}
+        next_cursor=base64.urlsafe_b64encode(json.dumps(value,separators=(',',':')).encode()).decode().rstrip('=')
+    return {"status":"current","assets":output[:size],"next_cursor":next_cursor}
 
 
 def list_location_observations(uow,actor,identifier,*,start=None,end=None,cursor=None):

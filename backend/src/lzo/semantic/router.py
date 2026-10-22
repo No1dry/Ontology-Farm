@@ -1,7 +1,7 @@
 """Dynamic object HTTP contract on shared authentication and caller-owned UoW."""
 from uuid import UUID
 from datetime import datetime
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Query
 from sqlalchemy import select
 from fastapi.encoders import jsonable_encoder
 from lzo.auth.router import AuthRequest, authenticated
@@ -22,7 +22,7 @@ from lzo.semantic.validation import ValidationReport
 from lzo.semantic.query import QueryRequest, QueryResult, GraphNeighborhood, execute_query, neighborhood
 from lzo.semantic.proofs import CurrentProofView, current_proof
 from lzo.semantic.exports import ExportRequest, start_export
-from lzo.gis.schemas import SpatialAssetRequest, LocationObservationRequest
+from lzo.gis.schemas import SpatialAssetRequest, LocationObservationRequest, SpatialAssetPage
 
 router = APIRouter(prefix="/api/v1", tags=["Objects"])
 
@@ -37,10 +37,10 @@ def spatial_asset_post(body:SpatialAssetRequest,request:Request,auth:AuthRequest
         lambda:register_spatial_asset(auth.uow,auth.actor,body.asset,snapshot))
 
 
-@router.get("/objects/{object_id}/spatial-assets",operation_id="listSpatialAssets")
-def spatial_assets_get(object_id:UUID,auth:AuthRequest=Depends(authenticated)):
+@router.get("/objects/{object_id}/spatial-assets",response_model=SpatialAssetPage,operation_id="listSpatialAssets")
+def spatial_assets_get(object_id:UUID,limit:int|None=Query(default=None,ge=1,le=1000),cursor:str|None=None,auth:AuthRequest=Depends(authenticated)):
     from lzo.gis.service import list_spatial_assets
-    return list_spatial_assets(setup(auth),auth.actor,object_id)
+    return list_spatial_assets(setup(auth),auth.actor,object_id,limit=limit,cursor=cursor)
 
 
 @router.post("/location-observations",response_model=RevisionRef,status_code=201,operation_id="registerLocationObservation")

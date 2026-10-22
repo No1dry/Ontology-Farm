@@ -4900,6 +4900,20 @@ export interface components {
             /** Vertical Datum */
             vertical_datum?: string | null;
         };
+        /** SpatialAssetPage */
+        SpatialAssetPage: {
+            /** Assets */
+            assets: {
+                [key: string]: unknown;
+            }[];
+            /** Next Cursor */
+            next_cursor: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "current" | "pending" | "failed" | "unavailable";
+        };
         /** SpatialAssetRequest */
         SpatialAssetRequest: {
             asset: components["schemas"]["SpatialAssetInput"];
@@ -8229,7 +8243,10 @@ export interface operations {
     };
     listSpatialAssets: {
         parameters: {
-            query?: never;
+            query?: {
+                limit?: number | null;
+                cursor?: string | null;
+            };
             header?: never;
             path: {
                 object_id: string;
@@ -8244,7 +8261,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["SpatialAssetPage"];
                 };
             };
             /** @description Validation Error */

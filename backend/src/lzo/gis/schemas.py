@@ -66,3 +66,9 @@ class SpatialAssetRequest(BaseModel):
 class LocationObservationRequest(BaseModel):
     observation: LocationObservationInput
     bundle_id: UUID
+
+
+class SpatialAssetPage(BaseModel):
+    status: Literal["current","pending","failed","unavailable"]
+    assets: list[dict]
+    next_cursor: str | None
