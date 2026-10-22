@@ -16,7 +16,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
 from lzo.config import Settings
-from lzo.db import create_db_engine
+from lzo.storage.registry import StorageRegistry
 from lzo.errors import ApiError
 
 logger = logging.getLogger(__name__)
@@ -56,16 +56,18 @@ def _validation_details(error: RequestValidationError):
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     config = settings or Settings()
-    engine = create_db_engine(config)
+    registry = StorageRegistry.from_settings(config)
+    engine = registry.engine("core")
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI):
         yield
-        engine.dispose()
+        registry.close()
 
     app = FastAPI(title="Liangzi Lake operational ontology API", version="0.1.0", lifespan=lifespan)
     app.state.settings = config
     app.state.engine = engine
+    app.state.storage_registry = registry
     from lzo.auth.router import router as auth_router
     from lzo.governance.history_router import router as history_router
     from lzo.artifacts.router import router as artifact_router
@@ -159,6 +161,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         except SQLAlchemyError:
             pass
 
+        stores = registry.readiness() if config.storage_mode == "split" else {}
+        for domain, status in stores.items():
+            dependencies["store_" + domain] = status
+        synchronization = {"pending": None, "failed": None}
+        if config.storage_mode == "split" and stores.get("core") == "ready":
+            try:
+                with engine.connect() as connection:
+                    synchronization = {"pending": connection.execute(text("SELECT count(*) FROM store_deliveries WHERE status IN ('pending','retry')")).scalar_one(),
+                                       "failed": connection.execute(text("SELECT count(*) FROM store_deliveries WHERE status='failed'")).scalar_one()}
+            except SQLAlchemyError:
+                pass
+
         verify = ssl.create_default_context(cafile=str(config.ca_bundle)) if config.ca_bundle else True
         with httpx.Client(timeout=3, verify=verify) as client:
             try:
@@ -187,7 +201,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             pass
 
         available = all(status == "ready" for status in dependencies.values())
-        return JSONResponse({"status": "ready" if available else "unavailable", "dependencies": dependencies},
+        return JSONResponse({"status": "ready" if available else "unavailable", "dependencies": dependencies, "synchronization": synchronization},
                             status_code=200 if available else 503)
 
     return app

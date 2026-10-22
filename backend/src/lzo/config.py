@@ -1,13 +1,28 @@
 """Environment-backed service configuration."""
 
 from pathlib import Path
+from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="LZO_", extra="ignore")
+
+    storage_mode: Literal["legacy", "split"] = "legacy"
+    gis_database_url: str | None = Field(default=None, repr=False)
+    timeseries_database_url: str | None = Field(default=None, repr=False)
+    catalog_database_url: str | None = Field(default=None, repr=False)
+    gis_migration_database_url: str | None = Field(default=None, repr=False)
+    timeseries_migration_database_url: str | None = Field(default=None, repr=False)
+    catalog_migration_database_url: str | None = Field(default=None, repr=False)
+
+    @model_validator(mode="after")
+    def explicit_split_stores(self):
+        if self.storage_mode == "split" and any(not getattr(self, f"{d}_database_url") for d in ("gis", "timeseries", "catalog")):
+            raise ValueError("split storage requires explicit GIS, timeseries and catalog database URLs")
+        return self
 
     database_url: str = Field(repr=False)
     migration_database_url: str | None = Field(default=None, repr=False)

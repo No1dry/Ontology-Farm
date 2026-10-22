@@ -5,6 +5,10 @@ x-api: &api
     context: ../..
     dockerfile: backend/Dockerfile
   environment: &api-env
+    LZO_STORAGE_MODE: ${LZO_STORAGE_MODE:-split}
+    LZO_GIS_DATABASE_URL: postgresql+psycopg://lzo_gis_app:${LZO_GIS_APP_PASSWORD:?Generate .env first}@postgres:5432/lzo_gis
+    LZO_TIMESERIES_DATABASE_URL: postgresql+psycopg://lzo_timeseries_app:${LZO_TIMESERIES_APP_PASSWORD:?Generate .env first}@postgres:5432/lzo_timeseries
+    LZO_CATALOG_DATABASE_URL: postgresql+psycopg://lzo_catalog_app:${LZO_CATALOG_APP_PASSWORD:?Generate .env first}@postgres:5432/lzo_catalog
     LZO_DATABASE_URL: postgresql+psycopg://lzo_app:${LZO_APP_PASSWORD:?Generate .env first}@postgres:5432/lzo
     LZO_FUSEKI_URL: http://fuseki:3030/lzo
     LZO_OIDC_ISSUER: ${LZO_PUBLIC_ORIGIN:-https://localhost:8443}/identity/realms/lzo
@@ -48,6 +52,12 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Generate .env first}
       LZO_OWNER_PASSWORD: ${LZO_OWNER_PASSWORD:?Generate .env first}
       LZO_APP_PASSWORD: ${LZO_APP_PASSWORD:?Generate .env first}
+      LZO_GIS_OWNER_PASSWORD: ${LZO_GIS_OWNER_PASSWORD:?Generate .env first}
+      LZO_GIS_APP_PASSWORD: ${LZO_GIS_APP_PASSWORD:?Generate .env first}
+      LZO_TIMESERIES_OWNER_PASSWORD: ${LZO_TIMESERIES_OWNER_PASSWORD:?Generate .env first}
+      LZO_TIMESERIES_APP_PASSWORD: ${LZO_TIMESERIES_APP_PASSWORD:?Generate .env first}
+      LZO_CATALOG_OWNER_PASSWORD: ${LZO_CATALOG_OWNER_PASSWORD:?Generate .env first}
+      LZO_CATALOG_APP_PASSWORD: ${LZO_CATALOG_APP_PASSWORD:?Generate .env first}
       KEYCLOAK_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD:?Generate .env first}
     volumes:
       - postgres:/var/lib/postgresql/data
@@ -116,6 +126,9 @@ services:
     environment:
       <<: *api-env
       LZO_MIGRATION_DATABASE_URL: postgresql+psycopg://lzo_owner:${LZO_OWNER_PASSWORD:?Generate .env first}@postgres:5432/lzo
+      LZO_GIS_MIGRATION_DATABASE_URL: postgresql+psycopg://lzo_gis_owner:${LZO_GIS_OWNER_PASSWORD:?Generate .env first}@postgres:5432/lzo_gis
+      LZO_TIMESERIES_MIGRATION_DATABASE_URL: postgresql+psycopg://lzo_timeseries_owner:${LZO_TIMESERIES_OWNER_PASSWORD:?Generate .env first}@postgres:5432/lzo_timeseries
+      LZO_CATALOG_MIGRATION_DATABASE_URL: postgresql+psycopg://lzo_catalog_owner:${LZO_CATALOG_OWNER_PASSWORD:?Generate .env first}@postgres:5432/lzo_catalog
       LZO_TEST_PROJECT: ${COMPOSE_PROJECT_NAME:-lzo-dev}
       LZO_SERVICE_MODE: compose
       SOURCE_POSTGRES_PASSWORD: ${SOURCE_POSTGRES_PASSWORD:?Generate .env first}
@@ -136,6 +149,9 @@ services:
     environment:
       <<: *api-env
       LZO_MIGRATION_DATABASE_URL: postgresql+psycopg://lzo_owner:${LZO_OWNER_PASSWORD:?Generate .env first}@postgres:5432/lzo
+      LZO_GIS_MIGRATION_DATABASE_URL: postgresql+psycopg://lzo_gis_owner:${LZO_GIS_OWNER_PASSWORD:?Generate .env first}@postgres:5432/lzo_gis
+      LZO_TIMESERIES_MIGRATION_DATABASE_URL: postgresql+psycopg://lzo_timeseries_owner:${LZO_TIMESERIES_OWNER_PASSWORD:?Generate .env first}@postgres:5432/lzo_timeseries
+      LZO_CATALOG_MIGRATION_DATABASE_URL: postgresql+psycopg://lzo_catalog_owner:${LZO_CATALOG_OWNER_PASSWORD:?Generate .env first}@postgres:5432/lzo_catalog
   web-test:
     build:
       context: ../..

@@ -9,6 +9,9 @@ RUN pip install --no-cache-dir -r requirements.lock \
 COPY backend/ ./backend/
 COPY database/alembic.ini ./database/alembic.ini
 COPY database/migrations/ ./database/migrations/
+COPY database/gis/ ./database/gis/
+COPY database/timeseries/ ./database/timeseries/
+COPY database/catalog/ ./database/catalog/
 COPY database/fuseki/config.ttl ./database/fuseki/config.ttl
 COPY infra/versions.lock.json ./infra/versions.lock.json
 # Existing API tests also consume shared contracts, fixtures and helper scripts.

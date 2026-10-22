@@ -1,4 +1,4 @@
-"""PostgreSQL engine and explicit transaction unit of work."""
+"""Core PostgreSQL transaction unit of work; domain engines use StorageRegistry."""
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine

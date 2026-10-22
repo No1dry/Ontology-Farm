@@ -13,6 +13,9 @@ def main():
     config = Config(str(Path(__file__).resolve().parents[3] / "database/alembic.ini"))
     config.attributes["connection_url"] = url
     command.upgrade(config, "head")
+    if os.environ.get("LZO_STORAGE_MODE", "legacy") == "split":
+        from lzo.storage.migrate import main as migrate_domains
+        migrate_domains()
 
 
 if __name__ == "__main__":

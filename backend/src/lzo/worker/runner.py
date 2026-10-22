@@ -262,7 +262,10 @@ def poll_once(runner):
 def main():
     settings = Settings()
     load_handlers(settings)
-    engine = create_db_engine(settings)
+    from lzo.storage.registry import StorageRegistry
+    from lzo.synchronization.delivery import poll_deliveries
+    registry = StorageRegistry.from_settings(settings)
+    engine = registry.engine("core")
     runner = Runner(engine, settings)
     stop = Event()
     for event in (signal.SIGTERM, signal.SIGINT):
@@ -270,6 +273,8 @@ def main():
     try:
         while not stop.is_set():
             try:
+                if settings.storage_mode == "split":
+                    poll_deliveries(registry)
                 busy = poll_once(runner)
             except Exception:
                 logger.error("Worker poll failed; retrying without exposing connection details")
@@ -277,4 +282,4 @@ def main():
             if not busy:
                 stop.wait(settings.job_poll_seconds)
     finally:
-        engine.dispose()
+        registry.close()
