@@ -23,6 +23,22 @@ from lzo.storage.migration import (_configuration, blob_identity, claim_blob_nam
     connection_identity, create_engine_for, identity, verify_blob_namespace)
 
 
+def destination_url(source, admin, database):
+    """Only credentials and schema/session options may come from the source."""
+    blocked = {'host', 'hostaddr', 'port', 'service', 'servicefile', 'dbname', 'database', 'user', 'password'}
+    if (blocked.intersection(k.lower() for k in source.query)
+            or blocked.intersection(k.lower() for k in admin.query)
+            or not admin.host or not admin.port or ',' in admin.host or '/' in admin.host):
+        raise BackupError('RESTORE_TRANSPORT_OVERRIDE')
+    return source.set(host=admin.host, port=admin.port, database=database)
+
+
+def _check_transport_environment():
+    import os
+    if any(os.environ.get(key) for key in ('PGHOSTADDR', 'PGSERVICE', 'PGSERVICEFILE')):
+        raise BackupError('RESTORE_TRANSPORT_OVERRIDE')
+
+
 def _rdf_digest(path):
     """Canonical quad reification retains blank-node links between named graphs."""
     from rdflib import Graph, BNode, URIRef, Literal
@@ -54,6 +70,7 @@ class RestoreService:
         destination = Path(destination).resolve()
         if destination.exists():
             raise BackupError('TARGET_EXISTS')
+        _check_transport_environment()
         manifest_path = Path(manifest_path).resolve()
         report = verify_backup_material(manifest_path, self.authority_key, self.pg_bin)
         manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
@@ -74,7 +91,7 @@ class RestoreService:
             for kind in ('database_url', 'migration_database_url'):
                 key = ('' if domain == 'core' else domain + '_') + kind
                 url = make_url(getattr(source, key))
-                overrides[key] = url.set(database=names[domain]).render_as_string(hide_password=False)
+                overrides[key] = destination_url(url, self.admin.url, names[domain]).render_as_string(hide_password=False)
         settings = source.model_copy(update=overrides)
         destination.mkdir(parents=True, exist_ok=True)
         state_path = destination / 'ownership.json'
@@ -86,6 +103,7 @@ class RestoreService:
             claim_blob_namespace(settings, 'restore', restore_id)
             blob_store = get_blob_store(settings)
             with self.admin.connect().execution_options(isolation_level='AUTOCOMMIT') as c:
+                cluster = c.execute(text('SELECT system_identifier::text FROM pg_control_system()')).scalar_one()
                 quote = c.dialect.identifier_preparer.quote
                 for domain, name in names.items():
                     owner = 'lzo_owner' if domain == 'core' else 'lzo_' + domain + '_owner'
@@ -105,11 +123,34 @@ class RestoreService:
                             actual = {r[0]: r[1] for r in target.execute(text('SELECT extname,extversion FROM pg_extension'))}
                             if any(actual.get(r['extname']) != r['extversion'] for r in manifest['stores'][domain]['extensions']):
                                 raise BackupError('RESTORE_EXTENSION_VERSION_MISMATCH')
+                            # The nonce is created by the explicit destination admin.
+                            # OIDs alone can coincide on independent clusters.
+                            target.execute(text('CREATE SCHEMA lzo_restore_control'))
+                            target.execute(text('CREATE TABLE lzo_restore_control.binding(id uuid,cluster text,domain text)'))
+                            target.execute(text('INSERT INTO lzo_restore_control.binding VALUES(:id,:cluster,:domain)'),
+                                {'id': restore_id, 'cluster': cluster, 'domain': domain})
+                            target.exec_driver_sql('GRANT USAGE ON SCHEMA lzo_restore_control TO ' + quote(owner) + ',' + quote(app))
+                            target.exec_driver_sql('GRANT SELECT ON lzo_restore_control.binding TO ' + quote(owner) + ',' + quote(app))
                     finally:
                         target_admin.dispose()
-                    owner_url = getattr(settings, ('' if domain == 'core' else domain + '_') + 'migration_database_url')
-                    self._restore_database(manifest_path.parent, manifest, domain, owner_url, destination)
-                    engines[domain] = create_engine_for(owner_url)
+            # Check every owner AND runtime route before the first data load.
+            for domain, name in names.items():
+                for kind in ('migration_database_url', 'database_url'):
+                    url = getattr(settings, ('' if domain == 'core' else domain + '_') + kind)
+                    engine = create_engine_for(url)
+                    try:
+                        with engine.connect() as route:
+                            binding = route.execute(text('SELECT * FROM lzo_restore_control.binding')).mappings().one()
+                            if (dict(binding) != {'id': restore_id, 'cluster': cluster, 'domain': domain}
+                                    or route.execute(text('SELECT current_database()')).scalar_one() != name):
+                                raise BackupError('RESTORE_DESTINATION_MISMATCH')
+                    finally:
+                        engine.dispose()
+                owner_url = getattr(settings, ('' if domain == 'core' else domain + '_') + 'migration_database_url')
+                engines[domain] = create_engine_for(owner_url)
+            for domain, engine in engines.items():
+                self._restore_database(manifest_path.parent, manifest, domain,
+                    engine.url.render_as_string(hide_password=False), destination)
             created = httpx.post(endpoint_base + '/$/datasets', data={'dbName': namespace, 'dbType': 'tdb2'}, timeout=30, trust_env=False)
             created.raise_for_status()
             empty = httpx.get(settings.fuseki_url + '/query', params={'query': 'ASK { { ?s ?p ?o } UNION { GRAPH ?g { ?s ?p ?o } } }'}, timeout=10, trust_env=False)

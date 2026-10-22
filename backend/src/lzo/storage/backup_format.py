@@ -74,6 +74,8 @@ def pg_command(pg_bin, tool, arguments, *, url=None, timeout=600, diagnostic_pat
     import os
     env = dict(os.environ)
     if url is not None:
+        for key in ('PGHOSTADDR', 'PGSERVICE', 'PGSERVICEFILE'):
+            env.pop(key, None)
         env.update(PGHOST=url.host or '', PGPORT=str(url.port or 5432), PGUSER=url.username or '',
             PGPASSWORD=url.password or '', PGDATABASE=url.database or '')
         env['PGOPTIONS'] = url.query.get('options', '')

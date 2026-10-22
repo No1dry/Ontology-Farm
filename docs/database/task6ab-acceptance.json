@@ -9,33 +9,38 @@
       "result": "33 passed",
       "seconds": 0.78,
       "log": "task6ab-unit-commit.log",
-      "stage": "final unit check after runtime fixes and EOF whitespace trimming"
+      "stage": "final unit check after runtime fixes and EOF whitespace trimming",
+      "fix_round_1_boundary": "Retained evidence at/before 1531a5f; not verification of I1-I4 fixes."
     },
     {
       "name": "clean stopped-writer locks retained across inner refusal",
       "result": "1 passed, 7 deselected",
       "seconds": 54.51,
       "log": "task6ab-green-maintenance-clean.log",
-      "stage": "before final ownership change; maintenance code unchanged"
+      "stage": "before final ownership change; maintenance code unchanged",
+      "fix_round_1_boundary": "Retained evidence at/before 1531a5f; not verification of I1-I4 fixes."
     },
     {
       "name": "real namespace competing-plan refusal and interrupted duplicate resume",
       "result": "2 passed, 6 deselected",
       "seconds": 104.44,
       "log": "task6ab-ownership-migration.log",
-      "stage": "after ownership fix; before final terminal-state/orphan guards"
+      "stage": "after ownership fix; before final terminal-state/orphan guards",
+      "fix_round_1_boundary": "Retained evidence at/before 1531a5f; not verification of I1-I4 fixes."
     },
     {
       "name": "terminal-state race and pre-existing orphan GIS target refusal",
       "result": "2 passed, 8 deselected",
       "seconds": 102.09,
-      "log": "task6ab-green-final-refusals.log"
+      "log": "task6ab-green-final-refusals.log",
+      "fix_round_1_boundary": "Retained evidence at/before 1531a5f; not verification of I1-I4 fixes."
     },
     {
       "name": "final affected restored API/current rights, compatible rollback, split-only post-write restore",
       "result": "3 passed, 1 deselected",
       "seconds": 619.0,
-      "log": "task6ab-ownership-recovery.log"
+      "log": "task6ab-ownership-recovery.log",
+      "fix_round_1_boundary": "Retained evidence at/before 1531a5f; not verification of I1-I4 fixes."
     }
   ],
   "packages": [
@@ -743,7 +748,7 @@
   "interpretation": {
     "table_counts_overlap": "Partition parent/children and repeated package captures overlap; never sum them as accepted records.",
     "rdf_state": "Matches recorded current/history projection heads. Pending accepted events/queues remain pending; no claim that all semantic work was drained to latest revision.",
-    "source_cleanup": "Product code never deletes source stores. Integration fixture teardown removes only its explicitly owned temporary core/GIS schemas after source-preservation assertions.",
+    "source_cleanup": "Product code never deletes source stores. Fixture teardown removes only explicitly owned temporary core/GIS schemas and the isolated catalog schema used for namespace replacement; retained restore targets remain owned.",
     "startup": "Fresh FastAPI TestClient startup from LZO_ACTIVATION_CONFIG was verified; full native daemon restart is a 6C gate."
   },
   "excluded": [
@@ -759,6 +764,880 @@
     "Confirmed semantic-object evidence attachment advances generic ledger head without semantic snapshot; migration fails closed LEGACY_HEAD_REPAIR_REQUIRED; root tracks integration repair.",
     "Catalog has capped failure visibility but no governed terminal-delivery retry API; restore preserves failed state rather than claiming to repair it.",
     "Task 5 deferred M1 malformed cursors and M2 maintenance group-role recipe remain open.",
-    "6C must validate broad integrated HEAD, native restart, public deployment schema inventory and measured workload; core/GIS restore here used owned isolated source schemas, timeseries/catalog used owned public schemas."
-  ]
+    "6C must validate broad integrated HEAD, native restart, public deployment schema inventory and measured workload; core/GIS restore here used owned isolated source schemas, timeseries/catalog used owned public schemas. Fix round 1 additionally tested one owned isolated catalog schema for identity replacement, not the broader 6C normal deployment/restart gate."
+  ],
+  "fix_round_1": {
+    "review_base": "1531a5ffea5f8856d2cb2ac25c0e31d55f21c59d",
+    "findings": [
+      "I1 explicit destination routing and cluster binding",
+      "I2 all-store final quiescence/identity/schema state",
+      "I3 terminal reconciliation CAS",
+      "I4 durable atomic publication and validated idempotent recovery"
+    ],
+    "checks": [
+      {
+        "name": "focused routing/publication/RDF/reference/blob/namespace units",
+        "result": "45 passed",
+        "seconds": 0.79,
+        "log": "task6ab-fix-green-units-final.log"
+      },
+      {
+        "name": "native reconciliation/maintenance/refusal checks",
+        "result": "3 passed, 8 deselected",
+        "seconds": 164.21,
+        "log": "task6ab-fix-green-refusals.log",
+        "boundary": "Before explicit captured schema-state follow-through; these refused paths were unchanged by it."
+      },
+      {
+        "name": "actual different-cluster restore, post-write rollback/race/publication recovery, all-domain identity/version activation",
+        "result": "3 passed, 2 deselected",
+        "seconds": 575.6,
+        "log": "task6ab-fix-green-coupled-final.log",
+        "boundary": "After final runtime/schema/helper changes."
+      }
+    ],
+    "preserved_incomplete_run": {
+      "result": "2 passed, 2 deselected, 1 setup error",
+      "seconds": 589.77,
+      "log": "task6ab-fix-green-coupled.log",
+      "error": "pg_ctl capture inherited-pipe TimeoutExpired before any archive load",
+      "owned_destination_state": "stopped_setup_interrupted",
+      "archive_load_started": false,
+      "boundary": "The two passes preceded the final captured schema-state binding."
+    },
+    "separate_cluster_restore": {
+      "id": "654ede78-bf04-4da5-a138-40a9ea9904c0",
+      "namespace": "lzo_restore_ecbf248e53384dff",
+      "state": "verified",
+      "destination_port": 8568,
+      "source_port": 25432,
+      "cluster_binding": "Distinct actual pg_control_system system identifiers; every owner/runtime route verified admin-created UUID/domain/cluster binding before data load.",
+      "same_named_source_database": "Preserved synthetic sentinel; no semantic_objects table created there.",
+      "targets": {
+        "core": {
+          "database": "lzo_restore_ecbf248e53384dff_core",
+          "schema": "f03_060ff82008ca4704ac8c062a461d171f",
+          "address": "127.0.0.1/32",
+          "port": 8568,
+          "database_oid": 20055,
+          "schema_oid": 22245
+        },
+        "gis": {
+          "database": "lzo_restore_ecbf248e53384dff_gis",
+          "schema": "migration_9211c03830994e10a16a0ae297c9a3cc",
+          "address": "127.0.0.1/32",
+          "port": 8568,
+          "database_oid": 21143,
+          "schema_oid": 23717
+        },
+        "timeseries": {
+          "database": "lzo_restore_ecbf248e53384dff_timeseries",
+          "schema": "public",
+          "address": "127.0.0.1/32",
+          "port": 8568,
+          "database_oid": 22231,
+          "schema_oid": 2200
+        },
+        "catalog": {
+          "database": "lzo_restore_ecbf248e53384dff_catalog",
+          "schema": "public",
+          "address": "127.0.0.1/32",
+          "port": 8568,
+          "database_oid": 22238,
+          "schema_oid": 2200
+        },
+        "blob": {
+          "provider": "s3",
+          "endpoint": "http://127.0.0.1:28333",
+          "bucket": "lzo-artifacts",
+          "prefix": "restores/lzo_restore_ecbf248e53384dff"
+        },
+        "rdf": "http://127.0.0.1:23030/lzo_restore_ecbf248e53384dff"
+      },
+      "references": {
+        "blob_versions": 5,
+        "upload_parts": 1,
+        "gis_versions": 2,
+        "catalog_versions": 0,
+        "telemetry_records": 0,
+        "rdf_heads": 1
+      },
+      "captured_schema_state": {
+        "core": [
+          "0406_storage_backups"
+        ],
+        "gis": 4,
+        "timeseries": 3,
+        "catalog": 3
+      },
+      "sql_inventory": {
+        "core": {
+          "alembic_version": {
+            "rows": 1,
+            "digest": "fe405d92d9db3996307d30830fa1f6cb7c51cba8d6ec568ff75631f43520c953",
+            "partition": false
+          },
+          "approval_decisions": {
+            "rows": 1,
+            "digest": "43ad0215de85acdb0045353ce96cfc341c21bc18c106c5bde8d3c33bdfa51b2b",
+            "partition": false
+          },
+          "approval_dependencies": {
+            "rows": 2,
+            "digest": "0c428b1a76dfae9c05b4c3451e744bf896e9be378cb97252b4c09f4651c9a6fe",
+            "partition": false
+          },
+          "approvals": {
+            "rows": 1,
+            "digest": "b04df12440a4b7307750e30fdd47ae85a07742763c2a99daa465b9d725b78461",
+            "partition": false
+          },
+          "artifact_links": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "artifact_quotas": {
+            "rows": 3,
+            "digest": "86aa19e235861f7e8b977c5826dbb737ffb6b37b52f769461926944ed0717980",
+            "partition": false
+          },
+          "artifact_reviews": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "artifact_upload_sessions": {
+            "rows": 1,
+            "digest": "31e5f27edd523850eebba429c5f1f7a92364ffb95b4053ec635852e6310de1d8",
+            "partition": false
+          },
+          "artifact_versions": {
+            "rows": 5,
+            "digest": "cc13c4114ea7fb2b585e0fb38539eaaf640aeb5e4f3e31326c65b6051c138a0a",
+            "partition": false
+          },
+          "audit_events": {
+            "rows": 44,
+            "digest": "21c2ee13d9aeea5abd509aec246dfcf5d8736bba8e9a843285e24526f26c1424",
+            "partition": false
+          },
+          "authorization_footprints": {
+            "rows": 1,
+            "digest": "20ddf52cac96f69dffdfcaa7af5122c4079eb3720e251cf657343ccb3e7250cc",
+            "partition": false
+          },
+          "authorization_state": {
+            "rows": 1,
+            "digest": "f4d6b1e6727be7c4b41b24d8a3cc394e6a32675ccc8ad8c7150a9d4d6c49f01d",
+            "partition": false
+          },
+          "bff_sessions": {
+            "rows": 5,
+            "digest": "abd68ccd3aedab12c9071bfd8aed1639a637b8b3aa163fc238c36ae114598e96",
+            "partition": false
+          },
+          "catalog_device_models": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "catalog_entries": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "execution_bundles": {
+            "rows": 1,
+            "digest": "3ed9a88ca8017b14a2adaa21517051324d697ada7f8fdf056beaab6a9a9e2aad",
+            "partition": false
+          },
+          "group_members": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "idempotency_results": {
+            "rows": 6,
+            "digest": "27b868fa4564989d9cbd66f5edc9c53683a5af372e809f09b0063911ac8fc47f",
+            "partition": false
+          },
+          "identity_operations": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "inference_components": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "inference_coverage": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "inference_current": {
+            "rows": 1,
+            "digest": "efa62d43d8b66f0baa23a5c578b80be23b3eb6ff0d878ffcfdc8cf30d283c6ed",
+            "partition": false
+          },
+          "inference_fence": {
+            "rows": 1,
+            "digest": "5fa3ad93cdda18242f3bffa36d4ebd60002c4d861a81bfcb7a20b4ef3812363d",
+            "partition": false
+          },
+          "inference_inputs": {
+            "rows": 3,
+            "digest": "8f9d5669f1fa71ba9a6abf33e206b14a0ed7745e2ab353e3ff84c54662e8189a",
+            "partition": false
+          },
+          "inference_manifests": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "inference_output_retirements": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "inference_requests": {
+            "rows": 1,
+            "digest": "3b3054881b0484c47f13dcc35561b4438e1907307982692231d19460cb40400b",
+            "partition": false
+          },
+          "inference_runs": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "inference_schedules": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "inference_terminals": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_alignment_keys": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_conflicts": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_identity_aliases": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_identity_bindings": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_import_authorizations": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_mapping_profiles": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_merge_proposals": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_preview_jobs": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_preview_work_rows": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_previews": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_rows": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_rule_impacts": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_rule_versions": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_rulings": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_run_rows": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_runs": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_scan_members": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_scans": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ingestion_source_evaluations": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "job_attempts": {
+            "rows": 2,
+            "digest": "996e11887946c6d9bae16e6ebd7b8dde87a66a838bdab0ec7d5042833c659c6a",
+            "partition": false
+          },
+          "job_dependencies": {
+            "rows": 31,
+            "digest": "a95056a92e00845ac082209500f2e3b2eb0820ed77a660215074ff74e0b7bf82",
+            "partition": false
+          },
+          "jobs": {
+            "rows": 3,
+            "digest": "16c8d5f06288ad5843ed09364ec139e4a6566112b49619e1a6584165d2ff4fa1",
+            "partition": false
+          },
+          "map_artifacts": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "map_resources": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "oidc_login_states": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "ontology_catalog": {
+            "rows": 1,
+            "digest": "257df56d4a6edd729a5d9454e3fadb73833123defc5fa6f4d2f198fa66d519d2",
+            "partition": false
+          },
+          "ontology_dependencies": {
+            "rows": 48,
+            "digest": "017781ba46e8ab460641f7214cbefa6f82cff8e5d82c238a7b822b8a26f9c357",
+            "partition": false
+          },
+          "ontology_drafts": {
+            "rows": 1,
+            "digest": "571d6a2a067e570377b9235c4130e33aefba42729ccc0f7682a0a4a54b37412c",
+            "partition": false
+          },
+          "ontology_genesis": {
+            "rows": 3,
+            "digest": "bd3459cd399d861a9e193b27403be687a9abe219b99a87e6a9b680ef01a0e8f0",
+            "partition": false
+          },
+          "ontology_installations": {
+            "rows": 1,
+            "digest": "59bb15bb8d7d06cd3c9a87fad71b305dfb8222c9e88b356618329e86e19cceee",
+            "partition": false
+          },
+          "ontology_releases": {
+            "rows": 1,
+            "digest": "1529d678b662d58eb76b99a725b061178c43b710a5dca627b3a0693fa237aff9",
+            "partition": false
+          },
+          "outbox_events": {
+            "rows": 44,
+            "digest": "c5f282835525d76f020c04141143c25771d34f4b4256fb405f217fef662c6752",
+            "partition": false
+          },
+          "permission_grants": {
+            "rows": 7,
+            "digest": "bd409d39fe10e8ef51df2db076b9019c60ab4d5d47ac7be0d0067fb216a6abec",
+            "partition": false
+          },
+          "platform_groups": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "platform_roles": {
+            "rows": 8,
+            "digest": "475634ddcbbe798b6e35b00c4e27585352b21e39031801242b90eff2163b6182",
+            "partition": false
+          },
+          "platform_users": {
+            "rows": 3,
+            "digest": "9c4360bbbcac0cbf5e8b033d9caa15d1d2871b9a6597c188ba0fc409caa87b58",
+            "partition": false
+          },
+          "platform_watermarks": {
+            "rows": 1,
+            "digest": "807d69777a45d437d6e95fa43bd8bddb0c0350ffc7c56c5e705d8c000e9c03a6",
+            "partition": false
+          },
+          "projection_classifications": {
+            "rows": 6,
+            "digest": "b14069b22a63e474e987e1f81ebd8f3cc3705f6b23231a4992dc42721185732e",
+            "partition": false
+          },
+          "projection_events": {
+            "rows": 3,
+            "digest": "de19cbe2f73ee0c133d3945769514b23db5fdb9b2ae62617ccf31bc51c7353f0",
+            "partition": false
+          },
+          "projection_heads": {
+            "rows": 1,
+            "digest": "cd2f163e9c072ccd74cb993ba04fccd7df792e0eff89d0d55b0dca3c1d434d28",
+            "partition": false
+          },
+          "resource_heads": {
+            "rows": 29,
+            "digest": "c7247a763f0f906eb822d841f8c4b1dba77101c27472a135ac176561a8eed3ee",
+            "partition": false
+          },
+          "resource_scopes": {
+            "rows": 29,
+            "digest": "3cee4a660861ad58870471b6d06d3dfc640f84125950489073bdb429efd09a21",
+            "partition": false
+          },
+          "revision_metadata": {
+            "rows": 12,
+            "digest": "73bafdafe46d5bf79ffdb97059d60e2819aa44a6b11ab04692e3bac09f51b2c2",
+            "partition": false
+          },
+          "revision_visibility_dependencies": {
+            "rows": 205,
+            "digest": "1be37d884499d2a6eb7d3d9ca373823803054fa3bedd49621c309d569554a880",
+            "partition": false
+          },
+          "revisions": {
+            "rows": 44,
+            "digest": "dd50002a087976735c89275552a412563cceb0e377dca658c0ff727c71ad855e",
+            "partition": false
+          },
+          "schema_axioms": {
+            "rows": 23,
+            "digest": "27215e074d149c64471ed15dffbdc0d069edc2f10b19dca8bd02f5dc6bfe03fd",
+            "partition": false
+          },
+          "semantic_assertions": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "semantic_export_dependencies": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "semantic_export_outputs": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "semantic_exports": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "semantic_geometry": {
+            "rows": 1,
+            "digest": "749a40874a5d0ac7027fa07cfcf368207d06004e7c790a0d8ec38583d9d19c09",
+            "partition": false
+          },
+          "semantic_geometry_supports": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "semantic_object_dependencies": {
+            "rows": 9,
+            "digest": "d9a8c036b2cf5387c4a89a5e44124c8fab24d1735b0ec1dcd5926aa8fadeb99f",
+            "partition": false
+          },
+          "semantic_objects": {
+            "rows": 1,
+            "digest": "350c0f3dfbf27d2d4d13ce7351464507534bbd51b2e5780b7e11950f20253f0c",
+            "partition": false
+          },
+          "semantic_supports": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "semantic_type_declarations": {
+            "rows": 1,
+            "digest": "8d31dd28ad95193340b5469f5cbdd01dfd0da1fae11443a2d179ae8babd7afd9",
+            "partition": false
+          },
+          "source_connections": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "source_credentials": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "source_health": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "source_positions": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "source_records": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "source_schedules": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "source_uploads": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "source_watermarks": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "sources": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "storage_backups": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "storage_migration_items": {
+            "rows": 8,
+            "digest": "06ecfc55033be721cb73afca4a6c4f56d2fa54123bab2748b183e9f9876ba0a7",
+            "partition": false
+          },
+          "storage_migration_plans": {
+            "rows": 1,
+            "digest": "e1b492e645211c3fb5570c162844f3a88ef03ae85fcfa73e333c222904b24b98",
+            "partition": false
+          },
+          "storage_restore_receipts": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "store_deliveries": {
+            "rows": 2,
+            "digest": "6f8ad1ed57b57b909b71d24ccc85a0f709a0fcaa6442e60b3c819ca29d4501ba",
+            "partition": false
+          },
+          "telemetry_batches": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "telemetry_record_keys": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          }
+        },
+        "gis": {
+          "gis_geometry_heads": {
+            "rows": 1,
+            "digest": "53f84391852d9f03b402e5a38426d59853d1d84981c6d662cf7a668e68eb050c",
+            "partition": false
+          },
+          "gis_geometry_versions": {
+            "rows": 2,
+            "digest": "e139acfbb5fb53c49a26cb46cdfb70d392955960979a66dd45864c315c3ea6b4",
+            "partition": false
+          },
+          "gis_location_observations": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "gis_spatial_assets": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": false
+          },
+          "storage_migration_namespace": {
+            "rows": 1,
+            "digest": "6b36d1b24a5adb8b66dfc91e62614e69784d58eea7c54c65f99dd0abc0c27916",
+            "partition": false
+          },
+          "store_heads": {
+            "rows": 1,
+            "digest": "719457e4c9b357b4cbd693596242227f97c3aa0a04e61716b09eecc1c378debf",
+            "partition": false
+          },
+          "store_inbox": {
+            "rows": 2,
+            "digest": "7b3fceb46aeb706c458453cc4357fdc049792770ee6bc31df8f9b377a7a297c1",
+            "partition": false
+          },
+          "store_schema_version": {
+            "rows": 1,
+            "digest": "0790392878cb6f7dc2eb05fdbbe5f1e1831d91f2427882c7af7c13d6c733fe06",
+            "partition": false
+          }
+        },
+        "timeseries": {
+          "delivery_test_effects": {
+            "rows": 7,
+            "digest": "75b4599cf77b13bf8c8ffc1b341e0eff954fb953b945659adc3f4cdb64330e28",
+            "partition": false
+          },
+          "store_heads": {
+            "rows": 195,
+            "digest": "b3161e7f0f33a243a3f2aba6364c0f5d138650afa6fede023c2eac7cd0f64f20",
+            "partition": false
+          },
+          "store_inbox": {
+            "rows": 195,
+            "digest": "4e057eafd3b32495d44185cd680fd5823ff53900a72fe6816cf7fe2d0d0a4d29",
+            "partition": false
+          },
+          "store_schema_version": {
+            "rows": 1,
+            "digest": "fcef7b4fb29d3eab7ba6209e5d1db8ef29330a6072c8d4169351108f914261db",
+            "partition": false
+          },
+          "telemetry_batch_receipts": {
+            "rows": 188,
+            "digest": "78a91696b886e7e8525ae24be3481806c4255ae72be065ab93182af17365822f",
+            "partition": false
+          },
+          "telemetry_identities": {
+            "rows": 11318,
+            "digest": "ed3fed108b8f843016285ea1d8be52ecabf9473e57daab344b0bacfbc71ea9f6",
+            "partition": false
+          },
+          "telemetry_samples": {
+            "rows": 11319,
+            "digest": "00c80bcd48cf92f95208652ab4e60db16ff908e2ed672c9b00c975d0857cbc73",
+            "partition": false
+          },
+          "telemetry_samples_202601": {
+            "rows": 11204,
+            "digest": "2818773c3f9a24a132c193a2e50fbba951f030b89ea56a7e316c170da92d4e78",
+            "partition": true
+          },
+          "telemetry_samples_202602": {
+            "rows": 25,
+            "digest": "e002e1039341a6bf39dc9b061e1b4e1097173d7bc7cb21ba03e67c629e45d9fa",
+            "partition": true
+          },
+          "telemetry_samples_202603": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": true
+          },
+          "telemetry_samples_202604": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": true
+          },
+          "telemetry_samples_202605": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": true
+          },
+          "telemetry_samples_202606": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": true
+          },
+          "telemetry_samples_202607": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": true
+          },
+          "telemetry_samples_202608": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": true
+          },
+          "telemetry_samples_202609": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": true
+          },
+          "telemetry_samples_202610": {
+            "rows": 90,
+            "digest": "0909e1477cffa6fbe5d832788498613fc5c81e06b3262ee0348509fd8e5a6fdf",
+            "partition": true
+          },
+          "telemetry_samples_202611": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": true
+          },
+          "telemetry_samples_202612": {
+            "rows": 0,
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "partition": true
+          },
+          "telemetry_supersessions": {
+            "rows": 33,
+            "digest": "39411016751aae78d9c50de794f73c52dc9033dda9f3865ee4fec7d9b99c9f59",
+            "partition": false
+          }
+        },
+        "catalog": {
+          "catalog_heads": {
+            "rows": 103,
+            "digest": "f9470749818d19d66552f7fbc5e8e42af4fb20748863cd1d440609b7fd10b5ba",
+            "partition": false
+          },
+          "catalog_versions": {
+            "rows": 120,
+            "digest": "e74f27f92c0210e5578fca9168d18e52cccd681c348d693a66aa224219a736e8",
+            "partition": false
+          },
+          "delivery_test_effects": {
+            "rows": 7,
+            "digest": "18ff95ec0078ccfbd6f057da8194a2631fa802e91c32bc0a198914db3638148a",
+            "partition": false
+          },
+          "store_heads": {
+            "rows": 110,
+            "digest": "e09b85746813d706351402280a92e34365d874ff1a0ea098b0f8cbd8cacd71a7",
+            "partition": false
+          },
+          "store_inbox": {
+            "rows": 130,
+            "digest": "9855689ea70b8fc16358cdc5ad107a0087a935b38cdb4219e98d4060fbad776d",
+            "partition": false
+          },
+          "store_schema_version": {
+            "rows": 1,
+            "digest": "fcef7b4fb29d3eab7ba6209e5d1db8ef29330a6072c8d4169351108f914261db",
+            "partition": false
+          }
+        }
+      },
+      "application_reads": "Actual restored HTTP geometry/history/current authorization revocation passed.",
+      "helper_lifecycle": "Only the fresh owned destination cluster was started/stopped through its exact data path; shared services were not restarted."
+    },
+    "interrupted_actual_restore": {
+      "id": "d6752bc5-63a8-43c6-9555-a6121588fd55",
+      "namespace": "lzo_restore_af62e27c72214afc",
+      "state": "failed",
+      "failure_stage": "Injected interruption after actual first database archive load; all targets retained, reuse refused, new namespace restored."
+    },
+    "committed_rollback_recovery": {
+      "plan_id": "66223bd6-0c5b-4f2e-b6e0-f248b53e81f4",
+      "state": "rolled_back",
+      "configuration_digest": "769839a6e139b886810adcc816d45441f72e5914f3f6dbc58cea1d2ff64e8b08",
+      "publication_path_digest": "a86c5eb77225c07eab2115b7e0b281ea088c59c7ede4fcbd58085faea9308b2f",
+      "protected_target_configuration_digest": "a4a04ff0580c29201df672390e04edfd22a050e2fbfaed8dd9687d5924851285",
+      "protected_maintenance": {
+        "core": {
+          "identity": {
+            "database": "lzo",
+            "schema": "f03_7729c45f23a141438f698fbb46fdcfa5",
+            "address": "127.0.0.1/32",
+            "port": 25432,
+            "database_oid": 16386,
+            "schema_oid": 1281693
+          },
+          "locked_tables": 102
+        },
+        "gis": {
+          "identity": {
+            "database": "lzo_gis",
+            "schema": "migration_999e0a4e47174327b4cda5ccbaf11ad4",
+            "address": "127.0.0.1/32",
+            "port": 25432,
+            "database_oid": 17470,
+            "schema_oid": 1283167
+          },
+          "locked_tables": 8
+        },
+        "timeseries": {
+          "identity": {
+            "database": "lzo_timeseries",
+            "schema": "public",
+            "address": "127.0.0.1/32",
+            "port": 25432,
+            "database_oid": 18554,
+            "schema_oid": 2200
+          },
+          "locked_tables": 20
+        },
+        "catalog": {
+          "identity": {
+            "database": "lzo_catalog",
+            "schema": "public",
+            "address": "127.0.0.1/32",
+            "port": 25432,
+            "database_oid": 18557,
+            "schema_oid": 2200
+          },
+          "locked_tables": 6
+        },
+        "processes": [
+          {
+            "service": "api",
+            "pid": 82648,
+            "created": 1792702360.1005273,
+            "stopped": true
+          },
+          {
+            "service": "worker",
+            "pid": 66964,
+            "created": 1792702361.1544917,
+            "stopped": true
+          }
+        ]
+      },
+      "proof": "Actual independent approval/post-write rollback won paused reconciliation; stale and later reconciliation refused. Post-core-commit publication failure retained complete stage. Tampered recovery refused; successful and repeated recovery preserved exact plan state/epoch/audit count. Legacy geometry/history/evidence bytes/denied reader assertions passed."
+    },
+    "version_scope": "Actually captured migration versions are checked against verified inventory, approved plan and current targets. No general DDL-history or identical-state ABA detection is claimed.",
+    "reproduction": "Use the checked-in tests and the public dotenv-loading sequence in migration-recovery.md; no ignored private runner is required."
+  }
 }

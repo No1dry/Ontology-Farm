@@ -11,7 +11,7 @@ sys.path.insert(0, str(ROOT / 'backend/src'))
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', nargs='?', default='preview', choices=('preview', 'backfill', 'reconcile', 'cutover', 'rollback'))
+    parser.add_argument('action', nargs='?', default='preview', choices=('preview', 'backfill', 'reconcile', 'cutover', 'rollback', 'recover-activation'))
     parser.add_argument('--source-env', required=True, type=Path)
     parser.add_argument('--target-env', required=True, type=Path)
     parser.add_argument('--actor', required=True, type=UUID, help='Current governed initiating platform identity')
@@ -29,6 +29,8 @@ def main():
         parser.error('--plan is required')
     if args.action in ('cutover', 'rollback') and any(getattr(args, key) is None for key in ('approval', 'writers', 'workspace', 'activation')):
         parser.error('activation requires --approval, --writers, --workspace and --activation')
+    if args.action == 'recover-activation' and any(getattr(args, key) is None for key in ('writers', 'workspace', 'activation')):
+        parser.error('recovery requires --writers, --workspace and --activation')
     from dotenv import dotenv_values
     from sqlalchemy import create_engine, text
     from lzo.config import Settings
@@ -59,13 +61,21 @@ def main():
                     'command': service.command(args.plan, actor, 'rollback' if args.for_rollback else 'cutover')}
         else:
             from lzo.storage.maintenance import MaintenanceWindow
-            with MaintenanceWindow(core, gis, args.writers, args.workspace) as window:
-                result = getattr(service, args.action)(args.plan, actor, args.approval, window, args.activation)
+            additional = {domain: create_engine(getattr(target, domain + '_migration_database_url'))
+                for domain in ('timeseries', 'catalog')}
+            engines.extend(additional.values())
+            with MaintenanceWindow(core, gis, args.writers, args.workspace, additional=additional) as window:
+                if args.action == 'recover-activation':
+                    result = service.recover_activation(args.plan, actor, window, args.activation)
+                else:
+                    result = getattr(service, args.action)(args.plan, actor, args.approval, window, args.activation)
         print(json.dumps(result, ensure_ascii=False, default=str))
         return 0
     except Exception as error:
         # Driver/Pydantic exceptions can contain connection strings or raw inputs.
-        print(json.dumps({'status': 'refused', 'code': str(error) if isinstance(error, MigrationError) else type(error).__name__}), file=sys.stderr)
+        pending = isinstance(error, MigrationError) and str(error) == 'ACTIVATION_PUBLICATION_PENDING'
+        print(json.dumps({'status': 'publication_pending' if pending else 'refused',
+            'transition_committed': pending, 'code': str(error) if isinstance(error, MigrationError) else type(error).__name__}), file=sys.stderr)
         return 1
     finally:
         for engine in engines:

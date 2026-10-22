@@ -18,7 +18,7 @@ from lzo.governance.risk import digest_change
 from lzo.storage.backup_format import (BackupError, check_references, file_hash,
     inventory, package_file, pg_command, read_inventory)
 from lzo.storage.blobs import get_blob_store
-from lzo.storage.migration import _configuration, _snapshot, blob_identity, connection_identity, url_identity
+from lzo.storage.migration import _configuration, _snapshot, blob_identity, connection_identity, schema_state, url_identity
 
 DOMAINS = ('core', 'gis', 'timeseries', 'catalog')
 
@@ -56,6 +56,12 @@ def verify_backup_material(path, authority_key, pg_bin):
         dump = package_file(root, value['files'][domain]['path'])
         pg_command(pg_bin, 'pg_restore', ['--list', dump])
         tables[domain] = read_inventory(package_file(root, value['files'][domain + '_inventory']['path']), store['tables'])
+        captured = (sorted(row['version_num'] for row in tables[domain]['alembic_version']) if domain == 'core'
+            else tables[domain]['store_schema_version'][0]['version'])
+        # Older packages remain restorable from their verified version rows.
+        # New migration activation additionally requires the explicit binding.
+        if 'schema_state' in store and store['schema_state'] != captured:
+            raise BackupError('BACKUP_SCHEMA_STATE_MISMATCH')
     for ref in value['blob_files']:
         file = package_file(root, ref['path'])
         if file.stat().st_size != ref['size_bytes'] or file_hash(file) != ref['sha256']:
@@ -121,7 +127,8 @@ class BackupService:
                     source_identity = row['source_identity']
                     if (_configuration(self.settings) != row['configuration_digest']
                             or source_identity['core'] != connection_identity(window.core)
-                            or row['target_identity']['gis'] != connection_identity(window.connections['gis'])
+                            or any(row['target_identity'][d] != connection_identity(window.connections[d]) for d in DOMAINS)
+                            or any(row['target_identity']['schema_state'][d] != schema_state(window.connections[d], d) for d in DOMAINS)
                             or row['target_identity']['blob'] != blob_identity(self.settings)):
                         raise BackupError('BACKUP_CONFIGURATION_TARGET_MISMATCH')
                     if not row['reconciliation'] or any(snapshot[k] != row['reconciliation'][k] for k in ('data_digest', 'data_position')):
@@ -140,7 +147,7 @@ class BackupService:
                     exported = exported_snapshots[domain]
                     pg_command(self.pg_bin, 'pg_dump', ['--format=custom', '--no-owner',
                         '--schema=' + current['schema'], '--snapshot=' + exported, '--file=' + str(dump)], url=connection.engine.url)
-                    value['stores'][domain] = {'identity': current, 'tables': tables,
+                    value['stores'][domain] = {'identity': current, 'tables': tables, 'schema_state': schema_state(connection, domain),
                         'server_version': connection.execute(text('SHOW server_version')).scalar_one(),
                         'extensions': [dict(r) for r in connection.execute(text('SELECT extname,extversion FROM pg_extension ORDER BY extname')).mappings()],
                         'functions': [dict(r) for r in connection.execute(text('''SELECT p.proname,

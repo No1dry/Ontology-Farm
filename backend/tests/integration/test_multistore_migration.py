@@ -10,7 +10,7 @@ from sqlalchemy import create_engine, insert, select, text, update
 
 
 @pytest.fixture
-def migration_case(object_case, tmp_path):
+def migration_case(object_case, tmp_path, request):
     from dotenv import dotenv_values
     from lzo.artifacts.service import ArtifactService
     from lzo.artifacts.store import ArtifactStore
@@ -101,11 +101,37 @@ def migration_case(object_case, tmp_path):
     s.target = type(s.target).model_validate(s.target.model_dump())
     s.owner = create_engine(owner_url)
     s.target_owner = create_engine(target_owner_url)
+    s.extra_owners = {domain: create_engine(getattr(s.target, domain + '_migration_database_url'))
+        for domain in ('timeseries', 'catalog')}
+    s.catalog_schema = None
+    if getattr(request, 'param', None) == 'isolated_catalog':
+        s.catalog_schema = 'migration_' + uuid4().hex
+        with s.extra_owners['catalog'].begin() as c:
+            c.exec_driver_sql('CREATE SCHEMA ' + s.catalog_schema + ' AUTHORIZATION lzo_catalog_owner')
+            c.exec_driver_sql('GRANT USAGE ON SCHEMA ' + s.catalog_schema + ' TO lzo_catalog_app')
+        overrides = {}
+        for kind in ('database_url', 'migration_database_url'):
+            key = 'catalog_' + kind
+            from sqlalchemy.engine import make_url
+            overrides[key] = make_url(getattr(s.target, key)).update_query_dict(
+                {'options': '-csearch_path=' + s.catalog_schema}).render_as_string(hide_password=False)
+        s.target = s.target.model_copy(update=overrides)
+        migrate_domain('catalog', s.target.catalog_migration_database_url)
+        s.extra_owners['catalog'].dispose()
+        s.extra_owners['catalog'] = create_engine(s.target.catalog_migration_database_url)
     s.migration = MigrationService(s.owner, s.target_owner, s.source, s.target)
     s.plan = s.migration.preview(s.actor('alice'))
     yield s
     s.owner.dispose()
     s.target_owner.dispose()
+    for engine in s.extra_owners.values():
+        engine.dispose()
+    if s.catalog_schema:
+        engine = create_engine(s.source.catalog_migration_database_url)
+        with engine.begin() as c:
+            for suffix in ('', '_original', '_replacement'):
+                c.exec_driver_sql('DROP SCHEMA IF EXISTS ' + s.catalog_schema + suffix + ' CASCADE')
+        engine.dispose()
     with admin.begin() as c:
         c.execute(text(f'DROP SCHEMA "{target_schema}" CASCADE'))
     admin.dispose()
@@ -295,6 +321,28 @@ def test_preexisting_orphan_gis_rows_are_preserved_and_refused(migration_case):
         assert c.execute(text('SELECT count(*) FROM gis_geometry_versions WHERE resource_id=:id'), {'id': orphan}).scalar_one() == 1
 
 
+def test_reconciliation_preserves_winning_terminal_state(migration_case, monkeypatch):
+    from lzo.storage.migration import MigrationError
+    s = migration_case
+    s.migration.backfill(s.plan, s.actor('alice'))
+    original = s.migration._verify
+    def winning_transition(values):
+        original(values)
+        with s.owner.begin() as c:
+            c.execute(text("UPDATE storage_migration_plans SET state='rolled_back',epoch=epoch+1 WHERE id=:id"), {'id': s.plan})
+    monkeypatch.setattr(s.migration, '_verify', winning_transition)
+    with pytest.raises(MigrationError, match='RECONCILIATION_STATE_CHANGED'):
+        s.migration.reconcile(s.plan, s.actor('alice'))
+    monkeypatch.setattr(s.migration, '_verify', original)
+    with s.owner.connect() as c:
+        before = c.execute(text('SELECT state,epoch,reconciliation FROM storage_migration_plans WHERE id=:id'), {'id': s.plan}).one()
+    assert before.state == 'rolled_back'
+    with pytest.raises(MigrationError, match='PLAN_TERMINAL'):
+        s.migration.reconcile(s.plan, s.actor('alice'))
+    with s.owner.connect() as c:
+        assert c.execute(text('SELECT state,epoch,reconciliation FROM storage_migration_plans WHERE id=:id'), {'id': s.plan}).one() == before
+
+
 def test_maintenance_refuses_writers_and_really_blocks_database_writes(migration_case, stopped_writer_markers, tmp_path):
     from lzo.storage.maintenance import MaintenanceWindow, record_writer
     from lzo.storage.migration import MigrationError
@@ -321,7 +369,7 @@ def test_maintenance_refuses_writers_and_really_blocks_database_writes(migration
                     pass
     finally:
         app_target.dispose()
-    with MaintenanceWindow(s.owner, s.target_owner, markers, tmp_path) as window:
+    with MaintenanceWindow(s.owner, s.target_owner, markers, tmp_path, additional=s.extra_owners) as window:
         assert window.evidence['core']['locked_tables'] > 20
         assert window.evidence['gis']['locked_tables'] >= 8
         with pytest.raises(DBAPIError):
@@ -382,14 +430,14 @@ def test_cutover_refuses_missing_backup_forged_receipt_and_stale_final_state(mig
     s.app.dispose()
     artifact = tmp_path / 'activation.json'
     with pytest.raises(MigrationError, match='BACKUP_REQUIRED'):
-        with MaintenanceWindow(s.owner, s.target_owner, stopped_writer_markers, tmp_path) as window:
+        with MaintenanceWindow(s.owner, s.target_owner, stopped_writer_markers, tmp_path, additional=s.extra_owners) as window:
             s.migration.cutover(s.plan, actor, uuid4(), window, artifact)
     assert not artifact.exists()
     s.geometry(2, 114.6)
     actor = s.actor('alice')
     s.app.dispose()
     with pytest.raises(MigrationError, match='RECONCILIATION_STALE'):
-        with MaintenanceWindow(s.owner, s.target_owner, stopped_writer_markers, tmp_path) as window:
+        with MaintenanceWindow(s.owner, s.target_owner, stopped_writer_markers, tmp_path, additional=s.extra_owners) as window:
             s.migration.cutover(s.plan, actor, uuid4(), window, artifact)
     assert not artifact.exists()
     with s.owner.connect() as c:

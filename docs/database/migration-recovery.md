@@ -32,7 +32,12 @@ automatic restart before maintenance. Never copy or invent ownership records.
 The controller verifies those exact incarnations are gone, refuses even idle
 connections from the four provisioned application roles, and holds NOWAIT
 `SHARE ROW EXCLUSIVE` locks on every table in each declared source schema.
-Backup locks cover all four stores. The independent owner connections used for
+Backup, cutover, rollback and publication recovery require all four stores. Their
+physical database/schema identities and migration versions are bound at preview,
+compared with the verified package at activation, and checked again at startup.
+Replacing a catalog/time-series namespace under the same URL requires a new
+governed plan; a configuration digest alone does not certify its identity.
+The independent owner connections used for
 dumping cannot modify their locked sources from another transaction. A refused
 inner operation rolls back its savepoint while retaining the outer locks.
 
@@ -80,11 +85,26 @@ platform UUIDs supplied by the operator, not embedded credentials.
    stopped, run `cutover` with the plan, initiating actor,
    approved record, writer directory/workspace and a **new** private activation
    path. It rechecks actual sources/targets and backup material under the locks,
-   commits governance/audit state, then publishes the configuration artifact.
+   durably stages the complete private configuration, commits governance/audit
+   state, then publishes the artifact atomically without replacing an existing
+   file. A bad parent path fails before the transition commits.
    It does not change a running process. Set `LZO_ACTIVATION_CONFIG` to that file
    before starting both API and worker. Startup checks the committed activation
    and exact physical targets. Verify actual application reads, current rights,
    delivery status and hashes before ending maintenance.
+
+If publication fails after commit, the CLI returns `publication_pending` with
+`transition_committed: true` and retains `<activation>.pending`. Keep writers
+stopped. Run `multistore_migrate.py recover-activation` with the same source/target
+environment files, `--plan`, current authorized `--actor`, `--writers`,
+`--workspace` and the original `--activation` path. No new approval or second
+activation is created. Recovery validates the committed state/audit payload,
+exact settings, original publication path and all four protected targets before
+publishing the staged bytes. Repeating recovery validates an already published
+artifact and succeeds without changing the plan epoch or audit history. A stage
+from an uncommitted transition, tampered settings, changed target or stale plan
+is refused. Never use the pending file as runtime configuration, copy an
+activation to another path, overwrite a foreign file, or manually edit plan state.
 
 Command entry points (run their `--help` for all required arguments):
 
@@ -110,6 +130,16 @@ letters/digits>` namespace and a private admin environment file containing
 chosen server, a new object prefix and a separate Fuseki dataset. Existing names
 are refused. Original domain owner/app roles and ACL/function boundaries are
 retained; this deployment recipe uses the existing provisioned role credentials.
+Every owner/runtime SQL URL uses the explicit admin destination host/port and
+new database name, retaining domain credentials and schema options. Hidden URL
+transport overrides (`host`, `hostaddr`, `service`, etc.) and ambient
+`PGHOSTADDR`/`PGSERVICE`/`PGSERVICEFILE` are refused; remove them rather than
+redirecting recovery implicitly. The destination admin must read
+`pg_control_system()`. Before any archive is loaded, every owner and runtime
+connection must read the unique admin-created restore binding and destination
+cluster identifier from the new database. A database with the same name on the
+source server is never selected by this operation. New destination servers need
+the provisioned domain roles/credentials and matching extension versions first.
 
 Restore verifies actual SQL table digests, partition contents, role/function
 security, all referenced bytes, exact accepted domain receipts and RDF current
@@ -124,6 +154,8 @@ coordinated backup including every post-cutover write. Submit the exact rollback
 command for independent approval. `rollback` copies every accepted blob/part
 back through the local adapter and rebuilds current legacy geometry from the
 unchanged immutable core history before publishing legacy configuration.
+Rolled-back plans are terminal. Subsequent reconciliation is refused; a stale
+reconciliation cannot overwrite a winning rollback or invalidate its artifact.
 
 Global legacy mode maps catalog and time-series access into core. If accepted
 catalog/telemetry or GIS asset/location data cannot be represented there,

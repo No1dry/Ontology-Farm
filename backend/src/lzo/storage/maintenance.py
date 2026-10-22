@@ -14,6 +14,56 @@ from sqlalchemy import text
 from lzo.storage.migration import MigrationError, connection_identity
 
 
+def stage_publication(path, payload):
+    """Write and sync the complete private artifact before the SQL transition."""
+    path = Path(path).resolve()
+    if path.exists():
+        raise MigrationError('ACTIVATION_PATH_EXISTS')
+    path.parent.mkdir(parents=True, exist_ok=True)
+    pending = path.with_name(path.name + '.pending')
+    try:
+        with pending.open('x', encoding='utf-8') as output:
+            json.dump(payload, output, ensure_ascii=False, indent=2)
+            output.flush()
+            os.fsync(output.fileno())
+    except FileExistsError:
+        raise MigrationError('ACTIVATION_STAGE_EXISTS') from None
+    _sync_directory(path.parent)
+    return pending
+
+
+def _sync_directory(path):
+    if os.name != 'nt':
+        fd = os.open(path, os.O_RDONLY)
+        try:
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+
+
+def publish_staged(path, pending):
+    """Publish atomically and exclusively; never expose a partially written file."""
+    path, pending = Path(path), Path(pending)
+    if os.name == 'nt':
+        import ctypes
+        from ctypes import wintypes
+        move = ctypes.WinDLL('kernel32', use_last_error=True).MoveFileExW
+        move.argtypes = [wintypes.LPCWSTR, wintypes.LPCWSTR, wintypes.DWORD]
+        move.restype = wintypes.BOOL
+        if not move(str(pending), str(path), 0x8):  # WRITE_THROUGH, no REPLACE_EXISTING
+            if path.exists():
+                raise MigrationError('ACTIVATION_PATH_EXISTS')
+            raise ctypes.WinError(ctypes.get_last_error())
+    else:
+        try:
+            os.link(pending, path)
+        except FileExistsError:
+            raise MigrationError('ACTIVATION_PATH_EXISTS') from None
+        _sync_directory(path.parent)
+        pending.unlink()
+        _sync_directory(path.parent)
+
+
 def record_writer(service, *, directory=None, workspace=None):
     directory = directory or os.environ.get('LZO_WRITER_OWNERSHIP_DIR')
     if directory is None:
@@ -117,9 +167,11 @@ class MaintenanceWindow:
 
     def publish_after_commit(self, path, payload):
         path = Path(path).resolve()
-        if path.exists():
-            raise MigrationError('ACTIVATION_PATH_EXISTS')
-        self.publications.append((path, payload))
+        self.publications.append((path, stage_publication(path, payload)))
+
+    def recover_publication(self, path):
+        path = Path(path).resolve()
+        self.publications.append((path, path.with_name(path.name + '.pending')))
 
     def __exit__(self, kind, value, traceback):
         try:
@@ -129,10 +181,11 @@ class MaintenanceWindow:
                 # changes are committed. No distributed commit claim is made.
                 for domain in reversed(tuple(self.transactions)):
                     self.transactions[domain].commit()
-                for path, payload in self.publications:
-                    path.parent.mkdir(parents=True, exist_ok=True)
-                    with path.open('x', encoding='utf-8') as output:
-                        json.dump(payload, output, ensure_ascii=False, indent=2)
+                for path, pending in self.publications:
+                    try:
+                        publish_staged(path, pending)
+                    except Exception:
+                        raise MigrationError('ACTIVATION_PUBLICATION_PENDING') from None
             else:
                 for transaction in self.transactions.values():
                     if transaction.is_active:

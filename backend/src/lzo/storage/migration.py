@@ -49,6 +49,30 @@ def blob_identity(settings):
         {'provider': 's3', 'endpoint': settings.s3_endpoint, 'bucket': settings.s3_bucket, 'prefix': settings.s3_key_prefix})
 
 
+SQL_DOMAINS = ('core', 'gis', 'timeseries', 'catalog')
+
+
+def schema_state(c, domain):
+    return (sorted(c.execute(text('SELECT version_num FROM alembic_version')).scalars()) if domain == 'core'
+        else c.execute(text('SELECT version FROM store_schema_version')).scalar_one())
+
+
+def sql_targets(settings):
+    result, versions = {}, {}
+    for domain in SQL_DOMAINS:
+        engine = create_engine_for(getattr(settings, ('' if domain == 'core' else domain + '_') + 'database_url'))
+        try:
+            with engine.connect() as c:
+                result[domain], versions[domain] = connection_identity(c), schema_state(c, domain)
+        finally:
+            engine.dispose()
+    return result, versions
+
+
+def publication_path_digest(path):
+    return digest_change(str(Path(path).resolve()))
+
+
 def claim_blob_namespace(settings, kind, identifier):
     """Exclusively claim a NEW destination; a partial claim is never recycled."""
     value = {'contract': 'multistore-blob-namespace-v1', 'kind': kind, 'id': str(identifier)}
@@ -200,8 +224,9 @@ class MigrationService:
         self.core, self.gis, self.source, self.target = core, gis, source, target
 
     def _identities(self):
+        targets, versions = sql_targets(self.target)
         return ({'core': identity(self.core), 'blob': blob_identity(self.source), 'configuration_digest': _configuration(self.source)},
-            {'gis': identity(self.gis), 'blob': blob_identity(self.target)})
+            {**targets, 'schema_state': versions, 'blob': blob_identity(self.target)})
 
     def _check_legacy_heads(self):
         # Generic evidence attachment can advance the ledger head without a
@@ -219,7 +244,7 @@ class MigrationService:
         source, target = self._identities()
         if source != row['source_identity'] or target != row['target_identity'] or _configuration(self.target) != row['configuration_digest']:
             raise MigrationError('TARGET_CHANGED')
-        if url_identity(self.target.gis_database_url) != target['gis'] or url_identity(self.source.database_url) != source['core']:
+        if identity(self.gis) != target['gis'] or url_identity(self.source.database_url) != source['core']:
             raise MigrationError('TARGET_CHANGED')
         verify_blob_namespace(self.target, 'migration', row['id'])
         with self.gis.connect() as c:
@@ -232,6 +257,8 @@ class MigrationService:
             raise MigrationError('EXPLICIT_LEGACY_TO_SPLIT_REQUIRED')
         self._check_legacy_heads()
         source, target = self._identities()
+        if identity(self.gis) != target['gis']:
+            raise MigrationError('TARGET_CHANGED')
         if identity(self.core) != url_identity(self.target.database_url):
             raise MigrationError('CORE_IDENTITY_MUST_REMAIN')
         if self.target.blob_provider == 's3':
@@ -361,6 +388,8 @@ class MigrationService:
     def reconcile(self, identifier, actor, backup_manifest=None):
         with PgUnitOfWork(self.core) as uow:
             row = _plan(uow, identifier, actor)
+            if row['state'] not in ('backfill', 'reconciled', 'activated'):
+                raise MigrationError('PLAN_TERMINAL')
             self._check(row)
             values, manifest = _snapshot(uow)
             checkpoints = {(r['kind'], r['version_key'], r['digest']) for r in uow.session.execute(
@@ -370,9 +399,14 @@ class MigrationService:
             self._verify(values)
             manifest.update(status='reconciled', source_identity=row['source_identity'], target_identity=row['target_identity'])
             backup = verify_backup(backup_manifest, row, manifest, core=self.core) if backup_manifest else None
-            uow.session.execute(text('''UPDATE storage_migration_plans SET reconciliation=CAST(:value AS jsonb),
-                backup=CAST(:backup AS jsonb),epoch=epoch+1,state=CASE WHEN state='activated' THEN state ELSE 'reconciled' END WHERE id=:id'''),
-                {'value': json.dumps(manifest), 'backup': json.dumps(backup), 'id': identifier})
+            changed = uow.session.execute(text('''UPDATE storage_migration_plans SET reconciliation=CAST(:value AS jsonb),
+                backup=CAST(:backup AS jsonb),epoch=epoch+1,state=:next
+                WHERE id=:id AND epoch=:epoch AND state=:observed'''),
+                {'value': json.dumps(manifest), 'backup': json.dumps(backup), 'id': identifier,
+                    'next': 'activated' if row['state'] == 'activated' else 'reconciled',
+                    'epoch': row['epoch'], 'observed': row['state']})
+            if changed.rowcount != 1:
+                raise MigrationError('RECONCILIATION_STATE_CHANGED')
             uow.commit()
             return manifest
 
@@ -382,11 +416,13 @@ class MigrationService:
 
     def _activate(self, identifier, actor, approval_id, window, path, action):
         window.verify()
+        if set(window.connections) != set(SQL_DOMAINS):
+            raise MigrationError('ALL_STORE_QUIESCENCE_REQUIRED')
         with PgUnitOfWork(window.core) as uow:
             row = _plan(uow, identifier, actor)
             self._check(row)
-            if (connection_identity(window.core) != row['source_identity']['core']
-                    or window.evidence['gis']['identity'] != row['target_identity']['gis']):
+            if any(connection_identity(window.connections[d]) != row['target_identity'][d]
+                    or schema_state(window.connections[d], d) != row['target_identity']['schema_state'][d] for d in SQL_DOMAINS):
                 raise MigrationError('MAINTENANCE_IDENTITY_MISMATCH')
             if row['state'] != ('reconciled' if action == 'cutover' else 'activated'):
                 raise MigrationError('ACTIVATION_STATE_CONFLICT')
@@ -432,6 +468,8 @@ class MigrationService:
             state = 'activated' if action == 'cutover' else 'rolled_back'
             activation = {'contract': 'multistore-activation-v1', 'plan_id': str(identifier), 'state': state,
                 'configuration_digest': _configuration(settings), 'data_digest': current['data_digest'],
+                'target_configuration_digest': row['configuration_digest'],
+                'publication_path_digest': publication_path_digest(path),
                 'final_watermarks': current, 'delivery_watermark': [dict(r) for r in uow.session.execute(text('''
                     SELECT target,status,count(*) AS count FROM store_deliveries GROUP BY target,status ORDER BY target,status''')).mappings()],
                 'maintenance': window.evidence, 'approval_id': str(approval_id)}
@@ -440,7 +478,8 @@ class MigrationService:
                 'storage.migration.activated' if action == 'cutover' else 'storage.migration.rolled_back')
             uow.session.execute(text('''UPDATE storage_migration_plans SET state=:state,epoch=epoch+1,
                 activation=CAST(:value AS jsonb) WHERE id=:id'''), {'state': state, 'value': json.dumps(activation), 'id': identifier})
-            window.publish_after_commit(path, {**activation, 'settings': settings.model_dump(mode='json')})
+            window.publish_after_commit(path, {**activation, 'settings': settings.model_dump(mode='json'),
+                'target_settings': self.target.model_dump(mode='json')})
             uow.commit()
         return {'status': 'configuration_prepared', 'plan_id': str(identifier), 'action': action,
             'running_processes_switched': False}
@@ -450,6 +489,28 @@ class MigrationService:
 
     def rollback(self, identifier, actor, approval_id, window, path):
         return self._activate(identifier, actor, approval_id, window, path, 'rollback')
+
+    def recover_activation(self, identifier, actor, window, path):
+        """Finish only the exact committed transition; never reactivate."""
+        window.verify()
+        if set(window.connections) != set(SQL_DOMAINS):
+            raise MigrationError('ALL_STORE_QUIESCENCE_REQUIRED')
+        path = Path(path).resolve()
+        artifact = path if path.exists() else path.with_name(path.name + '.pending')
+        value = json.loads(artifact.read_text(encoding='utf-8'))
+        with PgUnitOfWork(window.core) as uow:
+            row = _plan(uow, identifier, actor)
+            self._check(row)
+            if value['plan_id'] != str(identifier):
+                raise MigrationError('ACTIVATION_NOT_CURRENT')
+            _validate_activation(value, path, window.core)
+            for domain in SQL_DOMAINS:
+                if connection_identity(window.connections[domain]) != row['target_identity'][domain]:
+                    raise MigrationError('MAINTENANCE_IDENTITY_MISMATCH')
+        if not path.exists():
+            window.recover_publication(path)
+        return {'status': 'configuration_recovery_prepared' if not path.exists() else 'configuration_already_published',
+            'plan_id': str(identifier), 'running_processes_switched': False}
 
 
 def create_engine_for(url):
@@ -465,32 +526,43 @@ def url_identity(url):
         engine.dispose()
 
 
+def _validate_activation(value, path, core):
+    from lzo.config import Settings
+    settings = Settings.model_validate(value['settings'])
+    target = Settings.model_validate(value['target_settings'])
+    if (value.get('contract') != 'multistore-activation-v1' or _configuration(settings) != value.get('configuration_digest')
+            or _configuration(target) != value.get('target_configuration_digest')
+            or publication_path_digest(path) != value.get('publication_path_digest')):
+        raise MigrationError('ACTIVATION_CONFIG_MISMATCH')
+    row = core.execute(text('SELECT state,activation,source_identity,target_identity,configuration_digest FROM storage_migration_plans WHERE id=:id'),
+        {'id': UUID(value['plan_id'])}).mappings().one()
+    if (row['state'] != value['state'] or row['activation'] != {k: v for k, v in value.items() if k not in ('settings', 'target_settings')}
+            or connection_identity(core) != row['source_identity']['core']
+            or row['configuration_digest'] != _configuration(target)):
+        raise MigrationError('ACTIVATION_NOT_CURRENT')
+    targets, versions = sql_targets(target)
+    if any(targets[d] != row['target_identity'][d] for d in SQL_DOMAINS) or versions != row['target_identity']['schema_state']:
+        raise MigrationError('TARGET_CHANGED')
+    verify_blob_namespace(target, 'migration', UUID(value['plan_id']))
+    gis = create_engine_for(target.gis_database_url)
+    try:
+        with gis.connect() as c:
+            if c.execute(text('SELECT plan_id FROM storage_migration_namespace')).scalar_one() != UUID(value['plan_id']):
+                raise MigrationError('TARGET_CHANGED')
+    finally:
+        gis.dispose()
+    return settings
+
+
 def load_activation(path):
-    """Load private settings only if the canonical core committed this activation."""
+    """Load private settings only if every protected target still matches."""
     from lzo.config import Settings
     value = json.loads(Path(path).read_text(encoding='utf-8'))
     settings = Settings.model_validate(value['settings'])
-    if value.get('contract') != 'multistore-activation-v1' or _configuration(settings) != value.get('configuration_digest'):
-        raise MigrationError('ACTIVATION_CONFIG_MISMATCH')
     engine = create_engine_for(settings.database_url)
     try:
         with engine.connect() as c:
-            row = c.execute(text('SELECT state,activation,source_identity FROM storage_migration_plans WHERE id=:id'),
-                {'id': UUID(value['plan_id'])}).mappings().one()
-            if (row['state'] != value['state'] or row['activation'] != {k: v for k, v in value.items() if k != 'settings'}
-                    or connection_identity(c) != row['source_identity']['core']):
-                raise MigrationError('ACTIVATION_NOT_CURRENT')
-        if settings.storage_mode == 'split':
-            verify_blob_namespace(settings, 'migration', UUID(value['plan_id']))
-            gis = create_engine_for(settings.gis_database_url)
-            try:
-                with gis.connect() as c:
-                    if (connection_identity(c) != value['maintenance']['gis']['identity']
-                            or c.execute(text('SELECT plan_id FROM storage_migration_namespace')).scalar_one() != UUID(value['plan_id'])):
-                        raise MigrationError('TARGET_CHANGED')
-            finally:
-                gis.dispose()
-        return settings
+            return _validate_activation(value, path, c)
     finally:
         engine.dispose()
 
@@ -526,6 +598,10 @@ def verify_backup(path, plan, manifest, *, core):
         raise MigrationError('BACKUP_NOT_VERIFIED: ' + str(error)) from None
     path = Path(path).resolve()
     value = json.loads(path.read_text(encoding='utf-8'))
+    if any(value['stores'][domain]['identity'] != plan['target_identity'][domain] for domain in SQL_DOMAINS):
+        raise MigrationError('BACKUP_TARGET_MISMATCH')
+    if any(value['stores'][domain].get('schema_state') != plan['target_identity']['schema_state'][domain] for domain in SQL_DOMAINS):
+        raise MigrationError('BACKUP_SCHEMA_STATE_MISMATCH')
     if (value.get('contract') != 'multistore-backup-v1' or value.get('status') != 'complete'
             or value.get('source_identity') != plan['source_identity']
             or value.get('data_digest') != manifest['data_digest']
