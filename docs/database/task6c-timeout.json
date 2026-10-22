@@ -13,7 +13,7 @@
   "declared_acceptance_profile": {
     "batch_seconds": 240,
     "lease_seconds": 300,
-    "status": "shared-scene covering1passed/857.04s; native startup pending"
+    "status": "Shared-scene covering1 passed/857.04s; actual native API/worker startup and restart plus benchmark resolved240/300, see task6c-native.json and task6c-benchmark.json"
   },
   "timed_operation": "Entire rdf.project ctx.batch: fresh authorization/fence, exact dependency checks, RDF publication, SQL projection/watermark/inference scheduling and checkpoint; no narrower timing attribution",
   "accepted_ref": {

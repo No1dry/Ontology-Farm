@@ -1,7 +1,7 @@
 {
   "format_version": 1,
   "task": "6C",
-  "state": "implementation_verified_requested_benchmark_pending",
+  "state": "completed_with_unqualified_performance",
   "base_revision": "fefefc0ad11a7ef76255d98905c740991632b74e",
   "scope": "Integrated multi-store acceptance; distinct batches are not additive whole-product certification",
   "representative_matrix": {
@@ -81,10 +81,13 @@
     "typescript_no_emit": "passed",
     "production_vite_build": "passed",
     "compose_config": "passed; no container daemon execution",
-    "maintainer_member_role_selection": "passed; see task6c-maintenance.json"
+    "maintainer_member_role_selection": "passed; see task6c-maintenance.json",
+    "native_persistence_outages_restarts": "passed; task6c-native.json",
+    "focused_s3_process_offline": "first9passed2failed1setupError, amended3passed; distinct results retained",
+    "benchmark_runner": "completed; actual performance errors retained, not qualified"
   },
   "benchmark": {
-    "state": "smoke_measured_with_errors_baseline_pending",
+    "state": "measured_with_errors",
     "requested_entities": 10000,
     "requested_relations": 100000,
     "requested_distinct_authorized_users": 10,
@@ -97,7 +100,104 @@
     "smoke_incomplete_200": 0,
     "smoke_errors": 20,
     "graph_sparql_capacity_qualified": false,
-    "warmup_repetitions_note": "No extra warmup pass; one repetition, ten samples per operation; caches not cleared"
+    "warmup_repetitions_note": "No extra warmup pass; one repetition, ten samples per operation; caches not cleared",
+    "evidence": "task6c-benchmark.json",
+    "requested_size_seed_failure_evidence": "task6c-benchmark-size-red.json",
+    "measured_code": {
+      "revision": "717b07f4600ed9f490dc697033ff63a9aac37004",
+      "dirty": false,
+      "working_tree_content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "seed": {
+      "namespace_uuid": "78e987bd-cde0-5a3f-84ff-9869c97a8f52",
+      "first_entity_id": "ffe37073-b824-5f58-a28d-a9a66c3cd085",
+      "last_entity_id": "fd758481-8573-5553-b35f-7fcf00f656a9",
+      "requested_entities": 10000,
+      "requested_relations": 100000,
+      "persisted_entities": 10000,
+      "persisted_accepted_relations": 100000,
+      "projected_entities": 10000,
+      "real_gis_receipts": 10000,
+      "actual_gis_versions": 10000,
+      "actual_rdf_counts": {
+        "instances": 10000,
+        "relations": 100000
+      },
+      "projection_failure_or_limit": null,
+      "full_baseline_ready": true,
+      "rdf_verification": "first/last complete generation in each seeded chunk; all SQL projection head counts, actual RDF count below",
+      "setup_seconds": 237.86922100000083,
+      "observation_media_input": {
+        "requested_observations": 100,
+        "requested_media_bytes": 4096,
+        "sample_object_read_status": "current",
+        "sample_object_visible_records": 1,
+        "non_playable_synthetic_media": true,
+        "persisted_by_kind": {
+          "media": 1,
+          "observation": 100
+        },
+        "artifact": {
+          "version_id": "5b8da476-742c-4972-81c2-34de6e407c26",
+          "sha256": "a2e659dacb4691e887ac0139f8893d04764ee197d70fb73d3190d56113d18e3e",
+          "size_bytes": 4096
+        }
+      },
+      "observation_media_setup_seconds": 21.144711300265044
+    },
+    "distinct_authorized_users": 10,
+    "operation_seconds": 175.39425109978765,
+    "summary": {
+      "attempts": 70,
+      "complete": 50,
+      "incomplete": 0,
+      "http_or_transport_errors": 20,
+      "error_rate": 0.2857142857142857,
+      "incomplete_rate": 0.0,
+      "p50_seconds": 11.826284700073302,
+      "p95_seconds": 67.91260599996895,
+      "latency_by_outcome": {
+        "complete": {
+          "attempts": 50,
+          "p50_seconds": 6.961486400105059,
+          "p95_seconds": 69.16635159961879
+        },
+        "incomplete": {
+          "attempts": 0,
+          "p50_seconds": null,
+          "p95_seconds": null
+        },
+        "error": {
+          "attempts": 20,
+          "p50_seconds": 13.472050200216472,
+          "p95_seconds": 16.96084690000862
+        }
+      },
+      "attempt_throughput_per_second": 0.39910088022311896,
+      "complete_throughput_per_second": 0.28507205730222784
+    },
+    "query_budgets": {
+      "graph_server_ms": 15000,
+      "sparql_request_ms": 10000,
+      "sparql_server_cap_ms": 15000,
+      "timeout_phase": "SPARQL_TIMEOUT code only; cumulative acquisition, parse child and remote paths share it; no finer attribution"
+    },
+    "interpretation": "Full stored/projected seed counts are verified; graph and SPARQL ten-user workload is not qualified. Pytest passed means runner completed, not performance passed.",
+    "sample_note": "No extra warmup pass; one repetition, ten samples per operation. Caches and retained earlier domain/RDF fixtures were not cleared. First-page operations do not claim all rows returned.",
+    "resource_summary": {
+      "scope": "Individual PIDs, not process trees; client Python, PG postmaster parent, S3 server and Fuseki/IdP JVMs. PG backends and Python query children omitted from selected-PID CPU/RSS; host includes them plus unrelated activity. Native API/worker stopped.",
+      "samples": 334,
+      "host_cpu_mean_percent": 25.846107784431137,
+      "host_cpu_peak_percent": 89.1,
+      "host_used_memory_peak_gib": 27.789005279541016,
+      "selected_pid_rss_peak_mib": {
+        "43064": 609.7109375,
+        "66356": 27.60546875,
+        "64356": 188.7890625,
+        "87208": 1496.24609375,
+        "83376": 500.47265625
+      }
+    }
   },
   "unexecuted_dimensions": [
     "Docker engine and disconnected container deployment",
@@ -166,7 +266,7 @@
       "failed": 1,
       "deselected": 6,
       "seconds": 46.54,
-      "detail": "Local pending variable shadow corrected; covering final check pending"
+      "detail": "Local pending variable shadow corrected; covering check was pending at that checkpoint and later passed in focused S3 batch"
     }
   ],
   "scenario_timeout_evidence": "task6c-timeout.json",

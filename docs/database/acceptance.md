@@ -91,4 +91,25 @@ Regenerate/check OpenAPI with `scripts/export_openapi.py`, run `frontend/scripts
 
 See [offline deployment](../operations/offline-deployment.md), [schema/data flow](schema-guide.md), [real-data questions](real-data-questions.json) and [source/version references](sources.md). S3 Range verifies whole objects; upload part/orphan GC, physical capacity policy, high-volume catalog indexing and unbounded core-history scans remain limits. Telemetry budgets may produce actionable incomplete responses. No real ONVIF/DJI/device protocol, actual surveyed boundary/height, professional source-verification promotion, production HA, RPO/RTO or automatic deletion policy is certified.
 
-Current native evidence is [task6c-native.json](task6c-native.json). The initial measured [20/40/10-user smoke](task6c-benchmark-smoke.json) completed 70 requests: 50 complete and 20 errors. Every graph and SPARQL request returned 422 SPARQL_TIMEOUT under the declared 10,000ms query limit. Pytest completing the runner does not qualify this workload. There was no extra warmup pass and only ten samples per operation; caches were not cleared, so this is not a cold-cache claim. The [first malformed-seed run](task6c-benchmark-smoke-red.json) is retained separately. Full requested-size results remain pending at this implementation checkpoint.
+Current native evidence is [task6c-native.json](task6c-native.json). The initial measured [20/40/10-user smoke](task6c-benchmark-smoke.json) completed 70 requests: 50 complete and 20 errors. Every graph and SPARQL request returned 422 SPARQL_TIMEOUT. Graph uses the 15,000ms server budget; explicit SPARQL asks for 10,000ms, capped by that server budget. Pytest completing the runner does not qualify this workload. There was no extra warmup pass and only ten samples per operation; caches were not cleared, so this is not a cold-cache claim. The [first malformed-seed run](task6c-benchmark-smoke-red.json) is retained separately. The requested-size result below retains both failed setup runs for reproducibility.
+
+
+The [requested-size result](task6c-benchmark.json), measured from clean commit `717b07f4600ed9f490dc697033ff63a9aac37004`, verifies **10,000 semantic entities / 100,000 accepted relations**, matching actual RDF counts and 10,000 projection heads/GIS acknowledgements/versions. Seed setup took 237.87s within the 900s budget. Real auxiliary inputs persisted 100 observations plus one synthetic non-playable 4,096-byte media record. These are fixture setup/store counts, not API ingestion throughput or a claim that every entity was individually queried through HTTP. The [cross-chunk seed failure](task6c-benchmark-size-red.json) is preserved separately.
+
+Ten distinct authorized users attempted 70 operations in 175.39s: **50 complete, zero incomplete HTTP200, 20 HTTP422 SPARQL_TIMEOUT errors**. Graph and SPARQL each failed all ten requests. Pytest's `1 passed / 494.87s` establishes runner completion only. This workload is not performance qualified. No timeout budget was raised to obtain a passing number. The shared error code does not identify whether a cumulative acquisition checkpoint, parsing child or remote acquisition consumed its budget; no narrower bottleneck is claimed.
+
+| Operation | Complete / errors | P50 seconds | P95 seconds |
+| --- | ---: | ---: | ---: |
+| Object | 10 / 0 | 6.961 | 7.139 |
+| Map first page | 10 / 0 | 66.579 | 73.319 |
+| Graph | 0 / 10 | 16.406 | 16.975 |
+| SPARQL | 0 / 10 | 11.826 | 13.472 |
+| Exact history | 10 / 0 | 0.502 | 1.075 |
+| Domain history | 10 / 0 | 2.689 | 4.363 |
+| Bounded accept/sync | 10 / 0 | 67.149 | 67.913 |
+
+Attempt throughput was 0.3991/s; complete throughput was 0.2851/s across this mixed workload. Graph/SPARQL latency entries are failed requests, and the JSON separately reports complete/incomplete/error distributions. P95 with ten samples is the maximum observed sample, not an SLO qualification. Earlier domain/RDF evidence and host caches were retained. These are bounded page reads and ten sampled object IDs, not exhaustive API-read verification of all stored rows.
+
+Resource sampling covered **single PIDs**, not process trees: Python client, PostgreSQL postmaster parent, S3 server, Fuseki JVM and IdP JVM. PostgreSQL connection backends and Python query children are omitted from selected-PID CPU/RSS. Host CPU/used memory includes those and unrelated desktop activity. Across 334 samples host CPU averaged 25.85%, peaked at 89.1%, and used memory peaked at 27.789 GiB. Selected-PID peak RSS was client 609.71 MiB, PG parent 27.61 MiB, S3 188.79 MiB, Fuseki 1496.25 MiB and IdP JVM 500.47 MiB; their sum is not total service memory. Native API/worker were stopped for measurement. The actual 14-physical/20-logical CPU host with about 31.85 GiB RAM differs from the specified 8-core/32GB/SSD machine.
+
+Seed counts exclude the one template and the ten later measured create/sync operations. Store counts are taken before measurement/owned core-schema teardown; retained RDF/domain evidence is not removed to obtain a cleaner score.
