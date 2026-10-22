@@ -11,6 +11,7 @@ from lzo.synchronization.contracts import SyncEnvelope, DomainReceipt, DeliveryB
 
 class DeliveryConflict(ValueError): pass
 class DeliveriesPending(RuntimeError): pass
+class DeliveriesFailed(DeliveriesPending): pass
 
 
 def enqueue_delivery(uow, envelope: SyncEnvelope) -> UUID:
@@ -30,6 +31,8 @@ def delivery_status(uow, event_id: UUID) -> list[DomainReceipt]:
 
 def require_deliveries(uow, event_id: UUID, targets: tuple[str, ...]) -> None:
     receipts = {r.target:r for r in delivery_status(uow, event_id)}
+    if any(t in receipts and receipts[t].status == "failed" for t in targets):
+        raise DeliveriesFailed("Required domain delivery reached its failure limit")
     if any(t not in receipts or receipts[t].status not in ("applied", "superseded") for t in targets):
         raise DeliveriesPending("Required domain deliveries are pending or failed")
 
@@ -50,7 +53,8 @@ def _apply(registry, envelope, handler):
                 raise DeliveryConflict("Aggregate revision content conflict")
             status = "superseded"
         expected = dict(event_id=envelope.event_id, target=envelope.target, payload_hash=envelope.payload_hash, aggregate_revision=envelope.aggregate_revision, status=status)
-        receipt = DomainReceipt(**expected) if status == "superseded" else handler(connection, envelope)
+        history = history_handlers.get(envelope.target) if handlers.get(envelope.target) is handler else None
+        receipt = (history(connection,envelope) if history is not None else DomainReceipt(**expected)) if status == "superseded" else handler(connection, envelope)
         if not isinstance(receipt, DomainReceipt) or any(getattr(receipt,k) != v for k,v in expected.items()):
             raise DeliveryConflict("Handler receipt does not match committed envelope")
         connection.execute(text("""INSERT INTO store_inbox(event_id,envelope_hash,payload_hash,entity_id,aggregate_revision,receipt)
@@ -91,9 +95,13 @@ def deliver_once(registry, target: str, handler, limit: int = 100) -> DeliveryBa
 
 # Trusted worker modules register handlers; no client-supplied module loading.
 handlers = {}
-def register_delivery_handler(target, handler):
+history_handlers = {}
+def register_delivery_handler(target, handler, *, history_handler=None):
     if target not in ("gis", "timeseries", "catalog"): raise ValueError("Unknown target")
+    if history_handler is not None and target != "gis":raise ValueError("History delivery is currently GIS-only")
     handlers[target] = handler
+    if history_handler is not None:history_handlers[target]=history_handler
+    else:history_handlers.pop(target,None)
 
 def poll_deliveries(registry):
     return [deliver_once(registry, target, handler) for target,handler in tuple(handlers.items())]

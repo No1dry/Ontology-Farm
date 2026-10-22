@@ -198,6 +198,7 @@ class GeoFeatureCollection(Model):
     features: list[JsonObject]
     projection_watermark: int
     next_cursor: str | None
+    gis_status: Literal["current", "pending", "failed", "unavailable"] = "current"
 
 
 class CreateObjectRequest(Model):

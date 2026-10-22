@@ -4,9 +4,8 @@ The private context only substitutes the complete exact effect and prospective
 geometry for its enumerated create/patch. It never substitutes authorization,
 permits another resource/head, or calls ingestion persistence from S03.
 """
-import json
 from uuid import UUID
-from sqlalchemy import select, insert, update, text
+from sqlalchemy import select, insert, update
 from lzo.errors import ApiError, Conflict
 from lzo.auth.permissions import permission_context
 from lzo.semantic import facts
@@ -27,7 +26,8 @@ def eligible_geometry(uow,entry):
 
 
 def selected_geometry(uow,identifier):
-    payload=uow.session.execute(text("SELECT payload FROM semantic_geometry WHERE resource_id=:id AND active"),{"id":identifier}).scalar_one_or_none()
+    from lzo.gis.service import accepted_geometry
+    payload=accepted_geometry(uow,identifier)
     if payload:
         support=payload["source_support"]
         if not support.get("source_id") and not support.get("mapping_version_id"):return payload
@@ -132,15 +132,12 @@ def apply_source_row(uow,actor,row,bundle):
             receipt=(facts.register_object(uow,actor,command,bundle) if row.create else facts.apply_fact_patch(uow,actor,command,bundle))
             if context["selection"] is not None:
                 payload={**context["selection"],"revision":receipt.revision.revision}
-                uow.session.execute(text("""INSERT INTO semantic_geometry(resource_id,revision,event_id,geom,payload)
-                    VALUES (:id,:revision,:event,public.ST_SetSRID(public.ST_GeomFromGeoJSON(:geo),4326),CAST(:payload AS jsonb))
-                    ON CONFLICT(resource_id) DO UPDATE SET revision=excluded.revision,event_id=excluded.event_id,geom=excluded.geom,payload=excluded.payload,active=true"""),
-                    {"id":context["identifier"],"revision":receipt.revision.revision,"event":receipt.revision.event_id,
-                        "geo":json.dumps(payload["normalized"]),"payload":json.dumps(payload)})
             else:
                 # Empty current selection is a projection index, not deletion of
                 # historical geometry or an ontology entity.
-                uow.session.execute(text("UPDATE semantic_geometry SET active=false WHERE resource_id=:id"),{"id":context["identifier"]})
+                payload=None
+            from lzo.gis.service import legacy_index
+            legacy_index(uow,context["identifier"],receipt.revision,payload)
             if context["replacement"]:
                 uow.session.execute(insert(geometry_supports).values(id=row.geometry.source_support.support_id,
                     resource_id=context["identifier"],payload=context["replacement"],active=True,revision_ref=facts.json_value(receipt.revision)))

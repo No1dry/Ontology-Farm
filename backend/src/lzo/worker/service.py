@@ -117,7 +117,7 @@ def check_execution(uow, actor, row):
         require_permission(actor, "view", resource(uow, dependency), uow=uow)
 
 
-def append_job_event(uow, actor, row, event_type, **values):
+def append_job_event(uow, actor, row, event_type, *, dependency_recovery=None, **values):
     """Caller holds authorization -> ledger -> job locks."""
     now = uow.session.execute(select(func.clock_timestamp())).scalar_one()
     next_row = {**row, **values, "updated_at": now}
@@ -127,6 +127,8 @@ def append_job_event(uow, actor, row, event_type, **values):
                "attempt": next_row["attempts"]}
     if next_row["result_ref"]:
         payload["result_ref"] = next_row["result_ref"]
+    if dependency_recovery is not None:
+        payload["dependency_recovery"] = dependency_recovery
     revision = append_revision(uow, actor, row["id"], row["revision"], payload, event_type)
     next_row["revision"] = revision.revision
     uow.session.execute(update(jobs).where(jobs.c.id == row["id"]).values(
@@ -312,6 +314,7 @@ class JobService:
         if state not in allowed.get(row["status"], set()):
             raise Conflict("JOB_STATE_CONFLICT", "Job transition is not allowed")
         retry_count = row["retry_count"]
+        recovery = None
         if row["status"] == "running":
             now = self.uow.session.execute(select(func.clock_timestamp())).scalar_one()
             if row["lease_expires_at"] <= now:
@@ -325,8 +328,11 @@ class JobService:
                     # deliberately interrupted attempt, retaining earlier failures.
                     retry_count -= 1
         elif row["status"] == "failed" and state == "queued":
+            from lzo.gis.service import retry_failed_projection_deliveries
+            recovery = retry_failed_projection_deliveries(self.uow,actor,row)
             retry_count = 0
         append_job_event(self.uow, actor, row, "job." + state,
+            dependency_recovery=recovery,
             status=state, lease_token=None, lease_expires_at=None, error_code=None,
             retry_count=retry_count,
             available_at=func.clock_timestamp())

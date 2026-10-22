@@ -1,7 +1,7 @@
 """Real PostGIS governed writes; missing CRS never silently defaults."""
 
 
-def test_geometry_missing_crs_and_native_area(object_case):
+def test_geometry_missing_crs_and_native_area(object_case,gis_tick):
     s = object_case
     obj = s.create_object().json()["revision"]["resource_id"]
     geometry = {"resource_id": obj, "expected_revision": 1,
@@ -15,6 +15,7 @@ def test_geometry_missing_crs_and_native_area(object_case):
     response = s.client.put(url, headers=s.headers(1),
         json={"geometry": geometry, "bundle_id": str(s.bundle_id)})
     assert response.status_code == 200, response.text
+    gis_tick(s)
     collection = s.client.get(url).json()
     feature = collection["features"][0]
     assert feature["properties"]["source_crs"] == "EPSG:4490"

@@ -36,7 +36,7 @@ def preview_change(s,change,bundle):
 
 
 @pytest.fixture
-def geometry_quality_case(configuration_case):
+def geometry_quality_case(configuration_case,split_delivery_worker,gis_tick):
     from lzo.ingestion.sources import SourceService
     from lzo.ingestion.rules import RuleService
     from lzo.ingestion.schemas import AuthorityRule
@@ -52,11 +52,30 @@ def geometry_quality_case(configuration_case):
     initial=preview_change(s,raw_change(s,fields={'geometry':{'type':'Point','coordinates':[120,30]}}),bundle)
     assert initial.ready_count==1 and initial.invalid_count==0
     apply_initial(s,initial,bundle)
+    if s.config.storage_mode=='split':
+        tick=gis_tick(s)
+        with s.transaction() as uow:
+            from sqlalchemy import text
+            pending=uow.session.execute(text("SELECT aggregate_revision,status,error FROM store_deliveries WHERE target='gis' AND status NOT IN ('applied','superseded')")).all()
+            assert not pending,(tick,pending)
+        from lzo.semantic.projection import ProjectionService
+        from lzo.semantic.fuseki import FusekiRepository,graph_iri
+        from lzo.governance.models import revisions
+        from lzo.contracts import RevisionRef
+        with s.transaction() as uow:
+            uow.ontology_settings=s.config
+            event=uow.session.execute(select(revisions).where(revisions.c.resource_id==initial.rows[0].entity_id,
+                revisions.c.revision==1)).mappings().one()
+            ref=RevisionRef(event['resource_id'],event['revision'],event['event_id'])
+            repo=FusekiRepository(s.config.fuseki_url)
+            assert ProjectionService(uow,repo).project_revision(ref).state=='synced'
+            uow.commit()
+            assert any(t.predicate_iri=='urn:lzo:geometry' for t in repo.read_graph(graph_iri(ref.resource_id,'accepted')))
     return s,bundle,mapping,initial.rows[0].entity_id
 
 
 @pytest.mark.parametrize('quality',['nonconforming','incomplete'])
-def test_last_required_geometry_withdrawal_commits_with_honest_quality(geometry_quality_case,quality,monkeypatch):
+def test_last_required_geometry_withdrawal_commits_with_honest_quality(geometry_quality_case,quality,monkeypatch,gis_tick):
     from lzo.semantic import files,semantica_adapter
     from lzo.semantic.models import geometry_supports,projection_events
     from lzo.semantic.facts import get_object_row,object_view
@@ -98,6 +117,20 @@ def test_last_required_geometry_withdrawal_commits_with_honest_quality(geometry_
             assert view.validation_state=='needs_review' and view.validation_report is not None and not view.validation_report.conforms
         else:
             assert validation is None and view.validation_state=='pending' and view.validation_report is None
+    if s.config.storage_mode=='split':
+        gis_tick(s)
+        from lzo.semantic.projection import ProjectionService
+        from lzo.semantic.fuseki import FusekiRepository,graph_iri
+        from lzo.semantic.geometry import list_geometry
+        from lzo.contracts import RevisionRef
+        with s.transaction() as uow:
+            uow.ontology_settings=s.config
+            ref=RevisionRef(identifier,event['revision'],event['event_id'])
+            repo=FusekiRepository(s.config.fuseki_url)
+            assert ProjectionService(uow,repo).project_revision(ref).state=='synced'
+            uow.commit()
+            assert not any(t.predicate_iri=='urn:lzo:geometry' for t in repo.read_graph(graph_iri(identifier,'accepted')))
+            assert list_geometry(uow,s.actor('alice'),identifier=identifier).features==[]
 
 
 def test_reviewed_invalid_geometry_replacement_cannot_use_withdrawal_tolerance(geometry_quality_case):

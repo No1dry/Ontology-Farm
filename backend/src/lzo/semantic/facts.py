@@ -592,6 +592,8 @@ def record_state(uow, actor, row, expected, bundle, refs, event_type, effect, re
                 uow, row["id"], evidence["target_predicates"], evaluation_time(uow))
         payload[name] = evidence
     ref = append_revision(uow, actor, row["id"], expected, payload, event_type)
+    from lzo.gis.service import schedule_geometry
+    schedule_geometry(uow, ref, payload)
     uow.session.execute(update(objects).where(objects.c.id == row["id"]).values(
         revision=ref.revision, payload=row["payload"], bundle_id=bundle.id,
         next_transition_at=next_at, transition_origin_event_id=ref.event_id))
@@ -933,6 +935,7 @@ from lzo.worker.service import register_handler
 from lzo.governance.risk import register_policy
 register_policy("object.deactivate", _deactivate_descriptor)
 register_handler("facts.validity", _validity_boundary, references=_validity_references, action="edit")
-for _event in ("object.created", "object.facts_changed", "object.geometry_changed", "object.deactivated",
-               "object.validity_changed"):
+OBJECT_EVENTS=("object.created", "object.facts_changed", "object.geometry_changed", "object.deactivated",
+               "object.validity_changed", "object.spatial_asset_registered", "object.location_observed")
+for _event in OBJECT_EVENTS:
     register_projection(_event, _projection, version="objects-v1", dirty_kind="facts", action="edit")

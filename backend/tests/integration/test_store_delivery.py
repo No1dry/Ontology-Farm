@@ -235,7 +235,7 @@ def test_domain_upgrade_backfills_existing_heads_and_rolls_back_without_history(
         migrate_domain("gis", url, core_url=settings.database_url)
         migrate_domain("gis", url, core_url=settings.database_url)
         with isolated.connect() as c:
-            assert c.execute(text("SELECT version FROM store_schema_version")).scalar_one() == 2
+            assert c.execute(text("SELECT version FROM store_schema_version")).scalar_one() == 4
             assert c.execute(text("SELECT aggregate_content_hash FROM store_heads")).scalar_one() == item.aggregate_content_hash
             assert c.execute(text("SELECT event_id FROM store_heads")).scalar_one() == item.event_id
     finally:

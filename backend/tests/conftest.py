@@ -16,6 +16,36 @@ from sqlalchemy import create_engine, text
 ROOT = Path(__file__).resolve().parents[2]
 
 
+@pytest.fixture
+def gis_tick():
+    """Explicit real delivery tick for tests that previously used legacy sync writes."""
+    def tick(case):
+        if case.config.storage_mode!="split":return
+        from lzo.storage.registry import StorageRegistry
+        from lzo.gis.repository import apply_geometry
+        from lzo.synchronization.delivery import deliver_once
+        registry=StorageRegistry.from_settings(case.config)
+        registry._engines["core"].dispose()
+        registry._engines["core"]=case.app
+        try:return deliver_once(registry,"gis",apply_geometry)
+        finally:
+            registry._engines.pop("core") # borrowed test-schema engine
+            registry.close()
+    return tick
+
+
+@pytest.fixture
+def split_delivery_worker(monkeypatch,gis_tick):
+    """Exercise the deployed delivery-before-job loop with isolated test schemas."""
+    from types import SimpleNamespace
+    from lzo.worker.runner import Runner
+    original=Runner.run_once
+    def run_once(runner):
+        gis_tick(SimpleNamespace(config=runner.settings,app=runner.engine))
+        return original(runner)
+    monkeypatch.setattr(Runner,"run_once",run_once)
+
+
 def pytest_addoption(parser):
     # Root-level registration is required even when pytest starts above the
     # integration directory, before nested conftest files are discovered.

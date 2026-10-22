@@ -203,17 +203,20 @@ class Runner:
             row = fenced_row(uow, ctx.job_id, ctx.lease_token)
             code = denial_code if denied else None
             if error is not None and code is None:
+                from lzo.synchronization.delivery import DeliveriesPending, DeliveriesFailed
                 # Never persist raw exception messages, URLs, payloads or credentials.
-                code = "JOB_YIELD" if isinstance(error, ApiError) and error.code == "JOB_YIELD" else "HANDLER_FAILED"
-            yield_job = code == "JOB_YIELD"
-            retry = code is not None and not denied and (yield_job or row["retry_count"] < row["max_attempts"])
+                code = ("DOMAIN_DELIVERY_FAILED" if isinstance(error,DeliveriesFailed) else
+                    "DOMAIN_DELIVERY_PENDING" if isinstance(error,DeliveriesPending) else
+                    "JOB_YIELD" if isinstance(error, ApiError) and error.code == "JOB_YIELD" else "HANDLER_FAILED")
+            yield_job = code in ("JOB_YIELD","DOMAIN_DELIVERY_PENDING")
+            retry = code is not None and not denied and code != "DOMAIN_DELIVERY_FAILED" and (yield_job or row["retry_count"] < row["max_attempts"])
             state = "queued" if retry else ("failed" if code else "succeeded")
-            delay = 0 if yield_job else min(self.settings.job_retry_cap_seconds,
+            delay = 5 if code == "DOMAIN_DELIVERY_PENDING" else 0 if yield_job else min(self.settings.job_retry_cap_seconds,
                 self.settings.job_retry_base_seconds * 2 ** min(row["retry_count"] - 1, 30))
             now = uow.session.execute(select(func.clock_timestamp())).scalar_one()
             record_attempt(uow, actor, row, state, code)
             append_job_event(uow, actor, row, "job." + state, status=state,
-                lease_token=None, lease_expires_at=None, error_code=None if yield_job else code,
+                lease_token=None, lease_expires_at=None, error_code=None if code == "JOB_YIELD" else code,
                 retry_count=row["retry_count"] - 1 if yield_job else row["retry_count"],
                 available_at=now + timedelta(seconds=delay))
             uow.commit()
@@ -243,6 +246,7 @@ class Runner:
 
 def load_handlers(settings):
     """Only trusted deployment configuration can load handler modules."""
+    import lzo.gis.service
     for module in filter(None, (name.strip() for name in settings.worker_handler_modules.split(","))):
         importlib.import_module(module)
 

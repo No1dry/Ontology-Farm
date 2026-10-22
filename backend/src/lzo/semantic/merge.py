@@ -3,7 +3,7 @@ from contextvars import ContextVar
 from dataclasses import dataclass
 from datetime import datetime,timezone
 from uuid import UUID,uuid5
-from sqlalchemy import select,text
+from sqlalchemy import select
 from lzo.errors import Conflict,ApiError,Forbidden
 from lzo.auth.permissions import permission_context
 from lzo.ontology.drafts import definition_source_closure,head
@@ -42,8 +42,9 @@ def build_plan(uow,actor,proposal_id,canonical_id,duplicate_ids):
         blocked.append("inactive_identity")
     for row in duplicate_rows:
         if set(row["payload"]["class_iris"])!=set(canonical["payload"]["class_iris"]): blocked.append("incompatible_type:"+str(row["id"]))
-        geometry=uow.session.execute(text("SELECT payload FROM semantic_geometry WHERE resource_id=:id"),{"id":row["id"]}).scalar_one_or_none()
-        keep_geometry=uow.session.execute(text("SELECT payload FROM semantic_geometry WHERE resource_id=:id"),{"id":canonical_id}).scalar_one_or_none()
+        from lzo.gis.service import accepted_geometry
+        geometry=accepted_geometry(uow,row["id"])
+        keep_geometry=accepted_geometry(uow,canonical_id)
         if geometry and (not keep_geometry or geometry["normalized"]!=keep_geometry["normalized"]):
             blocked.append("unexpressed_geometry:"+str(row["id"]))
         inbound=facts._deactivate_descriptor(uow,[],{"operation":"object.deactivate","resource_id":str(row["id"]),

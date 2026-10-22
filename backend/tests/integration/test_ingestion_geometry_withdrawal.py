@@ -4,7 +4,7 @@ from test_ingestion_rule_versions import configuration_case,raw_change,version
 from test_ingestion_review_boundaries import publish
 
 
-def test_source_geometry_withdrawal_preserves_manual_geometry_and_identity(configuration_case):
+def test_source_geometry_withdrawal_preserves_manual_geometry_and_identity(configuration_case,split_delivery_worker,gis_tick):
     from lzo.ingestion.sources import SourceService
     from lzo.ingestion.rules import RuleService
     from lzo.ingestion.schemas import AuthorityRule,UploadBinding,ImportSelection,ImportPreviewCommand,ApplyImportCommand
@@ -99,3 +99,12 @@ def test_source_geometry_withdrawal_preserves_manual_geometry_and_identity(confi
         selected=selected_geometry(uow,first.entity_id)
         assert selected['source_support']['support_id']==str(manual.support_id)
         assert selected['normalized']=={'type':'Point','coordinates':[120,30]}
+    if s.config.storage_mode=='split':
+        gis_tick(s)
+        from lzo.semantic.geometry import list_geometry
+        with s.transaction() as uow:
+            uow.ontology_settings=s.config
+            result=list_geometry(uow,s.actor('alice'),identifier=first.entity_id)
+            assert result.gis_status=='current' and result.features[0]['id']==str(first.entity_id)
+            from sqlalchemy import text
+            assert uow.session.execute(text('SELECT count(*) FROM semantic_geometry')).scalar_one()==0

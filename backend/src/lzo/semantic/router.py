@@ -1,5 +1,6 @@
 """Dynamic object HTTP contract on shared authentication and caller-owned UoW."""
 from uuid import UUID
+from datetime import datetime
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy import select
 from fastapi.encoders import jsonable_encoder
@@ -21,8 +22,53 @@ from lzo.semantic.validation import ValidationReport
 from lzo.semantic.query import QueryRequest, QueryResult, GraphNeighborhood, execute_query, neighborhood
 from lzo.semantic.proofs import CurrentProofView, current_proof
 from lzo.semantic.exports import ExportRequest, start_export
+from lzo.gis.schemas import SpatialAssetRequest, LocationObservationRequest
 
 router = APIRouter(prefix="/api/v1", tags=["Objects"])
+
+
+@router.post("/spatial-assets",response_model=RevisionRef,status_code=201,operation_id="registerSpatialAsset")
+def spatial_asset_post(body:SpatialAssetRequest,request:Request,auth:AuthRequest=Depends(authenticated)):
+    from lzo.gis.service import register_spatial_asset
+    setup(auth)
+    version(request,body.asset.expected_revision)
+    snapshot=bundle(auth,body.bundle_id)
+    return write(auth,request,"spatial.asset.register",body.model_dump(mode="json"),
+        lambda:register_spatial_asset(auth.uow,auth.actor,body.asset,snapshot))
+
+
+@router.get("/objects/{object_id}/spatial-assets",operation_id="listSpatialAssets")
+def spatial_assets_get(object_id:UUID,auth:AuthRequest=Depends(authenticated)):
+    from lzo.gis.service import list_spatial_assets
+    return list_spatial_assets(setup(auth),auth.actor,object_id)
+
+
+@router.post("/location-observations",response_model=RevisionRef,status_code=201,operation_id="registerLocationObservation")
+def location_observation_post(body:LocationObservationRequest,request:Request,auth:AuthRequest=Depends(authenticated)):
+    from lzo.gis.service import register_location_observation
+    setup(auth)
+    version(request,body.observation.expected_revision)
+    snapshot=bundle(auth,body.bundle_id)
+    return write(auth,request,"location.observation.register",body.model_dump(mode="json"),
+        lambda:register_location_observation(auth.uow,auth.actor,body.observation,snapshot))
+
+
+@router.get("/objects/{object_id}/location-observations",operation_id="listLocationObservations")
+def location_observations_get(object_id:UUID,start:datetime|None=None,end:datetime|None=None,
+                              cursor:str|None=None,auth:AuthRequest=Depends(authenticated)):
+    import json
+    from lzo.gis.service import list_location_observations
+    parsed=None
+    try:
+        if any(value is not None and value.utcoffset() is None for value in (start,end)):raise ValueError()
+        if start and end and start>=end:raise ValueError()
+        if cursor:
+            value=json.loads(cursor)
+            if not isinstance(value,list) or len(value)!=3:raise ValueError()
+            parsed=(datetime.fromisoformat(value[0]),UUID(value[1]),UUID(value[2]))
+            if parsed[0].utcoffset() is None:raise ValueError()
+    except (ValueError,TypeError):raise ApiError("INVALID_TIME_CURSOR",422,"Invalid observation time range or cursor") from None
+    return list_location_observations(setup(auth),auth.actor,object_id,start=start,end=end,cursor=parsed)
 
 
 @router.post("/query/exports", response_model=JobRef, status_code=202, operation_id="createSemanticExport")

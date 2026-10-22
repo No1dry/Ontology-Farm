@@ -102,12 +102,8 @@ def write_geometry(uow, actor, geometry, bundle):
     refs.update(validation_refs)
     receipt = facts.record_state(uow, actor, row, row["revision"], bundle, refs,
         "object.geometry_changed", effect, report, geometry=payload)
-    uow.session.execute(text("""INSERT INTO semantic_geometry(resource_id,revision,event_id,geom,payload)
-        VALUES (:id,:revision,:event, public.ST_SetSRID(public.ST_GeomFromGeoJSON(:normalized),4326),CAST(:payload AS jsonb))
-        ON CONFLICT(resource_id) DO UPDATE SET revision=excluded.revision,event_id=excluded.event_id,
-            geom=excluded.geom,payload=excluded.payload,active=true"""), {"id": row["id"], "revision": receipt.revision.revision,
-        "event": receipt.revision.event_id, "normalized": json.dumps(normalized["normalized"]),
-        "payload": json.dumps(payload)})
+    from lzo.gis.service import legacy_index
+    legacy_index(uow,row["id"],receipt.revision,payload)
     return receipt.revision
 
 
@@ -138,6 +134,9 @@ def list_geometry(uow, actor, *, identifier=None, bbox=None, scope_id=None, curs
         except ValueError:
             raise ApiError("INVALID_BBOX", 422, "Invalid bounding box") from None
     size = facts.settings_for(uow).list_page_size
+    from lzo.gis.service import split
+    if split(uow):
+        return _list_split(uow,ids,bounds,size)
     features = []
     for resource_id in ids:
         from lzo.semantic.source_rows import selected_geometry
@@ -157,3 +156,55 @@ def list_geometry(uow, actor, *, identifier=None, bbox=None, scope_id=None, curs
     watermark = uow.session.execute(select(platform_watermarks.c.projection_watermark)).scalar_one()
     return GeoFeatureCollection(features=features[:size], projection_watermark=watermark,
         next_cursor=features[size-1]["id"] if len(features) > size else None)
+
+
+def _list_split(uow,ids,bounds,size):
+    from lzo.storage.registry import StorageRegistry
+    from lzo.gis.repository import GisRepository
+    from lzo.governance.models import resource_heads
+    # Gate against current core heads, including newer withdrawals/deactivation.
+    # Filtering precedes pagination so stale/unauthorized IDs never consume a page.
+    from lzo.synchronization.delivery import require_deliveries, DeliveriesPending, DeliveriesFailed
+    pending=False
+    failed=False
+    synced=[]
+    for identifier,event in uow.session.execute(select(resource_heads.c.resource_id,resource_heads.c.event_id).where(resource_heads.c.resource_id.in_(ids))):
+        try:
+            require_deliveries(uow,event,("gis",))
+            synced.append(identifier)
+        except DeliveriesFailed:failed=True
+        except DeliveriesPending: pending=True
+    registry=StorageRegistry.from_settings(facts.settings_for(uow))
+    unavailable=False
+    current=dict(uow.session.execute(select(facts.objects.c.id,facts.objects.c.revision).where(facts.objects.c.id.in_(ids))).all())
+    from lzo.semantic.source_rows import selected_geometry
+    selected={identifier:selected_geometry(uow,identifier) for identifier in synced}
+    eligible=[identifier for identifier in synced if selected[identifier] is not None]
+    rows=[]
+    try:
+        after=None
+        while True:
+            batch=GisRepository(registry).batch(eligible,bbox=bounds,cursor=after,limit=size+1)
+            for indexed in batch:
+                identifier=indexed["resource_id"]
+                if current.get(identifier)==indexed["revision"] and indexed["payload"]==selected[identifier]:
+                    rows.append(indexed)
+                else:pending=True
+            if len(rows)>size or len(batch)<size+1:break
+            after=batch[-1]["resource_id"]
+    except DBAPIError:
+        rows=[]
+        unavailable=True
+    finally:
+        registry.close()
+    features=[]
+    for row in rows:
+        payload=row["payload"]
+        features.append({"type":"Feature","id":str(row["resource_id"]),"geometry":payload["normalized"],
+            "properties":{"object_id":str(row["resource_id"]),"geometry_revision":payload["revision"],
+                "data_nature":payload["data_nature"],"source_crs":payload["source_crs"],
+                "area_square_metres":payload["area_square_metres"]}})
+    watermark=uow.session.execute(select(platform_watermarks.c.projection_watermark)).scalar_one()
+    return GeoFeatureCollection(features=features[:size],projection_watermark=watermark,
+        next_cursor=features[size-1]["id"] if len(features)>size else None,
+        gis_status="unavailable" if unavailable else "failed" if failed else "pending" if pending else "current")

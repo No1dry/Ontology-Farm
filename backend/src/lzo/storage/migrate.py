@@ -51,6 +51,14 @@ def migrate_domain(domain, url, core_url=None):
             version = c.execute(text("SELECT version FROM store_schema_version")).scalar_one()
             if version == 1:
                 _upgrade_aggregate_content(c, domain, core_url)
+                version = 2
+            if domain == "gis" and version == 2:
+                sql = Path(__file__).resolve().parents[4] / "database/gis/003_geometry.sql"
+                c.execute(text(sql.read_text()))
+                version = 3
+            if domain == "gis" and version == 3:
+                sql = Path(__file__).resolve().parents[4] / "database/gis/004_assets_locations.sql"
+                c.execute(text(sql.read_text()))
             c.execute(text(f"GRANT SELECT,INSERT ON store_inbox TO lzo_{domain}_app"))
             c.execute(text(f"GRANT SELECT,INSERT,UPDATE ON store_heads TO lzo_{domain}_app"))
             c.execute(text(f"GRANT SELECT ON store_schema_version TO lzo_{domain}_app"))

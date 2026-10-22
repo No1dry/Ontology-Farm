@@ -225,6 +225,14 @@ class ProjectionService:
         if _retired_output(self.uow, revision.event_id, row["event_type"]):
             self.advance_contiguous()
             return ProjectionReceipt(revision.resource_id, revision.revision, "retired", digest)
+        from lzo.gis.service import split
+        if split(self.uow):
+            from lzo.synchronization.delivery import require_deliveries
+            from lzo.semantic.facts import OBJECT_EVENTS
+            for dependency in (revision,*content.dependency_revisions):
+                dependent=_revision(self.uow,dependency)
+                if dependent["event_type"] in OBJECT_EVENTS:
+                    require_deliveries(self.uow,dependency.event_id,("gis",))
         if producer.before_publish is not None:
             try:
                 producer.before_publish(self.uow, self.actor, row)
