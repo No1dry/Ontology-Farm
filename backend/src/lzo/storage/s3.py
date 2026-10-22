@@ -2,6 +2,7 @@
 import hashlib
 import tempfile
 import io
+import re
 from pathlib import Path
 
 import boto3
@@ -30,6 +31,9 @@ class S3BlobStore(ArtifactStore):
         from lzo.storage.blobs import upload_budget
         super().__init__(settings.blob_staging_path, max_upload_bytes=upload_budget(settings))
         self.bucket = settings.s3_bucket
+        self.prefix = getattr(settings, 's3_key_prefix', '')
+        if self.prefix and not re.fullmatch(r'[A-Za-z0-9_-]+(?:/[A-Za-z0-9_-]+)*', self.prefix):
+            raise ValueError('Invalid S3 key prefix')
         self.client = boto3.client('s3', endpoint_url=settings.s3_endpoint,
             region_name=settings.s3_region,
             aws_access_key_id=settings.s3_access_key_file.read_text().strip(),
@@ -39,7 +43,7 @@ class S3BlobStore(ArtifactStore):
 
     def key(self, blob):
         self._path(blob.sha256)  # validate untrusted digest before constructing a key
-        return f'objects/{blob.sha256[:2]}/{blob.sha256}'
+        return (self.prefix + '/' if self.prefix else '') + f'objects/{blob.sha256[:2]}/{blob.sha256}'
 
     def ready(self):
         try:

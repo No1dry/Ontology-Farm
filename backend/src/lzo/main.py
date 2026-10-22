@@ -55,12 +55,15 @@ def _validation_details(error: RequestValidationError):
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
-    config = settings or Settings()
+    from lzo.storage.migration import runtime_settings
+    config = settings or runtime_settings()
     registry = StorageRegistry.from_settings(config)
     engine = registry.engine("core")
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI):
+        from lzo.storage.maintenance import record_writer
+        record_writer('api')
         yield
         registry.close()
 

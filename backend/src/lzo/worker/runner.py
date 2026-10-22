@@ -266,7 +266,10 @@ def poll_once(runner):
 
 
 def main():
-    settings = Settings()
+    from lzo.storage.migration import runtime_settings
+    from lzo.storage.maintenance import record_writer
+    settings = runtime_settings()
+    record_writer('worker')
     load_handlers(settings)
     from lzo.storage.registry import StorageRegistry
     from lzo.synchronization.delivery import poll_deliveries

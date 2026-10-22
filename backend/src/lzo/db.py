@@ -17,7 +17,7 @@ class PgUnitOfWork:
         self.session: Session
 
     def __enter__(self) -> "PgUnitOfWork":
-        self.session = Session(self.engine, expire_on_commit=False)
+        self.session = Session(self.engine, expire_on_commit=False, join_transaction_mode='create_savepoint')
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:

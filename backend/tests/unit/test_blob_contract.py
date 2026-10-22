@@ -45,6 +45,26 @@ def test_factory_preserves_legacy_locations(tmp_path):
     assert (tmp_path / 'artifacts' / 'objects' / new.sha256[:2] / new.sha256).exists()
 
 
+def test_s3_migration_namespace_keeps_original_keys_and_isolates_new_keys(tmp_path):
+    from lzo.storage.s3 import S3BlobStore
+    from lzo.contracts import BlobRef
+    from uuid import uuid4
+    access, secret = tmp_path / 'access', tmp_path / 'secret'
+    access.write_text('synthetic-access')
+    secret.write_text('synthetic-secret')
+    values = dict(blob_staging_path=tmp_path, artifact_max_upload_bytes=100,
+        s3_bucket='synthetic', s3_endpoint='http://127.0.0.1:1', s3_region='us-east-1',
+        s3_access_key_file=access, s3_secret_key_file=secret)
+    blob = BlobRef('a' * 64, 10, 'text/plain', uuid4())
+    original = S3BlobStore(SimpleNamespace(**values, s3_key_prefix=''))
+    migrated = S3BlobStore(SimpleNamespace(**values, s3_key_prefix='migrations/owned'))
+    assert original.key(blob) == 'objects/aa/' + 'a' * 64
+    assert migrated.key(blob) == 'migrations/owned/objects/aa/' + 'a' * 64
+    for prefix in ('../source', '/source', 'source//nested', 'source/../nested'):
+        with pytest.raises(ValueError):
+            S3BlobStore(SimpleNamespace(**values, s3_key_prefix=prefix))
+
+
 @pytest.mark.parametrize('header,expected', [('bytes=1-3',(1,3)), ('bytes=3-',(3,5)), ('bytes=-2',(4,5)), (None,None)])
 def test_ranges(header, expected):
     from lzo.storage.blobs import parse_range

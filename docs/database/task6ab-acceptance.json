@@ -1,0 +1,764 @@
+{
+  "task": "6AB",
+  "review_base": "7a0a28bbb4429e2489fb08a2cc45ca5a2c1064a3",
+  "scope": "Synthetic acceptance on owned native services; actual storage/approval/backup/restore/application paths; isolated test schemas and fresh databases/prefixes/datasets.",
+  "overall_task_6_complete": false,
+  "checks": [
+    {
+      "name": "namespace/RDF/blob/reference/restore units",
+      "result": "33 passed",
+      "seconds": 0.78,
+      "log": "task6ab-unit-commit.log",
+      "stage": "final unit check after runtime fixes and EOF whitespace trimming"
+    },
+    {
+      "name": "clean stopped-writer locks retained across inner refusal",
+      "result": "1 passed, 7 deselected",
+      "seconds": 54.51,
+      "log": "task6ab-green-maintenance-clean.log",
+      "stage": "before final ownership change; maintenance code unchanged"
+    },
+    {
+      "name": "real namespace competing-plan refusal and interrupted duplicate resume",
+      "result": "2 passed, 6 deselected",
+      "seconds": 104.44,
+      "log": "task6ab-ownership-migration.log",
+      "stage": "after ownership fix; before final terminal-state/orphan guards"
+    },
+    {
+      "name": "terminal-state race and pre-existing orphan GIS target refusal",
+      "result": "2 passed, 8 deselected",
+      "seconds": 102.09,
+      "log": "task6ab-green-final-refusals.log"
+    },
+    {
+      "name": "final affected restored API/current rights, compatible rollback, split-only post-write restore",
+      "result": "3 passed, 1 deselected",
+      "seconds": 619.0,
+      "log": "task6ab-ownership-recovery.log"
+    }
+  ],
+  "packages": [
+    {
+      "case": "test_real_governed_cutover_and0",
+      "package": "backup",
+      "backup_id": "ae0d71d1-d4dc-4ed4-be54-b46f90034ca8",
+      "data_position": 43,
+      "event_position": 44,
+      "references": {
+        "blob_versions": 5,
+        "upload_parts": 1,
+        "gis_versions": 2,
+        "catalog_versions": 0,
+        "telemetry_records": 0,
+        "rdf_heads": 1
+      },
+      "schema_versions": {
+        "core": [
+          {
+            "table": "alembic_version",
+            "value": {
+              "version_num": "0406_storage_backups"
+            }
+          }
+        ],
+        "gis": [
+          {
+            "table": "store_schema_version",
+            "value": {
+              "version": 4
+            }
+          }
+        ],
+        "timeseries": [
+          {
+            "table": "store_schema_version",
+            "value": {
+              "version": 3
+            }
+          }
+        ],
+        "catalog": [
+          {
+            "table": "store_schema_version",
+            "value": {
+              "version": 3
+            }
+          }
+        ]
+      },
+      "engine_versions": {
+        "core": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            },
+            {
+              "extname": "postgis",
+              "extversion": "3.6.2"
+            }
+          ]
+        },
+        "gis": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            },
+            {
+              "extname": "postgis",
+              "extversion": "3.6.2"
+            }
+          ]
+        },
+        "timeseries": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            }
+          ]
+        },
+        "catalog": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            }
+          ]
+        }
+      },
+      "sha256": {
+        "core": "973bda99e4bc4ac47cea035ed473caf2c645035d6dea3d73f2e487f55330a4b9",
+        "gis": "5be1c90f859cd5c6a5b499a39e47cf9c68677589b8842137884d97351f6e7ee1",
+        "timeseries": "b5110a9d491e1e4852527555b3593f7af65fa2a477cf2ff48e71844c5de01ddd",
+        "catalog": "0d5526b5663e5562659e926e4d551ce776bbe28ff9f0a7de61b2eac077e9594b",
+        "rdf": "42721b0a5da677619c7dfe6cae9b9bf0c0682f387cdcdeee6b88b3fe43a09a5e"
+      },
+      "source_identities": {
+        "core": {
+          "database": "lzo",
+          "schema": "f03_a15206bf335c4506a595388e8d2e9f9f",
+          "database_oid": 16386,
+          "schema_oid": 1261946
+        },
+        "gis": {
+          "database": "lzo_gis",
+          "schema": "migration_61aa4d1988994411a54002005264c351",
+          "database_oid": 17470,
+          "schema_oid": 1263420
+        },
+        "timeseries": {
+          "database": "lzo_timeseries",
+          "schema": "public",
+          "database_oid": 18554,
+          "schema_oid": 2200
+        },
+        "catalog": {
+          "database": "lzo_catalog",
+          "schema": "public",
+          "database_oid": 18557,
+          "schema_oid": 2200
+        }
+      }
+    },
+    {
+      "case": "test_real_governed_cutover_and0",
+      "package": "post-write-backup",
+      "backup_id": "c08a81ed-8ee8-4ad2-bd09-daca5fcb2a16",
+      "data_position": 52,
+      "event_position": 52,
+      "references": {
+        "blob_versions": 6,
+        "upload_parts": 1,
+        "gis_versions": 3,
+        "catalog_versions": 0,
+        "telemetry_records": 0,
+        "rdf_heads": 1
+      },
+      "schema_versions": {
+        "core": [
+          {
+            "table": "alembic_version",
+            "value": {
+              "version_num": "0406_storage_backups"
+            }
+          }
+        ],
+        "gis": [
+          {
+            "table": "store_schema_version",
+            "value": {
+              "version": 4
+            }
+          }
+        ],
+        "timeseries": [
+          {
+            "table": "store_schema_version",
+            "value": {
+              "version": 3
+            }
+          }
+        ],
+        "catalog": [
+          {
+            "table": "store_schema_version",
+            "value": {
+              "version": 3
+            }
+          }
+        ]
+      },
+      "engine_versions": {
+        "core": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            },
+            {
+              "extname": "postgis",
+              "extversion": "3.6.2"
+            }
+          ]
+        },
+        "gis": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            },
+            {
+              "extname": "postgis",
+              "extversion": "3.6.2"
+            }
+          ]
+        },
+        "timeseries": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            }
+          ]
+        },
+        "catalog": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            }
+          ]
+        }
+      },
+      "sha256": {
+        "core": "fef1a643b84c36397fde61fc1abab278a4d38719899dfc98864db50ed4e624ae",
+        "gis": "48f4bc2d547da1cd93869035755948c3ca6905f660c08535cf30577bbc42ea77",
+        "timeseries": "268f33729f67bdbafd3afb8b139d3d2e30c046c585060a2f697b0be9fe51e0a0",
+        "catalog": "7217fc344238319322501bf1b796fc96429d1881483827877af47b364030868d",
+        "rdf": "42721b0a5da677619c7dfe6cae9b9bf0c0682f387cdcdeee6b88b3fe43a09a5e"
+      },
+      "source_identities": {
+        "core": {
+          "database": "lzo",
+          "schema": "f03_a15206bf335c4506a595388e8d2e9f9f",
+          "database_oid": 16386,
+          "schema_oid": 1261946
+        },
+        "gis": {
+          "database": "lzo_gis",
+          "schema": "migration_61aa4d1988994411a54002005264c351",
+          "database_oid": 17470,
+          "schema_oid": 1263420
+        },
+        "timeseries": {
+          "database": "lzo_timeseries",
+          "schema": "public",
+          "database_oid": 18554,
+          "schema_oid": 2200
+        },
+        "catalog": {
+          "database": "lzo_catalog",
+          "schema": "public",
+          "database_oid": 18557,
+          "schema_oid": 2200
+        }
+      }
+    },
+    {
+      "case": "test_restore_is_new_reference_0",
+      "package": "backup",
+      "backup_id": "8a8d7f19-f814-44da-8e0a-c49e0002770e",
+      "data_position": 43,
+      "event_position": 44,
+      "references": {
+        "blob_versions": 5,
+        "upload_parts": 1,
+        "gis_versions": 2,
+        "catalog_versions": 0,
+        "telemetry_records": 0,
+        "rdf_heads": 1
+      },
+      "schema_versions": {
+        "core": [
+          {
+            "table": "alembic_version",
+            "value": {
+              "version_num": "0406_storage_backups"
+            }
+          }
+        ],
+        "gis": [
+          {
+            "table": "store_schema_version",
+            "value": {
+              "version": 4
+            }
+          }
+        ],
+        "timeseries": [
+          {
+            "table": "store_schema_version",
+            "value": {
+              "version": 3
+            }
+          }
+        ],
+        "catalog": [
+          {
+            "table": "store_schema_version",
+            "value": {
+              "version": 3
+            }
+          }
+        ]
+      },
+      "engine_versions": {
+        "core": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            },
+            {
+              "extname": "postgis",
+              "extversion": "3.6.2"
+            }
+          ]
+        },
+        "gis": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            },
+            {
+              "extname": "postgis",
+              "extversion": "3.6.2"
+            }
+          ]
+        },
+        "timeseries": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            }
+          ]
+        },
+        "catalog": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            }
+          ]
+        }
+      },
+      "sha256": {
+        "core": "08563afb2dcba4ca98bd8dcabc3414ddb82d01271f429fcf3a69e3cde74b83ee",
+        "gis": "55e917c3d2643dd84e75384a0da2d46e7d6b6f5a83eaee53ad0648f94c6bd816",
+        "timeseries": "eb4e75b276371d9d790e3a1c4e1ced189aff969995f7077535f45be0ea5da5b1",
+        "catalog": "8f0e4fc5881a61fa5cb9cd3325037c3e99d10369c99af499a946de8be946e97a",
+        "rdf": "b22ca1864bac687f02abb2e6ece5837eaf874ecd8f3c117f08297041ea700972"
+      },
+      "source_identities": {
+        "core": {
+          "database": "lzo",
+          "schema": "f03_7256977ae9dc42ce974f2714bed12901",
+          "database_oid": 16386,
+          "schema_oid": 1253789
+        },
+        "gis": {
+          "database": "lzo_gis",
+          "schema": "migration_0f38923c89be4a88a5ae415bedfac565",
+          "database_oid": 17470,
+          "schema_oid": 1255262
+        },
+        "timeseries": {
+          "database": "lzo_timeseries",
+          "schema": "public",
+          "database_oid": 18554,
+          "schema_oid": 2200
+        },
+        "catalog": {
+          "database": "lzo_catalog",
+          "schema": "public",
+          "database_oid": 18557,
+          "schema_oid": 2200
+        }
+      }
+    },
+    {
+      "case": "test_split_only_post_write_res0",
+      "package": "backup",
+      "backup_id": "36d686c2-d0bf-4c55-bc0a-94af0cc5d384",
+      "data_position": 43,
+      "event_position": 44,
+      "references": {
+        "blob_versions": 5,
+        "upload_parts": 1,
+        "gis_versions": 2,
+        "catalog_versions": 0,
+        "telemetry_records": 0,
+        "rdf_heads": 1
+      },
+      "schema_versions": {
+        "core": [
+          {
+            "table": "alembic_version",
+            "value": {
+              "version_num": "0406_storage_backups"
+            }
+          }
+        ],
+        "gis": [
+          {
+            "table": "store_schema_version",
+            "value": {
+              "version": 4
+            }
+          }
+        ],
+        "timeseries": [
+          {
+            "table": "store_schema_version",
+            "value": {
+              "version": 3
+            }
+          }
+        ],
+        "catalog": [
+          {
+            "table": "store_schema_version",
+            "value": {
+              "version": 3
+            }
+          }
+        ]
+      },
+      "engine_versions": {
+        "core": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            },
+            {
+              "extname": "postgis",
+              "extversion": "3.6.2"
+            }
+          ]
+        },
+        "gis": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            },
+            {
+              "extname": "postgis",
+              "extversion": "3.6.2"
+            }
+          ]
+        },
+        "timeseries": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            }
+          ]
+        },
+        "catalog": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            }
+          ]
+        }
+      },
+      "sha256": {
+        "core": "f3d0b0af7282364a278334af4834cc53b7201dca7f7dfc71486ed685a8fb138e",
+        "gis": "2d604dccef6fa30d4bf061e3c9edd91cc44346e6b02d86a945144f1137144634",
+        "timeseries": "08196c0f2ee81b4109bb1fa713d21b8bc043603cc34bbafe75ccddb074fa079a",
+        "catalog": "fa48dcbe731e15dc7ce288e2b387a60d7c87d6950d2c58c64bc694de60fa95b7",
+        "rdf": "20f20c4d7761ec1e3beed20d2a7dac6fbb84bb620f1a3f268e3d0daa49d46fbc"
+      },
+      "source_identities": {
+        "core": {
+          "database": "lzo",
+          "schema": "f03_7897e7c281304148bad6e56dcd2dfa86",
+          "database_oid": 16386,
+          "schema_oid": 1263510
+        },
+        "gis": {
+          "database": "lzo_gis",
+          "schema": "migration_14e7fbc363c3440e9a8c19f5c3370b3a",
+          "database_oid": 17470,
+          "schema_oid": 1264984
+        },
+        "timeseries": {
+          "database": "lzo_timeseries",
+          "schema": "public",
+          "database_oid": 18554,
+          "schema_oid": 2200
+        },
+        "catalog": {
+          "database": "lzo_catalog",
+          "schema": "public",
+          "database_oid": 18557,
+          "schema_oid": 2200
+        }
+      }
+    },
+    {
+      "case": "test_split_only_post_write_res0",
+      "package": "split-post-write-backup",
+      "backup_id": "e9d4bb1d-2641-492d-8a98-0d12d966b898",
+      "data_position": 57,
+      "event_position": 57,
+      "references": {
+        "blob_versions": 6,
+        "upload_parts": 1,
+        "gis_versions": 2,
+        "catalog_versions": 3,
+        "telemetry_records": 2,
+        "rdf_heads": 1
+      },
+      "schema_versions": {
+        "core": [
+          {
+            "table": "alembic_version",
+            "value": {
+              "version_num": "0406_storage_backups"
+            }
+          }
+        ],
+        "gis": [
+          {
+            "table": "store_schema_version",
+            "value": {
+              "version": 4
+            }
+          }
+        ],
+        "timeseries": [
+          {
+            "table": "store_schema_version",
+            "value": {
+              "version": 3
+            }
+          }
+        ],
+        "catalog": [
+          {
+            "table": "store_schema_version",
+            "value": {
+              "version": 3
+            }
+          }
+        ]
+      },
+      "engine_versions": {
+        "core": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            },
+            {
+              "extname": "postgis",
+              "extversion": "3.6.2"
+            }
+          ]
+        },
+        "gis": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            },
+            {
+              "extname": "postgis",
+              "extversion": "3.6.2"
+            }
+          ]
+        },
+        "timeseries": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            }
+          ]
+        },
+        "catalog": {
+          "server": "17.11",
+          "extensions": [
+            {
+              "extname": "plpgsql",
+              "extversion": "1.0"
+            }
+          ]
+        }
+      },
+      "sha256": {
+        "core": "d891829bceae1d78c0f4760a22588e5959acfeac93e66c6a51e28f04c7d7ec3e",
+        "gis": "5dfa5c1b4af31b7672b77dc6e42a4a1a87da107af9e79a43f056a45b9470f305",
+        "timeseries": "f0fc4a761f3381b8f49dc3db7562ebb74ae70b079bc0967b4112b31dcad9cb73",
+        "catalog": "6aeb949c1632e58dbc208acfb09b7ad39af8835b1493386bd38a4480c7a7aa37",
+        "rdf": "20f20c4d7761ec1e3beed20d2a7dac6fbb84bb620f1a3f268e3d0daa49d46fbc"
+      },
+      "source_identities": {
+        "core": {
+          "database": "lzo",
+          "schema": "f03_7897e7c281304148bad6e56dcd2dfa86",
+          "database_oid": 16386,
+          "schema_oid": 1263510
+        },
+        "gis": {
+          "database": "lzo_gis",
+          "schema": "migration_14e7fbc363c3440e9a8c19f5c3370b3a",
+          "database_oid": 17470,
+          "schema_oid": 1264984
+        },
+        "timeseries": {
+          "database": "lzo_timeseries",
+          "schema": "public",
+          "database_oid": 18554,
+          "schema_oid": 2200
+        },
+        "catalog": {
+          "database": "lzo_catalog",
+          "schema": "public",
+          "database_oid": 18557,
+          "schema_oid": 2200
+        }
+      }
+    }
+  ],
+  "restores": [
+    {
+      "case": "test_restore_is_new_reference_0",
+      "destination": "interrupted",
+      "namespace": "lzo_restore_fcfd7056e32b4404",
+      "restore_id": "650c8022-bbd5-44bd-8ca8-e3a82ba57b6d",
+      "state": "failed",
+      "configuration_published": false
+    },
+    {
+      "case": "test_restore_is_new_reference_0",
+      "destination": "restored",
+      "namespace": "lzo_restore_26f098d594a842b6",
+      "restore_id": "ae09dee0-f145-40ee-983b-8fd9885903ba",
+      "state": "verified",
+      "configuration_published": true,
+      "references": {
+        "blob_versions": 5,
+        "upload_parts": 1,
+        "gis_versions": 2,
+        "catalog_versions": 0,
+        "telemetry_records": 0,
+        "rdf_heads": 1
+      },
+      "configuration_digest": "e773a4745d01910eca8fdc463d4632a793c3c60c7e9949bc04e61e936eaf781e",
+      "inventory_sha256": {
+        "core": "7cf663095808ee2e24fda81298461a353c8ace3ab452280188acda65d38d7014",
+        "gis": "f81a9fe03c1b9364e368ca7b63efc24e68f433309f73821ceef83ef10d289c7b",
+        "timeseries": "d695cf008b733b9d692bb13549fa496df1c6c5e2e4e2f6dfc14262ae17a3961a",
+        "catalog": "21fa1dca9900c26e690e89ed5d949c4683e7ef760d78971d3ae050e4e5063c00"
+      },
+      "rdf_raw_sha256": "068fdc236b6d763f4dc0794b057d24a9e3ca6386a5ea40dee864cbc4187c2543",
+      "complete_rdf_comparison": "canonical equality passed before receipt/configuration publication"
+    },
+    {
+      "case": "test_split_only_post_write_res0",
+      "destination": "post-write-restored",
+      "namespace": "lzo_restore_122a8a40c2fd4293",
+      "restore_id": "39be1f6a-1ffb-4690-8804-ed0a4af1cf85",
+      "state": "verified",
+      "configuration_published": true,
+      "references": {
+        "blob_versions": 6,
+        "upload_parts": 1,
+        "gis_versions": 2,
+        "catalog_versions": 3,
+        "telemetry_records": 2,
+        "rdf_heads": 1
+      },
+      "configuration_digest": "5d9f43827dae4d9833a876bd76b1e250839411c522c470849a610ddee39371f2",
+      "inventory_sha256": {
+        "core": "922e7d87ab2810d8d92e57f79ca504a660db0b467e477a59a0311dc4551e1002",
+        "gis": "0703489120a41960218bd18642d7e1d6256f8e0ddf1e3badf783398d69fa3f53",
+        "timeseries": "f0ad3c0b35d67652ae21e50977f820aba21ff31d398588d20b5ce85b0c627336",
+        "catalog": "0e15e49d4e4e75ec820287f9317ff2dda9fd6dd39cca8d6b6eadd01d29e3f24a"
+      },
+      "rdf_raw_sha256": "5831a561e0066091b5d27838f4a15d7ff3b4536ef38377a4e26a3b6d35da3d64",
+      "complete_rdf_comparison": "canonical equality passed before receipt/configuration publication"
+    }
+  ],
+  "interpretation": {
+    "table_counts_overlap": "Partition parent/children and repeated package captures overlap; never sum them as accepted records.",
+    "rdf_state": "Matches recorded current/history projection heads. Pending accepted events/queues remain pending; no claim that all semantic work was drained to latest revision.",
+    "source_cleanup": "Product code never deletes source stores. Integration fixture teardown removes only its explicitly owned temporary core/GIS schemas after source-preservation assertions.",
+    "startup": "Fresh FastAPI TestClient startup from LZO_ACTIVATION_CONFIG was verified; full native daemon restart is a 6C gate."
+  },
+  "excluded": [
+    "external business source databases",
+    "independent OIDC realm/provider",
+    "whole-enterprise disaster recovery",
+    "Compose runtime evidence",
+    "production promotion",
+    "field/equipment claims",
+    "performance baseline"
+  ],
+  "open_followups": [
+    "Confirmed semantic-object evidence attachment advances generic ledger head without semantic snapshot; migration fails closed LEGACY_HEAD_REPAIR_REQUIRED; root tracks integration repair.",
+    "Catalog has capped failure visibility but no governed terminal-delivery retry API; restore preserves failed state rather than claiming to repair it.",
+    "Task 5 deferred M1 malformed cursors and M2 maintenance group-role recipe remain open.",
+    "6C must validate broad integrated HEAD, native restart, public deployment schema inventory and measured workload; core/GIS restore here used owned isolated source schemas, timeseries/catalog used owned public schemas."
+  ]
+}

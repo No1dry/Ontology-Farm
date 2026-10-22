@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     blob_provider: Literal['local', 's3'] = 'local'
     s3_endpoint: str | None = Field(default=None, repr=False)
     s3_bucket: str = 'lzo-artifacts'
+    s3_key_prefix: str = ''
     s3_region: str = 'us-east-1'
     s3_access_key_file: Path | None = Field(default=None, repr=False)
     s3_secret_key_file: Path | None = Field(default=None, repr=False)
@@ -46,6 +47,9 @@ class Settings(BaseSettings):
 
     @model_validator(mode='after')
     def explicit_blob_configuration(self):
+        import re
+        if self.s3_key_prefix and not re.fullmatch(r'[A-Za-z0-9_-]+(?:/[A-Za-z0-9_-]+)*', self.s3_key_prefix):
+            raise ValueError('S3 key prefix must contain safe nonempty path segments')
         if self.blob_provider == 's3' and not all((self.s3_endpoint, self.s3_access_key_file,
                                                   self.s3_secret_key_file, self.blob_staging_path)):
             raise ValueError('s3 requires endpoint, credential files and local staging path')
