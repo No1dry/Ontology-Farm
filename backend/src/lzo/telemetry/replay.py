@@ -38,7 +38,8 @@ def parse_records(payload, format):
                     # actual raw string, never silently converted to numeric zero.
                     if value == 'null':
                         row[key] = None
-                    elif key in ('supersedes', 'position', 'location_ref', 'device_binding_ref', 'model_ref', 'evidence_version_ids'):
+                    elif key in ('supersedes', 'position', 'location_ref', 'device_binding_ref', 'model_ref', 'evidence_version_ids',
+                                 'measurement_method', 'calibration', 'time_quality', 'media_metadata'):
                         row[key] = json.loads(value)
                     else:
                         row[key] = value

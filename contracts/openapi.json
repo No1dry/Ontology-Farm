@@ -511,6 +511,202 @@
         "title": "ApprovalWrite",
         "type": "object"
       },
+      "ArchiveInput": {
+        "additionalProperties": false,
+        "properties": {
+          "before": {
+            "format": "date-time",
+            "title": "Before",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "observation",
+              "event",
+              "media",
+              "track"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "object_id": {
+            "format": "uuid",
+            "title": "Object Id",
+            "type": "string"
+          },
+          "quality": {
+            "anyOf": [
+              {
+                "enum": [
+                  "valid",
+                  "suspect",
+                  "invalid",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quality"
+          },
+          "record_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "maxItems": 1000,
+                "minItems": 1,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Record Ids"
+          },
+          "source_id": {
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          },
+          "start": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start"
+          }
+        },
+        "required": [
+          "object_id",
+          "source_id",
+          "before",
+          "kind"
+        ],
+        "title": "ArchiveInput",
+        "type": "object"
+      },
+      "ArchiveManifest": {
+        "additionalProperties": false,
+        "properties": {
+          "accepted_events": {
+            "additionalProperties": {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "Accepted Events",
+            "type": "object"
+          },
+          "archive_version": {
+            "const": 1,
+            "title": "Archive Version",
+            "type": "integer"
+          },
+          "automatic_deletion": {
+            "const": false,
+            "title": "Automatic Deletion",
+            "type": "boolean"
+          },
+          "complete_selection": {
+            "title": "Complete Selection",
+            "type": "boolean"
+          },
+          "policy": {
+            "const": "retain-history",
+            "title": "Policy",
+            "type": "string"
+          },
+          "record_hashes": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Record Hashes",
+            "type": "object"
+          },
+          "records": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Records",
+            "type": "array"
+          },
+          "selector": {
+            "$ref": "#/components/schemas/ArchiveInput"
+          },
+          "source_scope": {
+            "$ref": "#/components/schemas/ResourceScope"
+          }
+        },
+        "required": [
+          "archive_version",
+          "selector",
+          "source_scope",
+          "record_hashes",
+          "accepted_events",
+          "records",
+          "policy",
+          "automatic_deletion",
+          "complete_selection"
+        ],
+        "title": "ArchiveManifest",
+        "type": "object"
+      },
+      "ArchiveReceipt": {
+        "additionalProperties": false,
+        "properties": {
+          "artifact_version_id": {
+            "format": "uuid",
+            "title": "Artifact Version Id",
+            "type": "string"
+          },
+          "automatic_deletion": {
+            "const": false,
+            "title": "Automatic Deletion",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "policy": {
+            "const": "retain-history",
+            "title": "Policy",
+            "type": "string"
+          },
+          "record_count": {
+            "title": "Record Count",
+            "type": "integer"
+          },
+          "sha256": {
+            "title": "Sha256",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "artifact_version_id",
+          "sha256",
+          "record_count",
+          "policy",
+          "automatic_deletion"
+        ],
+        "title": "ArchiveReceipt",
+        "type": "object"
+      },
       "ArtifactDetail": {
         "properties": {
           "filename": {
@@ -1183,6 +1379,34 @@
           "version_id"
         ],
         "title": "BlobRef",
+        "type": "object"
+      },
+      "Calibration": {
+        "additionalProperties": false,
+        "properties": {
+          "method": {
+            "anyOf": [
+              {
+                "maxLength": 256,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Method"
+          },
+          "version": {
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version"
+        ],
+        "title": "Calibration",
         "type": "object"
       },
       "CandidateValue": {
@@ -2635,10 +2859,34 @@
       "DocumentMetadata": {
         "additionalProperties": false,
         "properties": {
+          "agricultural_scenario": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agricultural Scenario"
+          },
           "artifact_version_id": {
             "format": "uuid",
             "title": "Artifact Version Id",
             "type": "string"
+          },
+          "author": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author"
           },
           "document_type": {
             "enum": [
@@ -2670,11 +2918,35 @@
             "title": "Entity Iris",
             "type": "array"
           },
+          "language": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
           "license": {
             "maxLength": 2000,
             "minLength": 1,
             "title": "License",
             "type": "string"
+          },
+          "manual_summary_preparer": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manual Summary Preparer"
           },
           "model_ids": {
             "default": [],
@@ -2685,6 +2957,18 @@
             "maxItems": 100,
             "title": "Model Ids",
             "type": "array"
+          },
+          "organization": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Organization"
           },
           "publication_date": {
             "anyOf": [
@@ -5664,6 +5948,128 @@
         "title": "MappingProfile",
         "type": "object"
       },
+      "MeasurementMethod": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "maxLength": 256,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "MeasurementMethod",
+        "type": "object"
+      },
+      "MediaGap": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "format": "date-time",
+            "title": "End",
+            "type": "string"
+          },
+          "start": {
+            "format": "date-time",
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ],
+        "title": "MediaGap",
+        "type": "object"
+      },
+      "MediaMetadata": {
+        "additionalProperties": false,
+        "properties": {
+          "encoding": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Encoding"
+          },
+          "gaps": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/MediaGap"
+                },
+                "maxItems": 1000,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gaps"
+          },
+          "resolution": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Resolution"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sequence": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sequence"
+          },
+          "verification": {
+            "anyOf": [
+              {
+                "enum": [
+                  "verified",
+                  "unverified",
+                  "failed",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verification"
+          }
+        },
+        "title": "MediaMetadata",
+        "type": "object"
+      },
       "MembersDetail": {
         "additionalProperties": false,
         "properties": {
@@ -5912,6 +6318,18 @@
             "title": "Capabilities",
             "type": "array"
           },
+          "equipment_category": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Equipment Category"
+          },
           "evidence_version_ids": {
             "default": [],
             "items": {
@@ -5939,6 +6357,18 @@
               }
             ],
             "title": "Firmware"
+          },
+          "hardware_version": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hardware Version"
           },
           "manufacturer": {
             "anyOf": [
@@ -6203,6 +6633,16 @@
             ],
             "title": "Artifact Version Id"
           },
+          "calibration": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Calibration"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "channel_id": {
             "anyOf": [
               {
@@ -6299,6 +6739,26 @@
             "anyOf": [
               {
                 "$ref": "#/components/schemas/RevisionRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "measurement_method": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MeasurementMethod"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "media_metadata": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MediaMetadata"
               },
               {
                 "type": "null"
@@ -6465,6 +6925,16 @@
               }
             ]
           },
+          "time_quality": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TimeQuality-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "version": {
             "default": 1,
             "minimum": 1.0,
@@ -6499,6 +6969,16 @@
               }
             ],
             "title": "Artifact Version Id"
+          },
+          "calibration": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Calibration"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "channel_id": {
             "anyOf": [
@@ -6605,6 +7085,26 @@
             "anyOf": [
               {
                 "$ref": "#/components/schemas/RevisionRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "measurement_method": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MeasurementMethod"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "media_metadata": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MediaMetadata"
               },
               {
                 "type": "null"
@@ -6787,6 +7287,16 @@
               }
             ],
             "title": "Supersedes Id"
+          },
+          "time_quality": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TimeQuality-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "version": {
             "default": 1,
@@ -8100,6 +8610,29 @@
           "label"
         ],
         "title": "RelationDef",
+        "type": "object"
+      },
+      "Resolution": {
+        "additionalProperties": false,
+        "properties": {
+          "height": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 100000.0,
+            "title": "Height",
+            "type": "integer"
+          },
+          "width": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 100000.0,
+            "title": "Width",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "width",
+          "height"
+        ],
+        "title": "Resolution",
         "type": "object"
       },
       "ResourceScope": {
@@ -10381,6 +10914,74 @@
           }
         },
         "title": "TemporalFields",
+        "type": "object"
+      },
+      "TimeQuality-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "state": {
+            "enum": [
+              "synchronized",
+              "estimated",
+              "unreliable",
+              "unknown"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "uncertainty_ms": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uncertainty Ms"
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "title": "TimeQuality",
+        "type": "object"
+      },
+      "TimeQuality-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "state": {
+            "enum": [
+              "synchronized",
+              "estimated",
+              "unreliable",
+              "unknown"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "uncertainty_ms": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uncertainty Ms"
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "title": "TimeQuality",
         "type": "object"
       },
       "Triple": {
@@ -18663,6 +19264,90 @@
         ]
       }
     },
+    "/api/v1/telemetry/archives": {
+      "post": {
+        "operationId": "createTelemetryArchive",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArchiveInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchiveReceipt"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Archive",
+        "tags": [
+          "Telemetry"
+        ]
+      }
+    },
+    "/api/v1/telemetry/archives/{id}": {
+      "get": {
+        "operationId": "getTelemetryArchive",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchiveManifest"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Archive Read",
+        "tags": [
+          "Telemetry"
+        ]
+      }
+    },
     "/api/v1/telemetry/batches": {
       "post": {
         "operationId": "acceptTelemetryBatch",
@@ -18972,6 +19657,45 @@
               ],
               "title": "Metric Id"
             }
+          },
+          {
+            "in": "query",
+            "name": "quality",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "valid",
+                    "suspect",
+                    "invalid",
+                    "unknown"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Quality"
+            }
+          },
+          {
+            "in": "query",
+            "name": "source_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Source Id"
+            }
           }
         ],
         "responses": {
@@ -19167,6 +19891,45 @@
               ],
               "title": "Metric Id"
             }
+          },
+          {
+            "in": "query",
+            "name": "quality",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "valid",
+                    "suspect",
+                    "invalid",
+                    "unknown"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Quality"
+            }
+          },
+          {
+            "in": "query",
+            "name": "source_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Source Id"
+            }
           }
         ],
         "responses": {
@@ -19361,6 +20124,45 @@
                 }
               ],
               "title": "Metric Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "quality",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "valid",
+                    "suspect",
+                    "invalid",
+                    "unknown"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Quality"
+            }
+          },
+          {
+            "in": "query",
+            "name": "source_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Source Id"
             }
           }
         ],
@@ -19648,6 +20450,45 @@
                 }
               ],
               "title": "Metric Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "quality",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "valid",
+                    "suspect",
+                    "invalid",
+                    "unknown"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Quality"
+            }
+          },
+          {
+            "in": "query",
+            "name": "source_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Source Id"
             }
           }
         ],

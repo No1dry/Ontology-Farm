@@ -47,10 +47,15 @@ def _permission(uow: UnitOfWork, actor: ActorContext, resource_id: UUID, action:
             raise ApiError("NOT_FOUND", 404, "Resource not found")
     if action != "view":
         require_permission(actor, action, scope, uow=uow)
+    if row['resource_kind'] == 'telemetry.archive':
+        from lzo.telemetry.archive import authorize_archive
+        authorize_archive(uow, actor, resource_id)
     return row
 
 
 def _catalog_write_guard(scope):
+    if scope['resource_kind'] == 'telemetry.archive':
+        raise Forbidden('IMMUTABLE_ARCHIVE', 'Retained telemetry archives are immutable')
     if scope['resource_kind'] == 'telemetry.batch':
         raise Forbidden('TELEMETRY_COMMAND_REQUIRED', 'Use immutable telemetry manifests and explicit retry')
     if scope['resource_kind'] in {'catalog.model', 'catalog.document', 'catalog.device', 'catalog.delivery_retry'}:
@@ -170,7 +175,7 @@ class ArtifactService:
             artifact_versions.c.id.in_(ids))).mappings().all()
         if {row['id'] for row in rows} != ids:
             raise ApiError('NOT_FOUND', 404, 'Artifact not found')
-        ordinary = [row for row in rows if row['resource_kind'] not in {'evidence', 'semantic.export'}]
+        ordinary = [row for row in rows if row['resource_kind'] not in {'evidence', 'semantic.export', 'telemetry.archive'}]
         owners = {row['resource_id'] for row in ordinary}
         visible = authorized_statement(actor, 'view')
         if owners:
@@ -193,7 +198,7 @@ class ArtifactService:
             if self.uow.session.execute(upload_dependencies.union_all(head_dependencies).limit(1)).first():
                 raise ApiError('NOT_FOUND', 404, 'Artifact not found')
         for row in rows:
-            if row['resource_kind'] in {'evidence', 'semantic.export'}:
+            if row['resource_kind'] in {'evidence', 'semantic.export', 'telemetry.archive'}:
                 self.authorize_version(actor, row['id'])
 
     def authorize_link(self, actor: ActorContext, version_id: UUID, target_resource_id: UUID) -> None:

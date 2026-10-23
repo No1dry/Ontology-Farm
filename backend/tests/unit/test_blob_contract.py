@@ -45,6 +45,22 @@ def test_factory_preserves_legacy_locations(tmp_path):
     assert (tmp_path / 'artifacts' / 'objects' / new.sha256[:2] / new.sha256).exists()
 
 
+def test_uploads_use_public_provider_contract(tmp_path):
+    from lzo.storage.blobs import BlobStore
+    from lzo.storage.s3 import S3BlobStore
+    import inspect
+    from lzo.artifacts.uploads import UploadService
+    assert {'normalize_media_type', 'staging_directory'} <= set(BlobStore.__dict__)
+    for provider in (ArtifactStore, S3BlobStore):
+        assert callable(provider.normalize_media_type)
+        assert isinstance(provider.staging_directory, property)
+    store = ArtifactStore(tmp_path, max_upload_bytes=100)
+    assert store.normalize_media_type(' TEXT/PLAIN ') == 'text/plain'
+    assert store.staging_directory.is_dir()
+    assert 'self.store._media' not in inspect.getsource(UploadService)
+    assert 'self.store.root' not in inspect.getsource(UploadService)
+
+
 def test_s3_migration_namespace_keeps_original_keys_and_isolates_new_keys(tmp_path):
     from lzo.storage.s3 import S3BlobStore
     from lzo.contracts import BlobRef

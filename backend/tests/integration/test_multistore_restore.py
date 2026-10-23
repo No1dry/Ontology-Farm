@@ -492,7 +492,7 @@ def test_activation_checks_all_domains_and_replaced_namespace(recovery_case, sto
     control.dispose()
 
 
-def test_split_only_post_write_restore_preserves_catalog_telemetry_and_relationships(recovery_case, stopped_writer_markers, tmp_path):
+def test_split_only_post_write_restore_preserves_catalog_telemetry_and_relationships(recovery_case, owned_restore_admin, stopped_writer_markers, tmp_path):
     """A refused downgrade must have a tested recovery path containing new writes."""
     import io
     from datetime import datetime, timedelta, timezone
@@ -546,6 +546,20 @@ def test_split_only_post_write_restore_preserves_catalog_telemetry_and_relations
             source = SourceService(uow).create(uow, s.actor('alice'), SourceCreate(source_system='synthetic',
                 source_instance=uuid4().hex, collection='post-cutover-recovery', kind='file', scope=scope, data_nature='synthetic'))
             uow.commit()
+        asset_id, location_id = uuid4(), uuid4()
+        spatial = {'resource_id': str(s.identifier), 'expected_revision': 2, 'asset_id': str(asset_id),
+            'artifact_version_id': str(artifact.version_id), 'sha256': artifact.sha256,
+            'footprint': {'type': 'Point', 'coordinates': [114.5, 30.2]}, 'horizontal_datum': 'EPSG:4326',
+            'captured_at': '2026-10-22T00:00:00Z', 'source': 'synthetic restore fixture', 'quality': 'display_only'}
+        accepted_asset = s.client.post('/api/v1/spatial-assets', headers=s.headers(2),
+            json={'asset': spatial, 'bundle_id': str(s.bundle_id)})
+        assert accepted_asset.status_code == 201, accepted_asset.text
+        position = {'observed_at': '2026-10-22T00:00:00Z', 'horizontal_datum': 'EPSG:4326',
+            'longitude': 114.6, 'latitude': 30.3, 'accuracy_metres': 2}
+        accepted_location = s.client.post('/api/v1/location-observations', headers=s.headers(3), json={
+            'observation': {'resource_id': str(s.identifier), 'expected_revision': 3, 'observation_id': str(location_id),
+                'position': position, 'source': 'synthetic restore fixture'}, 'bundle_id': str(s.bundle_id)})
+        assert accepted_location.status_code == 201, accepted_location.text
         sampled = datetime.now(timezone.utc) + timedelta(seconds=1)
         # Use the existing explicitly supported owner maintenance interface;
         # this is not verification of the deferred group-role recipe (M2).
@@ -584,7 +598,7 @@ def test_split_only_post_write_restore_preserves_catalog_telemetry_and_relations
     assert not path.exists()
     with s.owner.connect() as c:
         assert c.execute(text('SELECT state FROM storage_migration_plans WHERE id=:id'), {'id': s.plan}).scalar_one() == 'activated'
-    result = RestoreService(s.admin_engine, s.pg_bin, s.authority).restore(manifest,
+    result = RestoreService(owned_restore_admin, s.pg_bin, s.authority).restore(manifest,
         'lzo_restore_' + uuid4().hex[:16], tmp_path / 'post-write-restored')
     restored = load_restored_settings(result['configuration'])
     assert result['references']['catalog_versions'] == 3 and result['references']['telemetry_records'] == 2
@@ -609,10 +623,29 @@ def test_split_only_post_write_restore_preserves_catalog_telemetry_and_relations
         assert {row['version']: row['normalized_value'] for row in history.json()['items']} == {
             1: '12.345678901234567890', 2: '13'}
         assert history.json()['items'][0]['device_binding_ref']['event_id'] == str(binding.revision.event_id)
+        assets = client.get(f'/api/v1/objects/{s.identifier}/spatial-assets')
+        assert assets.status_code == 200 and assets.json()['status'] == 'current', assets.text
+        restored_asset = assets.json()['assets'][0]
+        assert restored_asset['asset_id'] == str(asset_id) and restored_asset['artifact_version_id'] == str(artifact.version_id)
+        assert restored_asset['sha256'] == artifact.sha256 and restored_asset['source'] == spatial['source']
+        locations = client.get(f'/api/v1/objects/{s.identifier}/location-observations')
+        assert locations.status_code == 200 and locations.json()['status'] == 'current', locations.text
+        restored_location = locations.json()['observations'][0]
+        assert restored_location['observation_id'] == str(location_id)
+        assert restored_location['longitude'] == 114.6 and restored_location['latitude'] == 30.3
+        geometry = client.get(f'/api/v1/geometry/{s.identifier}')
+        assert geometry.status_code == 200 and geometry.json()['features'][0]['geometry']['coordinates'] == [114.5, 30.2]
     with get_blob_store(restored).open(BlobRef(blob.sha256, blob.size_bytes, blob.media_type, artifact.version_id)) as retained:
         assert retained.read() == payload
     restored_registry = StorageRegistry.from_settings(restored)
     try:
+        with restored_registry.engine('gis').connect() as c:
+            for table, key, identifier, accepted in (('gis_spatial_assets', 'asset_id', asset_id, accepted_asset),
+                    ('gis_location_observations', 'observation_id', location_id, accepted_location)):
+                row = c.execute(text(f'SELECT resource_id,event_id,revision,payload FROM {table} WHERE {key}=:id'), {'id': identifier}).mappings().one()
+                assert row['resource_id'] == s.identifier
+                assert str(row['event_id']) == accepted.json()['event_id'] and row['revision'] == accepted.json()['revision']
+                assert row['payload'][key] == str(identifier)
         with restored_registry.engine('timeseries').connect() as c:
             assert c.execute(text('SELECT count(*) FROM telemetry_samples WHERE source_id=:id'), {'id': source.id}).scalar_one() == 2
             assert c.execute(text('SELECT DISTINCT tableoid::regclass::text FROM telemetry_samples WHERE source_id=:id'), {'id': source.id}).scalar_one() == 'telemetry_samples_' + month.strftime('%Y%m')

@@ -1,0 +1,169 @@
+{
+  "contract": "whole-branch-fix-acceptance-v1",
+  "reviewed_base": "299c2eeade1ac547b3dc6e4c3fc8f10d341a3d25",
+  "date": "2026-10-23",
+  "synthetic_native_only": true,
+  "findings": [
+    "I1",
+    "I2",
+    "I3",
+    "I4",
+    "I5",
+    "M1",
+    "M3",
+    "M4-future-runner",
+    "M5"
+  ],
+  "schema_migrations_added": false,
+  "schema_heads": {
+    "core": "0406_storage_backups",
+    "gis": 4,
+    "timeseries": 3,
+    "catalog": 3
+  },
+  "verification": [
+    {
+      "gate": "pure focused regression and compatibility",
+      "result": "passed",
+      "passed": 48,
+      "seconds": 1.0
+    },
+    {
+      "gate": "actual metadata + governed GIS evidence and pagination",
+      "result": "passed",
+      "passed": 3,
+      "seconds": 117.01,
+      "boundary": "Actual PG/GIS/S3 metadata; GIS primary/survey byte errors are targeted injections with actual authorization/domain context"
+    },
+    {
+      "gate": "one real separate-cluster post-write restore",
+      "result": "passed",
+      "passed": 1,
+      "deselected": 4,
+      "seconds": 993.65,
+      "covers": [
+        "actual asset and location registrations",
+        "exact domain identity/event/revision/content",
+        "primary evidence bytes",
+        "current geometry identity",
+        "catalog model/document/device history",
+        "telemetry exact values and pins"
+      ],
+      "retained_rdf_bytes": 673006144,
+      "elapsed_is_not_six_blob_restore_performance": true
+    },
+    {
+      "gate": "final archive + HTTP provenance + measured-role visibility + quality",
+      "result": "passed",
+      "passed": 4,
+      "deselected": 14,
+      "seconds": 16.67,
+      "covers": [
+        "source.read never held refusal",
+        "hidden selected dependency refusal",
+        "pending capture refusal",
+        "record and byte bounds",
+        "explicit exact subset",
+        "immutable manifest/audit/source scope/event pins",
+        "authenticated HTTP contracts",
+        "current generic artifact and history revocation",
+        "nonempty expected seeded professional IDs",
+        "four qualities and cursor/aggregate consistency"
+      ]
+    },
+    {
+      "gate": "OpenAPI and TypeScript generation",
+      "result": "passed"
+    },
+    {
+      "gate": "actual TypeScript tsc --noEmit",
+      "result": "passed"
+    },
+    {
+      "gate": "actual Vite build",
+      "result": "passed",
+      "modules": 288,
+      "build_seconds": 1.31
+    }
+  ],
+  "red_and_intermediate_results_retained": [
+    {
+      "gate": "GIS reference regressions",
+      "failed": 14,
+      "passed": 4
+    },
+    {
+      "gate": "GIS operational/provenance regressions",
+      "failed": 6,
+      "passed": 1
+    },
+    {
+      "gate": "public BlobStore contract",
+      "failed": 1,
+      "passed": 14
+    },
+    {
+      "gate": "quality missing argument",
+      "failed": 1,
+      "deselected": 14
+    },
+    {
+      "gate": "archive module missing",
+      "failed": 1
+    },
+    {
+      "gate": "archive S3 fixture staging omitted",
+      "failed": 1
+    },
+    {
+      "gate": "archive S3 fixture credentials omitted",
+      "failed": 1
+    },
+    {
+      "gate": "benchmark preflight missing",
+      "failed": 1,
+      "passed": 1
+    },
+    {
+      "gate": "legacy fixture generation setup corrected",
+      "failed": 1,
+      "passed": 3
+    }
+  ],
+  "restore_receipts": [
+    {
+      "backup_id": "c3b7d4dd-5546-451c-bf4a-71d030c87d13",
+      "state": "verified",
+      "references": {
+        "blob_versions": 6,
+        "upload_parts": 1,
+        "gis_versions": 4,
+        "catalog_versions": 3,
+        "telemetry_records": 2,
+        "rdf_heads": 1
+      }
+    }
+  ],
+  "historic_benchmark": {
+    "measured_sha": "717b07f",
+    "preserved": true,
+    "repository_json_sha256": "d89b75860a06a325f9898accb01407b279ddffd68284eb8d909429764c06a9e8",
+    "rerun": false
+  },
+  "limits": {
+    "archive_max_records": "min(1000,list_max_page_size)",
+    "archive_manifest_max_bytes": 2000000,
+    "archive_reference_scan_max_records": 10000,
+    "archive_reference_scan_max_json_bytes": 2000000,
+    "upload_budget_and_quotas_apply": true,
+    "archive_deletes_originals": false,
+    "archive_changes_current_heads": false
+  },
+  "limitations": [
+    "No original full-suite or benchmark rerun; overlapping focused runs must not be summed as unique tests.",
+    "Native synthetic fixtures do not prove field truth, Compose execution or production performance.",
+    "Historical benchmark source/evidence visibility limitation remains separately annotated by the controller.",
+    "Archive requires narrower interval or explicit subset on bounds; no retention duration or physical reclamation policy invented.",
+    "Shared PostgreSQL failure domain and stopped-writer operator trust boundary remain unchanged."
+  ]
+}

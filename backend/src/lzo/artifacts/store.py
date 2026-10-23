@@ -31,7 +31,12 @@ class ArtifactStore:
         (self.root / "staging").mkdir(parents=True, exist_ok=True)
         (self.root / "objects").mkdir(parents=True, exist_ok=True)
 
-    def _media(self, media_type: str) -> str:
+    @property
+    def staging_directory(self) -> Path:
+        """Private local workspace for bounded assembly, including S3 uploads."""
+        return self.root / 'staging'
+
+    def normalize_media_type(self, media_type: str) -> str:
         normalized = media_type.lower().strip()
         if not _MEDIA.fullmatch(normalized):
             raise ApiError("INVALID_MEDIA_TYPE", 422, "Invalid artifact media type")
@@ -64,7 +69,7 @@ class ArtifactStore:
         return ref
 
     def _write(self, chunks: Iterable[bytes], media_type: str) -> BlobRef:
-        media = self._media(media_type)
+        media = self.normalize_media_type(media_type)
         digest = hashlib.sha256()
         size = 0
         path = None
@@ -94,7 +99,7 @@ class ArtifactStore:
         return self._write(iter(lambda: stream.read(_CHUNK), b""), media_type)
 
     async def stage_async(self, chunks: AsyncIterable[bytes], media_type: str) -> StagedBlob:
-        media = self._media(media_type)
+        media = self.normalize_media_type(media_type)
         digest = hashlib.sha256()
         size = 0
         path = None

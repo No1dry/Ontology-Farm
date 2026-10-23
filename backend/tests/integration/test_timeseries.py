@@ -103,6 +103,30 @@ def test_late_duplicates_global_timestamp_conflict_decimal_unknown_zero_and_inte
         assert s.telemetry(uow).status(s.actor('alice'), UUID(result['id']))['status'] == 'current'
 
 
+def test_quality_selection_precedes_pagination_aggregate_and_cursor_identity(telemetry_case):
+    from lzo.errors import ApiError
+    from lzo.synchronization.delivery import poll_deliveries
+    s = telemetry_case
+    s.accept([s.observation(str(i), quality=quality) for i, quality in enumerate(
+        ('valid', 'suspect', 'invalid', 'unknown', 'suspect'))])
+    poll_deliveries(s.registry)
+    for quality, count in (('valid', 1), ('suspect', 2), ('invalid', 1), ('unknown', 1)):
+        page = s.query(quality=quality)
+        assert len(page['items']) == page['aggregate']['count'] == count
+        assert {row['quality'] for row in page['items']} == {quality}
+    first = s.query(quality='suspect', limit=1)
+    assert first['next_cursor'] and first['aggregate']['count'] == 1
+    second = s.query(quality='suspect', limit=1, cursor=first['next_cursor'])
+    assert len(second['items']) == 1 and second['items'][0]['id'] != first['items'][0]['id']
+    with pytest.raises(ApiError, match='TELEMETRY_CURSOR_STALE'):
+        s.query(quality='invalid', cursor=first['next_cursor'])
+    with pytest.raises(ApiError, match='INVALID_FILTER'):
+        s.query(quality='invented')
+    with pytest.raises(ApiError, match='INVALID_FILTER'):
+        s.query(quality='suspect', latest=True)
+    assert s.query(quality='valid', latest=True)['items']
+
+
 def test_correction_withdrawal_and_late_original_delivery_preserve_history(telemetry_case):
     from lzo.synchronization.contracts import SyncEnvelope
     from lzo.synchronization.delivery import _apply

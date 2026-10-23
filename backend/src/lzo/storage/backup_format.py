@@ -120,6 +120,17 @@ def check_references(core, domains, blobs, rdf_path):
         if envelope.envelope_hash != row['envelope_hash'] or envelope.payload_hash != row['payload_hash']:
             raise BackupError('ENVELOPE_DIGEST_MISMATCH')
         # Accepted inputs must survive even while a domain delivery is pending.
+        if envelope.operation == 'geometry.index':
+            asset = envelope.payload.get('asset')
+            if asset:
+                refs = {asset['artifact_version_id']}
+                if asset.get('survey_evidence_version_id'):
+                    refs.add(asset['survey_evidence_version_id'])
+                if not refs <= artifact_ids:
+                    raise BackupError('GIS_ARTIFACT_REFERENCE_MISSING')
+                artifact = next(r for r in core['artifact_versions'] if r['id'] == asset['artifact_version_id'])
+                if artifact['sha256'] != asset['sha256']:
+                    raise BackupError('GIS_ARTIFACT_DIGEST_MISMATCH')
         if envelope.operation == 'catalog.index':
             metadata = envelope.payload['metadata']
             refs = set(metadata.get('attachment_version_ids', ())) | set(metadata.get('evidence_version_ids', ()))
@@ -158,13 +169,25 @@ def check_references(core, domains, blobs, rdf_path):
         if envelope.operation == 'geometry.index':
             version = next((r for r in domain['gis_geometry_versions'] if r['resource_id'] == str(envelope.entity_id)
                 and r['revision'] == envelope.aggregate_revision), None)
-            if version is None or version['payload_hash'] != envelope.payload_hash or version['payload'] != envelope.payload['geometry']:
+            if (version is None or version['payload_hash'] != envelope.payload_hash
+                    or version['payload'] != envelope.payload['geometry'] or version['event_id'] != str(envelope.event_id)
+                    or version['active'] != envelope.payload['active']):
                 raise BackupError('GIS_VERSION_REFERENCE_MISSING')
             counts['gis_versions'] += 1
             for name in ('asset', 'observation'):
                 ref = envelope.payload.get(name)
-                if ref and ref.get('artifact_version_id') not in artifact_ids:
-                    raise BackupError('GIS_ARTIFACT_REFERENCE_MISSING')
+                if not ref:
+                    continue
+                key, table = (('asset_id', 'gis_spatial_assets') if name == 'asset'
+                    else ('observation_id', 'gis_location_observations'))
+                effect = next((r for r in domain[table] if r[key] == ref[key]), None)
+                expected = {'resource_id': str(envelope.entity_id),
+                    'event_id': ref.get('event_id', str(envelope.event_id)),
+                    'revision': ref.get('revision', envelope.aggregate_revision), 'payload': ref}
+                if name == 'asset':
+                    expected['artifact_version_id'] = ref['artifact_version_id']
+                if effect is None or any(effect[k] != v for k, v in expected.items()):
+                    raise BackupError('GIS_EFFECT_REFERENCE_MISSING')
         elif envelope.operation == 'catalog.index':
             version = next((r for r in domain['catalog_versions'] if r['resource_id'] == str(envelope.entity_id)
                 and r['revision'] == envelope.aggregate_revision), None)

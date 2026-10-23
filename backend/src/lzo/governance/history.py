@@ -121,6 +121,16 @@ class HistoryService:
             revisions.c.revision == revision)).mappings().one_or_none()
         if row is None:
             raise ApiError("NOT_FOUND", 404, "Resource not found")
+        # Archive contents remain subject to source/evidence authority even
+        # through generic historical endpoints, after current rights change.
+        from lzo.artifacts.models import artifact_versions
+        owner = self.uow.session.execute(select(artifact_versions.c.resource_id).where(
+            artifact_versions.c.id == resource_id)).scalar_one_or_none() or resource_id
+        kind = self.uow.session.execute(select(resource_scopes.c.resource_kind).where(
+            resource_scopes.c.resource_id == owner)).scalar_one_or_none()
+        if kind == 'telemetry.archive':
+            from lzo.telemetry.archive import authorize_archive
+            authorize_archive(self.uow, actor, owner)
         return RevisionDetail(_ref(row), row["payload"], row["actor_id"], row["task_id"],
             row["recorded_at"], row["effective_at"], row["bundle_id"],
             [UUID(value) for value in row["evidence_refs"] or []], [UUID(value) for value in row["proof_refs"] or []])

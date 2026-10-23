@@ -66,12 +66,15 @@ class TelemetryRepository:
     def __init__(self, registry):
         self.registry = registry
 
-    def page(self, object_ids, source_ids, *, kind, start=None, end=None, after=None, limit=100, history=False, filters=None):
+    def page(self, object_ids, source_ids, *, kind, start=None, end=None, after=None, limit=100, history=False, filters=None, record_ids=None):
         if not object_ids or not source_ids:
             return []
         query = '''SELECT s.payload,s.batch_id,s.event_id FROM telemetry_samples s
             WHERE s.object_id IN :objects AND s.source_id IN :sources AND s.kind=:kind '''
         params = dict(objects=list(object_ids), sources=list(source_ids), kind=kind, limit=limit)
+        if record_ids is not None:
+            query += 'AND s.id=ANY(:record_ids) '
+            params['record_ids'] = list(record_ids)
         if not history:
             query += "AND s.payload->>'operation'='upsert' AND NOT EXISTS(SELECT 1 FROM telemetry_supersessions x WHERE x.old_id=s.id) "
         if start is not None:
@@ -82,7 +85,7 @@ class TelemetryRepository:
         if after:
             query += 'AND (s.sampled_at,s.id)>(:time,:id) '; params.update(time=after[0], id=after[1])
         for key, value in (filters or {}).items():
-            if key not in ('device_id', 'channel_id', 'mission_id', 'metric_id'):
+            if key not in ('device_id', 'channel_id', 'mission_id', 'metric_id', 'quality'):
                 raise ValueError('Unsupported telemetry selector')
             query += f"AND s.payload->>'{key}'=:{key} "
             params[key] = str(value)

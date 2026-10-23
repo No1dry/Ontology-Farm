@@ -5,7 +5,7 @@ import pytest
 from sqlalchemy import insert,update,select
 
 
-def test_survey_requires_controlled_evidence_and_current_authority(object_case,gis_tick):
+def test_survey_requires_controlled_evidence_and_current_authority(object_case,gis_tick,monkeypatch):
     from lzo.auth import models
     from lzo.contracts import ResourceScope,RevisionRef
     from lzo.ingestion.sources import SourceService
@@ -66,6 +66,22 @@ def test_survey_requires_controlled_evidence_and_current_authority(object_case,g
     gis_tick(s)
     listing=s.client.get(f'/api/v1/objects/{identifier}/spatial-assets')
     assert listing.status_code==200 and listing.json()['assets'][0]['quality']=='verified',listing.text
+    # Actual authorized core/object/evidence and real GIS rows, with narrow
+    # injection at the byte boundary only; no shared S3 service disruption.
+    from lzo.artifacts.store import ArtifactStore
+    from lzo.errors import ApiError
+    original_open=ArtifactStore.open
+    for failed_id in (UUID(artifact['version_id']), evidence.id):
+        for code in ('BLOB_UNAVAILABLE','BLOB_CORRUPT'):
+            def failed_open(store,blob):
+                if blob.version_id==failed_id:
+                    raise ApiError(code,503,'Synthetic failure at actual authorized byte boundary')
+                return original_open(store,blob)
+            with monkeypatch.context() as scoped:
+                scoped.setattr(ArtifactStore,'open',failed_open)
+                failed=s.client.get(f'/api/v1/objects/{identifier}/spatial-assets')
+                assert failed.status_code==503 and failed.json()['code']==code,failed.text
+    assert s.client.get(f'/api/v1/objects/{identifier}/spatial-assets').json()['assets']
     # Model an old pre-fix specialized-index entry; read filtering must reject
     # its ordinary-file survey independently of the now-fixed write command.
     from lzo.storage.registry import StorageRegistry

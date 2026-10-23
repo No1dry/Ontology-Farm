@@ -205,7 +205,10 @@ def list_spatial_assets(uow,actor,identifier,*,limit=None,cursor=None):
                     _artifact(uow,actor,UUID(asset["artifact_version_id"]),asset["sha256"])
                     if asset.get("survey_evidence_version_id"):
                         _survey_evidence(uow,actor,UUID(asset["survey_evidence_version_id"]),verified=asset.get("quality")=="verified")
-                except ApiError:continue
+                except ApiError as error:
+                    if error.status == 403 or (error.status == 404 and error.code == 'NOT_FOUND'):
+                        continue
+                    raise
                 output.append(asset)
                 if len(output)>size:break
             if len(rows)<size+1:break

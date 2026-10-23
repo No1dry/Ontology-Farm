@@ -1,0 +1,128 @@
+{
+  "base": "299c2eeade1ac547b3dc6e4c3fc8f10d341a3d25",
+  "batch": {
+    "payload": {
+      "adapter": "incremental-v1",
+      "input_artifact_version_id": null,
+      "mapping_version_id": null,
+      "records": [
+        {
+          "artifact_version_id": null,
+          "channel_id": null,
+          "clock_basis": "device",
+          "data_nature": "synthetic",
+          "device_binding_ref": {
+            "event_id": "00000000-0000-0000-0000-000000000003",
+            "resource_id": "00000000-0000-0000-0000-000000000002",
+            "revision": 7
+          },
+          "device_id": "00000000-0000-0000-0000-000000000002",
+          "end_at": null,
+          "event_type": null,
+          "evidence_version_ids": [],
+          "kind": "observation",
+          "location_ref": null,
+          "metric_id": "flow",
+          "mission_id": null,
+          "model_ref": {
+            "event_id": "00000000-0000-0000-0000-000000000005",
+            "resource_id": "00000000-0000-0000-0000-000000000004",
+            "revision": 9
+          },
+          "normalized_unit": null,
+          "normalized_value": "1.000",
+          "object_id": "00000000-0000-0000-0000-000000000001",
+          "operation": "upsert",
+          "point_id": "pump",
+          "position": null,
+          "quality": "valid",
+          "raw_unit": null,
+          "raw_value": "1.000",
+          "reported_at": null,
+          "sampled_at": "2026-10-22T00:00:00Z",
+          "source_record_id": "legacy-pinned",
+          "supersedes": null,
+          "version": 1
+        }
+      ],
+      "source_id": "00000000-0000-0000-0000-000000000006"
+    },
+    "sha256": "f2e130cf67eea8de4c83f4d4aa6d8f6442984d56716e1ff7f2f74a056c59671f"
+  },
+  "document": {
+    "payload": {
+      "artifact_version_id": "00000000-0000-0000-0000-000000000007",
+      "document_type": "manual",
+      "entity_ids": [],
+      "entity_iris": [],
+      "license": "synthetic",
+      "model_ids": [],
+      "publication_date": null,
+      "source_uri": "urn:synthetic:manual",
+      "source_version": "1",
+      "state": "draft",
+      "summary": "",
+      "term_iris": [],
+      "title": "Manual"
+    },
+    "sha256": "0a89d30ba3a7b83522a2a13be20835b6ae69208fe0858ea1b9fe2b8996915936"
+  },
+  "model": {
+    "payload": {
+      "applicability": null,
+      "attachment_version_ids": [],
+      "capabilities": [],
+      "evidence_version_ids": [],
+      "exact_model": "PX-1",
+      "firmware": "fw-7",
+      "manufacturer": null,
+      "offline_constraints": null,
+      "protocol_profiles": null,
+      "state": "draft",
+      "summary": "",
+      "synthetic": false
+    },
+    "sha256": "04e0bb61dfa1dbe5beb3c0150141bdeb10ffd26d7daa2b5cb7f84f058cbbb50c"
+  },
+  "record": {
+    "payload": {
+      "artifact_version_id": null,
+      "channel_id": null,
+      "clock_basis": "device",
+      "data_nature": "synthetic",
+      "device_binding_ref": {
+        "event_id": "00000000-0000-0000-0000-000000000003",
+        "resource_id": "00000000-0000-0000-0000-000000000002",
+        "revision": 7
+      },
+      "device_id": "00000000-0000-0000-0000-000000000002",
+      "end_at": null,
+      "event_type": null,
+      "evidence_version_ids": [],
+      "kind": "observation",
+      "location_ref": null,
+      "metric_id": "flow",
+      "mission_id": null,
+      "model_ref": {
+        "event_id": "00000000-0000-0000-0000-000000000005",
+        "resource_id": "00000000-0000-0000-0000-000000000004",
+        "revision": 9
+      },
+      "normalized_unit": null,
+      "normalized_value": "1.000",
+      "object_id": "00000000-0000-0000-0000-000000000001",
+      "operation": "upsert",
+      "point_id": "pump",
+      "position": null,
+      "quality": "valid",
+      "raw_unit": null,
+      "raw_value": "1.000",
+      "reported_at": null,
+      "sampled_at": "2026-10-22T00:00:00+00:00",
+      "source_record_id": "legacy-pinned",
+      "supersedes": null,
+      "version": 1
+    },
+    "sha256": "8f2be9d70bb551082f78ee0d2f2700b88641ba0fb035c6cc7f71323531a3a91a"
+  }
+}

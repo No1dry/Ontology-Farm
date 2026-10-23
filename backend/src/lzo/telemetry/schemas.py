@@ -2,15 +2,54 @@
 from decimal import Decimal
 from typing import Literal
 from uuid import UUID
-from pydantic import AwareDatetime, Field, model_validator
+from pydantic import AwareDatetime, Field, model_validator, model_serializer
 from lzo.ingestion.schemas import DTO, DataNature
-from lzo.contracts import RevisionRef
+from lzo.contracts import RevisionRef, ResourceScope
 from lzo.gis.schemas import PositionInput
 
 
 class Supersedes(DTO):
     source_record_id: str = Field(min_length=1, max_length=256)
     version: int = Field(ge=1)
+
+
+class MeasurementMethod(DTO):
+    name: str = Field(min_length=1, max_length=256)
+    version: str | None = Field(default=None, max_length=256)
+
+
+class Calibration(DTO):
+    version: str = Field(min_length=1, max_length=256)
+    method: str | None = Field(default=None, max_length=256)
+
+
+class TimeQuality(DTO):
+    state: Literal['synchronized', 'estimated', 'unreliable', 'unknown']
+    uncertainty_ms: Decimal | None = Field(default=None, ge=0, allow_inf_nan=False)
+
+
+class Resolution(DTO):
+    width: int = Field(gt=0, le=100000)
+    height: int = Field(gt=0, le=100000)
+
+
+class MediaGap(DTO):
+    start: AwareDatetime
+    end: AwareDatetime
+
+    @model_validator(mode='after')
+    def increasing(self):
+        if self.end <= self.start:
+            raise ValueError('Gap end must follow start')
+        return self
+
+
+class MediaMetadata(DTO):
+    encoding: str | None = Field(default=None, max_length=128)
+    resolution: Resolution | None = None
+    sequence: int | None = Field(default=None, ge=0)
+    gaps: tuple[MediaGap, ...] | None = Field(default=None, max_length=1000)
+    verification: Literal['verified', 'unverified', 'failed', 'unknown'] | None = None
 
 
 class ObservationInput(DTO):
@@ -42,6 +81,20 @@ class ObservationInput(DTO):
     mission_id: str | None = Field(default=None, max_length=256)
     position: PositionInput | None = None
     event_type: str | None = Field(default=None, max_length=256)
+    measurement_method: MeasurementMethod | None = None
+    calibration: Calibration | None = None
+    time_quality: TimeQuality | None = None
+    media_metadata: MediaMetadata | None = None
+
+    @model_serializer(mode='wrap')
+    def compatible_payload(self, handler):
+        value = handler(self)
+        # Old accepted records must retain their exact representation/hash.
+        # Only these additive fields omit unknown defaults; old defaults stay.
+        for key in ('measurement_method', 'calibration', 'time_quality', 'media_metadata'):
+            if value.get(key) is None:
+                value.pop(key, None)
+        return value
 
     @model_validator(mode='after')
     def consistent(self):
@@ -83,6 +136,45 @@ class FileReplayInput(DTO):
     artifact_version_id: UUID
     format: Literal['csv', 'json', 'geojson']
     mapping_version_id: UUID | None = None
+
+
+class ArchiveInput(DTO):
+    object_id: UUID
+    source_id: UUID
+    before: AwareDatetime
+    start: AwareDatetime | None = None
+    kind: Literal['observation', 'event', 'media', 'track']
+    quality: Literal['valid', 'suspect', 'invalid', 'unknown'] | None = None
+    record_ids: tuple[UUID, ...] | None = Field(default=None, min_length=1, max_length=1000)
+
+    @model_validator(mode='after')
+    def bounded_selection(self):
+        if self.start is not None and self.start >= self.before:
+            raise ValueError('Archive interval must increase')
+        if self.record_ids is not None and len(set(self.record_ids)) != len(self.record_ids):
+            raise ValueError('Archive record selection must be unique')
+        return self
+
+
+class ArchiveReceipt(DTO):
+    id: UUID
+    artifact_version_id: UUID
+    sha256: str
+    record_count: int
+    policy: Literal['retain-history']
+    automatic_deletion: Literal[False]
+
+
+class ArchiveManifest(DTO):
+    archive_version: Literal[1]
+    selector: ArchiveInput
+    source_scope: ResourceScope
+    record_hashes: dict[str, str]
+    accepted_events: dict[str, list[UUID]]
+    records: list[dict]
+    policy: Literal['retain-history']
+    automatic_deletion: Literal[False]
+    complete_selection: bool
 
 
 class SourceNamespace(DTO):

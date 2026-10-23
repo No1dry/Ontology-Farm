@@ -283,7 +283,8 @@ class TelemetryService:
         return ObservationInput.model_validate({key: value for key, value in row.items() if key in ObservationInput.model_fields})
 
     def query(self, actor, *, kind='observation', object_id=None, start=None, end=None, cursor=None,
-              limit=50, history=False, latest=False, device_id=None, channel_id=None, mission_id=None, metric_id=None):
+              limit=50, history=False, latest=False, device_id=None, channel_id=None, mission_id=None, metric_id=None,
+              quality=None, source_id=None, record_ids=None):
         validate_actor(self.uow, actor)
         if kind not in ('observation', 'event', 'media', 'track') or type(limit) is not int or not 1 <= limit <= min(1000, self.settings.list_max_page_size):
             raise ApiError('INVALID_FILTER', 422, 'Invalid telemetry query')
@@ -291,12 +292,16 @@ class TelemetryService:
             raise ApiError('INVALID_FILTER', 422, 'Timezone-aware increasing interval required')
         if latest and (history or cursor):
             raise ApiError('INVALID_FILTER', 422, 'Latest query cannot combine history or cursor')
+        if quality not in (None, 'valid', 'suspect', 'invalid', 'unknown') or (latest and quality not in (None, 'valid')):
+            raise ApiError('INVALID_FILTER', 422, 'Latest requires valid quality; invalid quality selector')
+        if record_ids is not None and (not record_ids or len(record_ids) > 1000):
+            raise ApiError('INVALID_FILTER', 422, 'Bounded exact record selection required')
         if object_id:
             self._object(actor, object_id)
         if device_id:
             self._object(actor, device_id)
         filters = {key: str(value) for key, value in dict(device_id=device_id, channel_id=channel_id,
-            mission_id=mission_id, metric_id=metric_id).items() if value is not None}
+            mission_id=mission_id, metric_id=metric_id, quality=quality).items() if value is not None}
         if any(not value or len(value) > 256 for value in filters.values()):
             raise ApiError('INVALID_FILTER', 422, 'Invalid telemetry selector')
         objects = list(self.uow.session.execute(select(resource_scopes.c.resource_id).where(
@@ -314,8 +319,14 @@ class TelemetryService:
                 if error.status not in (403, 404):
                     raise
         source_ids = permitted_sources
+        if source_id is not None:
+            SourceService(self.uow).read(actor, source_id)
+            source_ids = [source_id] if source_id in source_ids else []
         context = {'actor': str(actor.subject_id), 'authorization': actor.authorization_version, 'kind': kind,
-            'object': str(object_id) if object_id else None, 'start': str(start), 'end': str(end), 'history': history, 'filters': filters}
+            'object': str(object_id) if object_id else None, 'source': str(source_id) if source_id else None,
+            'start': str(start), 'end': str(end), 'history': history, 'filters': filters}
+        if record_ids is not None:
+            context['record_ids'] = sorted(map(str, record_ids))
         after = None
         if cursor:
             try:
@@ -333,7 +344,15 @@ class TelemetryService:
             except (ValueError, TypeError, KeyError, binascii.Error):
                 raise ApiError('INVALID_CURSOR', 422, 'Invalid telemetry cursor') from None
         # Frozen core envelopes authenticate candidates and pending watermarks.
-        wires = self.uow.session.execute(text("SELECT envelope,status FROM store_deliveries WHERE target='timeseries' AND entity_id IN (SELECT id FROM telemetry_batches)")).mappings()
+        wire_query = "SELECT envelope,status FROM store_deliveries WHERE target='timeseries' AND entity_id IN (SELECT id FROM telemetry_batches)"
+        wire_params = {}
+        if source_id is not None:
+            wire_query += " AND envelope->'payload'->>'source_id'=:source"
+            wire_params['source'] = str(source_id)
+        if record_ids is not None:
+            wire_query += " AND EXISTS(SELECT 1 FROM jsonb_array_elements(envelope->'payload'->'records') r WHERE r->>'id'=ANY(:record_ids))"
+            wire_params['record_ids'] = list(map(str, record_ids))
+        wires = self.uow.session.execute(text(wire_query), wire_params).mappings()
         accepted, states, watermark, superseded = {}, [], None, set()
         for wire in wires:
             envelope = SyncEnvelope.model_validate(wire['envelope'])
@@ -357,6 +376,8 @@ class TelemetryService:
             records = {}
             for row in payload['records']:
                 if UUID(row['object_id']) not in objects or row['kind'] != kind:
+                    continue
+                if record_ids is not None and UUID(row['id']) not in record_ids:
                     continue
                 record = self._input(row)
                 if (start and ((record.end_at <= start) if kind == 'media' else record.sampled_at < start)) or (end and record.sampled_at >= end):
@@ -384,7 +405,7 @@ class TelemetryService:
             repository = TelemetryRepository(registry)
             while True:
                 candidates = repository.page(objects, source_ids, kind=kind, start=start, end=end,
-                    after=after, limit=1000, history=history, filters=filters)
+                    after=after, limit=1000, history=history, filters=filters, record_ids=record_ids)
                 for candidate in candidates:
                     row = candidate['payload']
                     after = (datetime.fromisoformat(row['sampled_at']), UUID(row['id']))

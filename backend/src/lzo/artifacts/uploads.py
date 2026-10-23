@@ -61,7 +61,7 @@ class UploadService:
             raise ApiError('UPLOAD_TOO_LARGE', 413, 'Artifact exceeds resource upload budget')
         if not re.fullmatch('[0-9a-f]{64}', sha256):
             raise ApiError('INVALID_DIGEST', 422, 'Expected SHA-256 is required')
-        media_type = self.store._media(media_type)
+        media_type = self.store.normalize_media_type(media_type)
         request = dict(resource_id=str(resource_id), filename=filename, media_type=media_type,
             size_bytes=size_bytes, sha256=sha256, metadata=metadata or {},
             previous_version_id=str(previous_version_id) if previous_version_id else None,
@@ -144,7 +144,7 @@ class UploadService:
         digest, size = hashlib.sha256(), 0
         path = None
         try:
-            with tempfile.NamedTemporaryFile(dir=self.store.root/'staging', delete=False) as output:
+            with tempfile.NamedTemporaryFile(dir=self.store.staging_directory, delete=False) as output:
                 path = Path(output.name)
                 for number in range(1, count+1):
                     part = dict(row['parts'][str(number)])

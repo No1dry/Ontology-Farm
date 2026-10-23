@@ -23,6 +23,15 @@ import time
 from uuid import UUID, uuid4
 
 ROOT = Path(__file__).resolve().parents[1]
+MEASURED_ACTIONS = ['view', 'edit', 'source.read', 'evidence.read']
+
+
+def require_professional_visibility(value, expected):
+    """Fail before timing if measured identities cannot read populated input."""
+    for kind, identifiers in expected.items():
+        page = value.get(kind, {})
+        actual = {row['id'] for row in page.get('items', ())}
+        assert identifiers and page.get('status') == 'current' and identifiers <= actual, 'Seeded professional visibility is incomplete: ' + kind
 
 
 def completeness(status, value):
@@ -204,10 +213,17 @@ def run_case(s):
             result['seed']['observation_media_input'] = {'state': 'not_executed', 'reason': 'entity projection baseline incomplete',
                 'requested_observations': config['observations'], 'requested_media_bytes': config['media_bytes']}
             save()
+        expected_professional = {}
+        if (config['observations'] or config['media_bytes']) and seed['full_baseline_ready']:
+            from lzo.telemetry.service import record_id
+            for label, kind in (('observations', 'observation'), ('media', 'media')):
+                sample = next((record for record in records if record.object_id == ids[0] and record.kind == kind), None)
+                if sample is not None:
+                    expected_professional[label] = {str(record_id(source.id, sample.source_record_id, sample.version))}
         clients = []
         with s.transaction() as uow:
             role = uuid4()
-            uow.session.execute(insert(auth.roles).values(id=role, name='benchmark-current-view-edit', actions=['view', 'edit'], revision=1))
+            uow.session.execute(insert(auth.roles).values(id=role, name='benchmark-current-view-edit', actions=MEASURED_ACTIONS, revision=1))
             for number in range(config['users']):
                 subject = resolve_identity(uow, 'urn:benchmark:fixture-issuer', f'benchmark-{number}', f'Benchmark {number}', f'benchmark-{number}@example.invalid')
                 uow.session.execute(insert(auth.grants).values(id=uuid4(), user_id=subject, role_id=role,
@@ -228,6 +244,13 @@ def run_case(s):
         save()
         for _, client in clients:
             assert client.get(f'/api/v1/objects/{ids[0]}').status_code == 200
+            if expected_professional:
+                response = client.get(f'/api/v1/objects/{ids[0]}/data')
+                assert response.status_code == 200
+                require_professional_visibility(response.json(), expected_professional)
+        result['professional_visibility_preflight'] = {'subjects': len(clients),
+            'expected_ids': {kind: sorted(values) for kind, values in expected_professional.items()},
+            'checked_before_timing': True}
         operation_defs = {
             'object': 'GET /api/v1/objects/{id}', 'map': 'GET /api/v1/geometry?bbox=113,29,116,32; first authorized page at recorded list_page_size',
             'graph': 'GET /api/v1/graph/neighborhood?resource_id={id}&hops=1',

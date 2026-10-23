@@ -1963,6 +1963,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/telemetry/archives": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Archive */
+        post: operations["createTelemetryArchive"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/telemetry/archives/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Archive Read */
+        get: operations["getTelemetryArchive"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/telemetry/batches": {
         parameters: {
             query?: never;
@@ -2434,6 +2468,96 @@ export interface components {
             /** Target Ids */
             target_ids: string[];
         };
+        /** ArchiveInput */
+        ArchiveInput: {
+            /**
+             * Before
+             * Format: date-time
+             */
+            before: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "observation" | "event" | "media" | "track";
+            /**
+             * Object Id
+             * Format: uuid
+             */
+            object_id: string;
+            /** Quality */
+            quality?: ("valid" | "suspect" | "invalid" | "unknown") | null;
+            /** Record Ids */
+            record_ids?: string[] | null;
+            /**
+             * Source Id
+             * Format: uuid
+             */
+            source_id: string;
+            /** Start */
+            start?: string | null;
+        };
+        /** ArchiveManifest */
+        ArchiveManifest: {
+            /** Accepted Events */
+            accepted_events: {
+                [key: string]: string[];
+            };
+            /**
+             * Archive Version
+             * @constant
+             */
+            archive_version: 1;
+            /**
+             * Automatic Deletion
+             * @constant
+             */
+            automatic_deletion: false;
+            /** Complete Selection */
+            complete_selection: boolean;
+            /**
+             * Policy
+             * @constant
+             */
+            policy: "retain-history";
+            /** Record Hashes */
+            record_hashes: {
+                [key: string]: string;
+            };
+            /** Records */
+            records: {
+                [key: string]: unknown;
+            }[];
+            selector: components["schemas"]["ArchiveInput"];
+            source_scope: components["schemas"]["ResourceScope"];
+        };
+        /** ArchiveReceipt */
+        ArchiveReceipt: {
+            /**
+             * Artifact Version Id
+             * Format: uuid
+             */
+            artifact_version_id: string;
+            /**
+             * Automatic Deletion
+             * @constant
+             */
+            automatic_deletion: false;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Policy
+             * @constant
+             */
+            policy: "retain-history";
+            /** Record Count */
+            record_count: number;
+            /** Sha256 */
+            sha256: string;
+        };
         /** ArtifactDetail */
         ArtifactDetail: {
             /** Filename */
@@ -2760,6 +2884,13 @@ export interface components {
              * Format: uuid
              */
             version_id: string;
+        };
+        /** Calibration */
+        Calibration: {
+            /** Method */
+            method?: string | null;
+            /** Version */
+            version: string;
         };
         /** CandidateValue */
         CandidateValue: {
@@ -3297,11 +3428,15 @@ export interface components {
         };
         /** DocumentMetadata */
         DocumentMetadata: {
+            /** Agricultural Scenario */
+            agricultural_scenario?: string | null;
             /**
              * Artifact Version Id
              * Format: uuid
              */
             artifact_version_id: string;
+            /** Author */
+            author?: string | null;
             /**
              * Document Type
              * @enum {string}
@@ -3317,13 +3452,19 @@ export interface components {
              * @default []
              */
             entity_iris: string[];
+            /** Language */
+            language?: string | null;
             /** License */
             license: string;
+            /** Manual Summary Preparer */
+            manual_summary_preparer?: string | null;
             /**
              * Model Ids
              * @default []
              */
             model_ids: string[];
+            /** Organization */
+            organization?: string | null;
             /** Publication Date */
             publication_date?: string | null;
             /** Source Uri */
@@ -4315,6 +4456,38 @@ export interface components {
             /** Source Timezone */
             source_timezone: string | null;
         };
+        /** MeasurementMethod */
+        MeasurementMethod: {
+            /** Name */
+            name: string;
+            /** Version */
+            version?: string | null;
+        };
+        /** MediaGap */
+        MediaGap: {
+            /**
+             * End
+             * Format: date-time
+             */
+            end: string;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+        };
+        /** MediaMetadata */
+        MediaMetadata: {
+            /** Encoding */
+            encoding?: string | null;
+            /** Gaps */
+            gaps?: components["schemas"]["MediaGap"][] | null;
+            resolution?: components["schemas"]["Resolution"] | null;
+            /** Sequence */
+            sequence?: number | null;
+            /** Verification */
+            verification?: ("verified" | "unverified" | "failed" | "unknown") | null;
+        };
         /** MembersDetail */
         MembersDetail: {
             /**
@@ -4420,6 +4593,8 @@ export interface components {
              * @default []
              */
             capabilities: components["schemas"]["Capability"][];
+            /** Equipment Category */
+            equipment_category?: string | null;
             /**
              * Evidence Version Ids
              * @default []
@@ -4429,6 +4604,8 @@ export interface components {
             exact_model: string;
             /** Firmware */
             firmware?: string | null;
+            /** Hardware Version */
+            hardware_version?: string | null;
             /** Manufacturer */
             manufacturer?: string | null;
             /** Offline Constraints */
@@ -4529,6 +4706,7 @@ export interface components {
         ObservationInput: {
             /** Artifact Version Id */
             artifact_version_id?: string | null;
+            calibration?: components["schemas"]["Calibration"] | null;
             /** Channel Id */
             channel_id?: string | null;
             /**
@@ -4564,6 +4742,8 @@ export interface components {
              */
             kind: "observation" | "event" | "media" | "track";
             location_ref?: components["schemas"]["RevisionRef"] | null;
+            measurement_method?: components["schemas"]["MeasurementMethod"] | null;
+            media_metadata?: components["schemas"]["MediaMetadata"] | null;
             /** Metric Id */
             metric_id?: string | null;
             /** Mission Id */
@@ -4607,6 +4787,7 @@ export interface components {
             /** Source Record Id */
             source_record_id: string;
             supersedes?: components["schemas"]["Supersedes"] | null;
+            time_quality?: components["schemas"]["TimeQuality-Input"] | null;
             /**
              * Version
              * @default 1
@@ -4617,6 +4798,7 @@ export interface components {
         ObservationView: {
             /** Artifact Version Id */
             artifact_version_id?: string | null;
+            calibration?: components["schemas"]["Calibration"] | null;
             /** Channel Id */
             channel_id?: string | null;
             /**
@@ -4659,6 +4841,8 @@ export interface components {
              */
             kind: "observation" | "event" | "media" | "track";
             location_ref?: components["schemas"]["RevisionRef"] | null;
+            measurement_method?: components["schemas"]["MeasurementMethod"] | null;
+            media_metadata?: components["schemas"]["MediaMetadata"] | null;
             /** Metric Id */
             metric_id?: string | null;
             /** Mission Id */
@@ -4710,6 +4894,7 @@ export interface components {
             supersedes?: components["schemas"]["Supersedes"] | null;
             /** Supersedes Id */
             supersedes_id: string | null;
+            time_quality?: components["schemas"]["TimeQuality-Output"] | null;
             /**
              * Version
              * @default 1
@@ -5136,6 +5321,13 @@ export interface components {
              * @default false
              */
             transitive: boolean;
+        };
+        /** Resolution */
+        Resolution: {
+            /** Height */
+            height: number;
+            /** Width */
+            width: number;
         };
         /** ResourceScope */
         ResourceScope: {
@@ -5945,6 +6137,26 @@ export interface components {
             valid_from_path?: string | null;
             /** Valid To Path */
             valid_to_path?: string | null;
+        };
+        /** TimeQuality */
+        "TimeQuality-Input": {
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "synchronized" | "estimated" | "unreliable" | "unknown";
+            /** Uncertainty Ms */
+            uncertainty_ms?: number | string | null;
+        };
+        /** TimeQuality */
+        "TimeQuality-Output": {
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "synchronized" | "estimated" | "unreliable" | "unknown";
+            /** Uncertainty Ms */
+            uncertainty_ms?: string | null;
         };
         /** Triple */
         Triple: {
@@ -11319,6 +11531,70 @@ export interface operations {
             };
         };
     };
+    createTelemetryArchive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ArchiveInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArchiveReceipt"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    getTelemetryArchive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArchiveManifest"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     acceptTelemetryBatch: {
         parameters: {
             query?: never;
@@ -11448,6 +11724,8 @@ export interface operations {
                 channel_id?: string | null;
                 mission_id?: string | null;
                 metric_id?: string | null;
+                quality?: ("valid" | "suspect" | "invalid" | "unknown") | null;
+                source_id?: string | null;
             };
             header?: never;
             path?: never;
@@ -11489,6 +11767,8 @@ export interface operations {
                 channel_id?: string | null;
                 mission_id?: string | null;
                 metric_id?: string | null;
+                quality?: ("valid" | "suspect" | "invalid" | "unknown") | null;
+                source_id?: string | null;
             };
             header?: never;
             path?: never;
@@ -11530,6 +11810,8 @@ export interface operations {
                 channel_id?: string | null;
                 mission_id?: string | null;
                 metric_id?: string | null;
+                quality?: ("valid" | "suspect" | "invalid" | "unknown") | null;
+                source_id?: string | null;
             };
             header?: never;
             path?: never;
@@ -11636,6 +11918,8 @@ export interface operations {
                 channel_id?: string | null;
                 mission_id?: string | null;
                 metric_id?: string | null;
+                quality?: ("valid" | "suspect" | "invalid" | "unknown") | null;
+                source_id?: string | null;
             };
             header?: never;
             path?: never;

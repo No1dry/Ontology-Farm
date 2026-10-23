@@ -1,5 +1,6 @@
 """Explicit private blob providers; no remote-to-local fallback."""
 import re
+from pathlib import Path
 from typing import Protocol, BinaryIO, AsyncIterable
 
 from lzo.artifacts.store import ArtifactStore, StagedBlob
@@ -12,6 +13,9 @@ def upload_budget(settings):
 
 
 class BlobStore(Protocol):
+    @property
+    def staging_directory(self) -> Path: ...
+    def normalize_media_type(self, media_type: str) -> str: ...
     def put(self, stream: BinaryIO, media_type: str) -> BlobRef: ...
     async def stage_async(self, chunks: AsyncIterable[bytes], media_type: str) -> StagedBlob: ...
     def complete(self, staged: StagedBlob) -> BlobRef: ...

@@ -1,6 +1,7 @@
 """Authenticated backend-only telemetry and object data API."""
 from datetime import datetime
 from uuid import UUID
+from typing import Literal
 from fastapi import APIRouter, Depends, Request
 from lzo.auth.router import AuthRequest, authenticated
 from lzo.errors import require_idempotency_key
@@ -54,10 +55,11 @@ def query_endpoint(kind):
                  end: datetime | None = None, cursor: str | None = None, limit: int = 50,
                  history: bool = False, latest: bool = False, device_id: UUID | None = None,
                  channel_id: str | None = None, mission_id: str | None = None, metric_id: str | None = None,
+                 quality: Literal['valid', 'suspect', 'invalid', 'unknown'] | None = None, source_id: UUID | None = None,
                  auth: AuthRequest = Depends(authenticated)):
         return service(request, auth).query(auth.actor, kind=kind, object_id=object_id, start=start, end=end,
             cursor=cursor, limit=limit, history=history, latest=latest, device_id=device_id,
-            channel_id=channel_id, mission_id=mission_id, metric_id=metric_id)
+            channel_id=channel_id, mission_id=mission_id, metric_id=metric_id, quality=quality, source_id=source_id)
     return endpoint
 
 
@@ -77,3 +79,20 @@ def object_data(id: UUID, request: Request, observations_start: datetime | None 
 @router.get('/telemetry/retention-preview', operation_id='previewTelemetryRetention')
 def retention(object_id: UUID, before: datetime, request: Request, auth: AuthRequest = Depends(authenticated)):
     return service(request, auth).retention_preview(auth.actor, object_id, before)
+
+
+from lzo.telemetry.schemas import ArchiveInput, ArchiveReceipt, ArchiveManifest
+from lzo.telemetry.archive import ArchiveService
+
+
+@router.post('/telemetry/archives', status_code=201, response_model=ArchiveReceipt, operation_id='createTelemetryArchive')
+def archive(body: ArchiveInput, request: Request, auth: AuthRequest = Depends(authenticated)):
+    result = ArchiveService(service(request, auth)).create(auth.actor, body,
+        require_idempotency_key(request.headers.get('Idempotency-Key')))
+    auth.uow.commit()
+    return result
+
+
+@router.get('/telemetry/archives/{id}', response_model=ArchiveManifest, operation_id='getTelemetryArchive')
+def archive_read(id: UUID, request: Request, auth: AuthRequest = Depends(authenticated)):
+    return ArchiveService(service(request, auth)).read(auth.actor, id)

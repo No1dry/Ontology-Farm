@@ -2,13 +2,22 @@
 from datetime import date, datetime
 from typing import Literal
 from uuid import UUID
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator, model_serializer
 from lzo.contracts import ResourceScope, RevisionRef
 from lzo.semantic.rdf import iri
 
 
 class DTO(BaseModel):
     model_config = ConfigDict(extra='forbid', frozen=True)
+
+    @model_serializer(mode='wrap')
+    def compatible_payload(self, handler):
+        value = handler(self)
+        for key in ('hardware_version', 'equipment_category', 'author', 'organization',
+                    'agricultural_scenario', 'language', 'manual_summary_preparer'):
+            if value.get(key) is None:
+                value.pop(key, None)
+        return value
 
 
 class Capability(DTO):
@@ -22,6 +31,8 @@ class ModelMetadata(DTO):
     manufacturer: str | None = Field(default=None, max_length=200)
     exact_model: str = Field(min_length=1, max_length=200)
     firmware: str | None = Field(default=None, max_length=200)
+    hardware_version: str | None = Field(default=None, max_length=200)
+    equipment_category: str | None = Field(default=None, max_length=200)
     applicability: str | None = Field(default=None, max_length=4000)
     capabilities: tuple[Capability, ...] = Field(default=(), max_length=100)
     protocol_profiles: list[str] | None = Field(default=None, max_length=100)
@@ -41,6 +52,11 @@ class DocumentMetadata(DTO):
     source_version: str = Field(min_length=1, max_length=200)
     license: str = Field(min_length=1, max_length=2000)
     publication_date: date | None = None
+    author: str | None = Field(default=None, max_length=500)
+    organization: str | None = Field(default=None, max_length=500)
+    agricultural_scenario: str | None = Field(default=None, max_length=2000)
+    language: str | None = Field(default=None, max_length=100)
+    manual_summary_preparer: str | None = Field(default=None, max_length=500)
     model_ids: tuple[UUID, ...] = Field(default=(), max_length=100)
     entity_ids: tuple[UUID, ...] = Field(default=(), max_length=100)
     entity_iris: tuple[str, ...] = Field(default=(), max_length=100)

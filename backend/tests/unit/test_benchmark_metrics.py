@@ -20,3 +20,19 @@ def test_benchmark_accounts_for_incomplete_200_and_errors():
     assert result['latency_by_outcome']['complete']['p95_seconds'] == .1
     assert result['latency_by_outcome']['incomplete']['p50_seconds'] == .2
     assert result['latency_by_outcome']['error']['attempts'] == 1
+
+
+def test_benchmark_refuses_empty_or_wrong_professional_visibility():
+    import pytest
+    path = Path(__file__).resolve().parents[3] / 'scripts/benchmark_multistore.py'
+    spec = importlib.util.spec_from_file_location('benchmark_visibility', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    page = {'observations': {'status': 'current', 'items': [{'id': 'expected-observation'}]},
+        'media': {'status': 'current', 'items': [{'id': 'expected-media'}]}}
+    module.require_professional_visibility(page, {'observations': {'expected-observation'}, 'media': {'expected-media'}})
+    for bad in ({'observations': {'status': 'current', 'items': []}},
+                {'observations': {'status': 'pending', 'items': [{'id': 'expected-observation'}]}},
+                {'observations': {'status': 'current', 'items': [{'id': 'wrong'}]}}):
+        with pytest.raises(AssertionError):
+            module.require_professional_visibility(bad, {'observations': {'expected-observation'}})
