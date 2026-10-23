@@ -66,11 +66,17 @@ def reconcile_legacy_evidence(uow, actor, identifier, expected):
                 revision_visibility_dependencies.c.event_id == revision['event_id'])).scalars():
             facts.authorize(uow, actor, dependency)
     bundle = get_execution_bundle(actor, row['bundle_id'])
-    ref = facts.record_state(uow, actor, row, expected, bundle, evidence,
+    retained = baseline['payload']['dependency_revisions']
+    # The current generic head has no snapshot. Preserve every exact baseline
+    # pin, including distinct historical versions of one resource, while the
+    # ordinary resolver still rechecks current authority over all inputs.
+    refs = evidence | {UUID(pin['resource_id']) for pin in retained}
+    ref = facts.record_state(uow, actor, row, expected, bundle, refs,
         'object.evidence_reconciled', {'operation': 'object.evidence.reconcile',
             'semantic_baseline': facts.json_value(facts.RevisionRef(identifier, row['revision'], baseline['event_id'])),
+            'retained_dependency_revisions': retained,
             'legacy_events': [str(r['event_id']) for r in tail],
-            'evidence_version_ids': sorted(map(str, evidence))}).revision
+            'evidence_version_ids': sorted(map(str, evidence))}, previous_snapshot=baseline['payload']).revision
     uow.session.execute(insert(revision_metadata).values(event_id=ref.event_id,
         evidence_refs=sorted(map(str, evidence)), proof_refs=[]))
     return ref

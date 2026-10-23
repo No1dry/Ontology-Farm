@@ -76,43 +76,32 @@ def wait(url, seconds=180):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['start-idp', 'stop-idp', 'start-app', 'stop-app', 'restart-app', 'restart-fuseki'])
-    parser.add_argument('--env', action='append', required=True)
+    parser.add_argument('action', choices=['start-idp', 'stop-idp', 'start-app', 'stop-app', 'restart-app',
+        'start-fuseki', 'stop-fuseki', 'restart-fuseki'])
+    parser.add_argument('--env', action='append', default=[])
     parser.add_argument('--tool-root', type=Path)
     parser.add_argument('--java-home', type=Path)
-    parser.add_argument('--state', type=Path, required=True)
+    parser.add_argument('--state', type=Path)
     parser.add_argument('--idp-port', type=int, default=28080)
     parser.add_argument('--management-port', type=int, default=29000)
     parser.add_argument('--api-port', type=int, default=28000)
     parser.add_argument('--fuseki-state', type=Path)
     parser.add_argument('--fuseki-port', type=int, default=23030)
+    parser.add_argument('--fuseki-namespace', default='lzo')
+    parser.add_argument('--upgrade-stopped-legacy', action='store_true')
     args = parser.parse_args()
-    state = owned_state(ROOT, args.state)
     load_environment(args.env)
-    if args.action == 'restart-fuseki':
-        import psutil
+    if args.action.endswith('-fuseki'):
         if not args.fuseki_state or not args.tool_root or not args.java_home:
             parser.error('Fuseki needs explicit owned --fuseki-state, read-only --tool-root and --java-home')
-        owned = owned_state(ROOT, args.fuseki_state)
-        marker = owned / 'ownership.json'
-        record = json.loads(marker.read_text())
-        process = psutil.Process(record['pid'])
-        if (Path(record['state']).resolve() != owned or Path(process.cwd()).resolve() != owned or
-                Path(process.exe()).resolve() != Path(record['executable']).resolve()):
-            raise RuntimeError('Refusing unowned Fuseki process')
-        java = (args.java_home / 'bin/java.exe').resolve(strict=True)
-        home = (args.tool_root / 'fuseki/apache-jena-fuseki-6.2.0').resolve(strict=True)
-        process.terminate(); process.wait(timeout=30)
-        environment = dict(os.environ, FUSEKI_BASE=str(owned), FUSEKI_HOME=str(home), JAVA_HOME=str(args.java_home))
-        with (owned/'server.log').open('ab') as log:
-            child = subprocess.Popen([str(java), '-Xmx1g', '-jar', str(home/'fuseki-server.jar'),
-                '--config='+str(owned/'config.ttl'), '--localhost', '--port='+str(args.fuseki_port)],
-                cwd=owned, env=environment, stdin=subprocess.DEVNULL, stdout=log, stderr=log, creationflags=FLAGS)
-        record.update(pid=child.pid, executable=str(java.resolve()))
-        marker.write_text(json.dumps(record))
-        wait(f'http://127.0.0.1:{args.fuseki_port}/lzo/query?query=ASK%7B%7D')
-        print('Owned Fuseki restarted with retained TDB state')
+        from multistore_fuseki import lifecycle
+        result = lifecycle(ROOT, args.action.split('-')[0], args.fuseki_state, args.tool_root, args.java_home,
+            args.fuseki_port, args.fuseki_namespace, upgrade_stopped_legacy=args.upgrade_stopped_legacy)
+        print('Owned Fuseki '+result['state']+' on loopback port '+str(result['port'])+' namespace '+result['namespace'])
         return
+    if not args.state or not args.env:
+        parser.error('Identity/API lifecycle requires explicit --state and --env')
+    state = owned_state(ROOT, args.state)
     if args.action == 'stop-idp':
         stop(state, 'keycloak')
         return

@@ -8,6 +8,22 @@ Use Python 3.12.7, Node 24.22.0 and the exact [version/archive/image pins](../..
 
 The retained native deployment owns PostgreSQL **127.0.0.1:25432** with four independent databases/accounts, S3 **28333**, and Fuseki **23030**. Ownership markers bind this absolute worktree and the specific data/state directories. `multistore_native.py init --tool-cache <cache> --port 25432` is only for a **new** cluster; existing owned state uses `start/status/restart`, never re-init. `object_store_native.py` owns its separate S3 lifecycle. Native lifecycle is supplemental evidence, not Compose.
 
+A fresh Fuseki namespace can be created without an existing PID/config or private bootstrap wrapper. Use the pinned read-only Fuseki 6.2.0 cache and Java 21. This command renders the checked-in [configuration](../../database/fuseki/config.ttl), binds only loopback and keeps config/TDB/logs in the named owned runtime:
+
+```powershell
+.venv/Scripts/python.exe scripts/multistore_prerequisites.py start-fuseki --fuseki-state .runtime/multistore-fuseki --tool-root ../p0-p1/.tools --java-home '<existing Java 21 home>' --fuseki-port 23030 --fuseki-namespace lzo
+```
+
+The matching application URL is `http://127.0.0.1:23030/lzo`. A different explicit port/namespace needs the corresponding private `LZO_FUSEKI_URL`; retain the existing deployment identity. `stop-fuseki`, `start-fuseki` and `restart-fuseki` use those same arguments and preserve config/TDB. Start also supports an owned crashed process whose recorded incarnation is gone. A live mismatched/reused PID, changed worktree/config/data/namespace/port or unmarked directory refuses. Markers bind actual PID creation time, executable, state and configuration hash.
+
+A running **legacy** marker without process creation time is deliberately ambiguous. A one-time operator must verify and stop the old service through its owning process/service console, checking its listening port, executable and owned TDB directory. The new runner will not stop/adopt it based only on the old PID. After that verified stop, start with the same arguments plus `--upgrade-stopped-legacy`. The upgrade requires the old PID absent, free declared port, matching worktree/state/executable, exact checked configuration and existing TDB path; it preserves config/data and records the new actual incarnation. Preserve the original ownership records. This one-time maintenance cost applies to the retained pre-fix runtime; this fix round did **not** stop or upgrade port23030.
+
+Reproduce the isolated lifecycle check on a NEW namespace and unused port (it writes only synthetic RDF, then stops its own process):
+
+```powershell
+.venv/Scripts/python.exe scripts/check_fuseki_lifecycle.py --state .runtime/fuseki-check-UNIQUE --tool-root ../p0-p1/.tools --java-home '<existing Java 21 home>' --port 23131 --namespace acceptance6c --untouched-state .runtime/multistore-fuseki --output .runtime/fuseki-check.json
+```
+
 For a new owned identity fixture (Keycloak writes into its installation tree, so its binaries are copied into an owned runtime):
 
 ```powershell
@@ -16,7 +32,7 @@ For a new owned identity fixture (Keycloak writes into its installation tree, so
 
 This binds Keycloak **28080** and management **29000** to loopback. Its private `idp.env` supplies actual discovery/client configuration and a stable session key. Native synthetic identity uses a fresh local dev-file database, not the Compose PostgreSQL identity deployment. Email/external invitations remain disabled. Native cleartext HTTP is restricted to loopback and is not a production identity configuration. Stop it through the same owned `stop-idp` command. Do not invoke the old `native_dev.py` hardcoded restart against this environment.
 
-Every command explicitly loads private dotenv files. Later files override earlier ones. The public wrapper never rewrites them or prints their values:
+Application/test commands requiring credentials explicitly load private dotenv files. Later files override earlier ones. The public wrapper never rewrites them or prints their values:
 
 ```powershell
 .venv/Scripts/python.exe scripts/multistore_acceptance.py --env .runtime/multistore/services.env --env .runtime/multistore/maintenance.env --env .runtime/acceptance-services/idp.env -- backend/src/lzo/migrate.py
@@ -55,11 +71,11 @@ Only after all active test clients have stopped, start the public deployment usi
 .venv/Scripts/python.exe scripts/multistore_prerequisites.py restart-fuseki --env .runtime/multistore/services.env --state .runtime/acceptance-services --fuseki-state .runtime/multistore-fuseki --tool-root ../p0-p1/.tools --java-home '<Java 21 home>'
 ```
 
-Optionally exercise owned IdP persistence with `stop-idp` then the original `start-idp` command against the **same** marked runtime, retaining its private idp.env/data. Start API/worker again with the exact original split+S3 command, then run `multistore_persistence.py check` through the same dotenv wrapper and manifest, writing a new result path. The manifest contains a private fixture session and never belongs in Git. The safe result compares semantic revision/history, current GIS, S3 hash, exact catalog/telemetry IDs, managed RDF generation/digest, provider JWKS fingerprint/service-account restrictions and four schema heads/postmaster start times. New writer PID/start records prove actual daemon startup, not a short TestClient factory lifecycle. All role/session/data setup is explicitly synthetic; public reads/writes and normal worker progress are real.
+Optionally exercise owned IdP persistence with `stop-idp` then the original `start-idp` command against the **same** marked runtime, retaining its private idp.env/data. Start API/worker again with the exact original split+S3 command, then run `multistore_persistence.py check` through the same dotenv wrapper and manifest, writing a new result path. The manifest contains a private fixture session and never belongs in Git. The safe result verifies current-authorized HTTP200 access to retained history revision1 (no historical payload digest comparison), and compares semantic revision, current GIS, S3 hash, exact catalog/telemetry IDs, managed RDF generation/digest, provider JWKS fingerprint/service-account restrictions and four schema heads/postmaster start times. New writer PID/start records prove actual daemon startup, not a short TestClient factory lifecycle. All role/session/data setup is explicitly synthetic; public reads/writes and normal worker progress are real.
 
 ## Recovery commands
 
-For a pre-fix semantic object whose ledger ends with a contiguous legacy attachment tail, POST `/api/v1/objects/{id}/evidence/reconcile` with its **current ledger** `If-Match`, CSRF and a new idempotency key. It requires current edit and every retained artifact/dependency; absent bytes, mismatched references, an unknown/intervening event or a changed head refuse. The appended `object.evidence_reconciled` records the exact baseline, legacy event IDs and evidence versions. It preserves all old revisions and leaves current GIS blocked until the new event's real receipt. It is an explicit repair, not an automatic immutable-history rewrite.
+For a pre-fix semantic object whose ledger ends with a contiguous legacy attachment tail, POST `/api/v1/objects/{id}/evidence/reconcile` with its **current ledger** `If-Match`, CSRF and a new idempotency key. It requires current edit and every retained artifact/dependency; absent bytes, mismatched references, an unknown/intervening event or a changed head refuse. The appended `object.evidence_reconciled` records the exact baseline, legacy event IDs and evidence versions. It retains every exact semantic-baseline dependency pin, including several historical versions of one resource, while adding attachment dependencies and rechecking current authority. It preserves all old revisions and leaves current GIS blocked until the new event's real receipt. It is an explicit repair, not an automatic immutable-history rewrite.
 
 For an exhausted catalog event, POST `/api/v1/catalog/models/{id}/retry` or `/documents/{id}/retry` with `If-Match` matching body `expected_revision`, and body `accepted_revision` containing the exact original resource/revision/event. Current `catalog.manage` and all retained dependencies/bytes are required. Only that failed event resets. Pending/applied/unrelated events refuse. The response returns an independent scoped audit RevisionRef whose current history visibility also depends on the original catalog resource. Catalog metadata/version heads do not advance for retry. Once domain progress is acknowledged, use the existing failed semantic-job retry if a dependent release job has already failed. Retrying a failed job alone does not repair catalog delivery. GIS and telemetry keep their accepted governed recovery interfaces.
 

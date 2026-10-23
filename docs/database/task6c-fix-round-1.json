@@ -1,0 +1,151 @@
+{
+  "format_version": 1,
+  "review_base": "741fa3ddc6fd690e337d35f55a358afa42729b9c",
+  "state": "implemented_covering_verified_pending_independent_rereview",
+  "addressed": [
+    "I1",
+    "I2",
+    "M1"
+  ],
+  "I1": {
+    "change": "Only legacy reconciliation supplies the accepted semantic baseline to existing pin resolution. All exact baseline triples are retained, attachments added and current authority checked. Ordinary current-head edits retain their existing resolver behavior.",
+    "fixture_error": {
+      "failed": 1,
+      "seconds": 54.19,
+      "cause": "Direct fixture call lacked permission_context; not a product RED"
+    },
+    "red": {
+      "failed": 1,
+      "seconds": 60.37,
+      "command": ".venv/Scripts/python.exe scripts/multistore_acceptance.py --env .runtime/multistore/services.env --env .runtime/multistore/maintenance.env --env .runtime/object-store/services.env --env .runtime/acceptance-services/idp.env -- pytest backend/tests/integration/test_attachment_heads.py::test_legacy_repair_retains_all_exact_baseline_pins_after_dependency_advance -q -o usefixtures=split_delivery_worker --basetemp .runtime/test6c-fix1-pins-red-02",
+      "cause": "Public reconciliation returned200 but dropped exact baseline pins after dependency advanced from retainedv1/v2 to currentv3"
+    },
+    "green": {
+      "passed": 2,
+      "seconds": 120.15,
+      "command": ".venv/Scripts/python.exe scripts/multistore_acceptance.py --env .runtime/multistore/services.env --env .runtime/multistore/maintenance.env --env .runtime/object-store/services.env --env .runtime/acceptance-services/idp.env -- pytest backend/tests/integration/test_attachment_heads.py::test_legacy_repair_retains_all_exact_baseline_pins_after_dependency_advance backend/tests/integration/test_attachment_heads.py::test_explicit_legacy_repair_is_append_only_current_authorized_and_conflict_safe -q -o usefixtures=split_delivery_worker --basetemp .runtime/test6c-fix1-pins-green-01",
+      "provider": "split SQL/Fuseki + S3",
+      "assertions": [
+        "every exact baseline pin incl several versions of same resource survives public repair and later optimistic edit",
+        "actual projection dependency refs retain baseline pins",
+        "new attachment retained; previous revision payloads unchanged",
+        "current dependency authority required",
+        "missing evidence and unknown newer head refuse",
+        "accepted6AB preflight/backfill remains covered"
+      ]
+    }
+  },
+  "I2": {
+    "red": {
+      "exit_code": 2,
+      "cause": "Public start-fuseki action absent",
+      "command": ".venv/Scripts/python.exe scripts/multistore_prerequisites.py start-fuseki --env .runtime/multistore/services.env --state .runtime/acceptance-services --fuseki-state .runtime/task6c-fuseki-fix-01 --fuseki-port 23131 --fuseki-namespace acceptance6c --tool-root ../p0-p1/.tools --java-home 'C:/Program Files/JetBrains/PyCharm 2025.1.3.1/jbr'"
+    },
+    "initial_green": {
+      "exit_code": 0,
+      "seconds": 9.76
+    },
+    "final_green": {
+      "exit_code": 0,
+      "command": ".venv/Scripts/python.exe scripts/check_fuseki_lifecycle.py --state .runtime/task6c-fuseki-fix-03 --tool-root ../p0-p1/.tools --java-home 'C:/Program Files/JetBrains/PyCharm 2025.1.3.1/jbr' --port 23131 --namespace acceptance6c --untouched-state .runtime/multistore-fuseki --output .runtime/task6c-fix1-fuseki-final-03.json",
+      "actual": {
+        "state": "passed",
+        "port": 23131,
+        "namespace": "acceptance6c",
+        "runtime": ".runtime\\task6c-fuseki-fix-03",
+        "config_sha256": "c6b48048bd7fea926a393fdcf23d051b1279d94750218d86a75d736245710ea7",
+        "observed_incarnations": [
+          {
+            "pid": 55836,
+            "created": 1792714482.6561651
+          },
+          {
+            "pid": 85456,
+            "created": 1792714485.6836948
+          },
+          {
+            "pid": 33620,
+            "created": 1792714488.197755
+          },
+          {
+            "pid": 70920,
+            "created": 1792714489.9865048
+          }
+        ],
+        "checks": [
+          "fresh public startup",
+          "same-state stopped startup preserves synthetic RDF",
+          "reused-incarnation refusal",
+          "running legacy refusal without stopping process",
+          "explicit stopped-legacy upgrade preserves config/TDB",
+          "crashed-owned restart preserves RDF"
+        ],
+        "isolated_runtime_stopped": true,
+        "untouched_retained_runtime": {
+          "marker_sha256": "eac2552ecb4128497f4c719e9419d6e45e7fd2843aa5c53190f7f4d4f0fc8899",
+          "pid": 87208,
+          "created": 1792711486.1562219
+        },
+        "scope": "synthetic RDF on explicit loopback namespace; no retained23030 mutation"
+      },
+      "additional_check": "Readiness verifies the newly spawned owned PID holds the listening port before accepting HTTP readiness"
+    },
+    "no_retained_23030_changes": true,
+    "legacy_compatibility": "Live marker without trusted incarnation refuses; one-time operator-verified stop then explicit --upgrade-stopped-legacy validates original config/data/ownership/free port and records new actual incarnation.",
+    "pre_listening_owner_green": {
+      "exit_code": 0,
+      "seconds": 9.53,
+      "command": ".venv/Scripts/python.exe scripts/check_fuseki_lifecycle.py --state .runtime/task6c-fuseki-fix-02 --tool-root ../p0-p1/.tools --java-home 'C:/Program Files/JetBrains/PyCharm 2025.1.3.1/jbr' --port 23131 --namespace acceptance6c --untouched-state .runtime/multistore-fuseki --output .runtime/task6c-fix1-fuseki-final.json",
+      "actual": {
+        "state": "passed",
+        "port": 23131,
+        "namespace": "acceptance6c",
+        "runtime": ".runtime\\task6c-fuseki-fix-02",
+        "config_sha256": "c6b48048bd7fea926a393fdcf23d051b1279d94750218d86a75d736245710ea7",
+        "observed_incarnations": [
+          {
+            "pid": 64444,
+            "created": 1792714308.3751552
+          },
+          {
+            "pid": 51676,
+            "created": 1792714311.2055252
+          },
+          {
+            "pid": 84356,
+            "created": 1792714313.765592
+          },
+          {
+            "pid": 80308,
+            "created": 1792714315.367247
+          }
+        ],
+        "checks": [
+          "fresh public startup",
+          "same-state stopped startup preserves synthetic RDF",
+          "reused-incarnation refusal",
+          "running legacy refusal without stopping process",
+          "explicit stopped-legacy upgrade preserves config/TDB",
+          "crashed-owned restart preserves RDF"
+        ],
+        "isolated_runtime_stopped": true,
+        "untouched_retained_runtime": {
+          "marker_sha256": "eac2552ecb4128497f4c719e9419d6e45e7fd2843aa5c53190f7f4d4f0fc8899",
+          "pid": 87208,
+          "created": 1792711486.1562219
+        },
+        "scope": "synthetic RDF on explicit loopback namespace; no retained23030 mutation"
+      }
+    }
+  },
+  "M1": {
+    "resolution": "Wording narrowed; current harness only establishes currently authorized retained revision1 HTTP200 availability, no historical payload/event digest equality",
+    "persistence_rerun": false
+  },
+  "preserved_evidence": {
+    "benchmark_measured_code": "717b07f4600ed9f490dc697033ff63a9aac37004",
+    "benchmark_rerun": false,
+    "large_matrix_rerun": false,
+    "performance_still_unqualified": true
+  }
+}

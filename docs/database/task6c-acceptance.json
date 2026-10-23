@@ -299,5 +299,17 @@
       "worker_errors": 0
     },
     "interpretation": "Functional correctness only under declared profile; production30/60 defaults not qualified"
+  },
+  "fix_round_1": {
+    "state": "implemented_covering_verified_pending_independent_rereview",
+    "review_base": "741fa3ddc6fd690e337d35f55a358afa42729b9c",
+    "addressed": [
+      "I1",
+      "I2",
+      "M1"
+    ],
+    "evidence": "task6c-fix-round-1.json",
+    "retained23030_changed": false,
+    "original_benchmark_measured_code": "717b07f4600ed9f490dc697033ff63a9aac37004"
   }
 }

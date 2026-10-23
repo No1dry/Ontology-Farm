@@ -1,7 +1,8 @@
 """Create/check one synthetic native persistence probe; manifest stays private.
 
 Seed uses actual HTTP commands, independent schema approval and the real native
-worker. Check traverses persisted current authorization, semantic/GIS/history,
+worker. Check traverses persisted current authorization, semantic/GIS, retained
+historical revision availability (HTTP200, no payload-digest comparison),
 private S3 bytes, catalog, telemetry and managed RDF. SQL postmaster timestamps
 and four schema heads identify the restart boundary. Identity setup is an owned
 synthetic fixture, not a live OIDC browser-login test.
@@ -193,7 +194,7 @@ def main():
                 'idp_jwks_sha256': provider_fingerprint(settings)}), encoding='utf-8')
         value = json.loads(args.manifest.read_text())
         output = {'probe_id': value['resource_id'], 'synthetic': True, 'action': args.action,
-            'scope': 'normal public core/domain deployment, actual HTTP semantic/GIS/history/S3/catalog/telemetry reads and managed RDF after real worker progress; fixture sessions, not live OIDC browser login'}
+            'scope': 'normal public core/domain deployment, actual HTTP semantic/GIS/S3/catalog/telemetry reads and managed RDF; authorized historical revision availability is HTTP200 only, no history digest comparison; fixture sessions, not live OIDC browser login'}
         with httpx.Client(base_url=args.api, cookies={SESSION_COOKIE: value['cookie']}, timeout=20) as client:
             ready = client.get('/health/ready')
             assert ready.status_code == 200

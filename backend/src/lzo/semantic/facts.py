@@ -476,10 +476,12 @@ def validate_facts(actor, facts, bundle):
         tuple(sorted(focus)), "focused", bundle.shapes_digest, selected or None, as_of)
 
 
-def _pins(uow, actor, identifier, refs):
-    previous = uow.session.execute(select(revisions.c.payload).join(resource_heads,
-        resource_heads.c.event_id == revisions.c.event_id).where(resource_heads.c.resource_id == identifier)
-        ).scalar_one_or_none()
+def _pins(uow, actor, identifier, refs, *, previous_snapshot=None):
+    previous = previous_snapshot
+    if previous is None:
+        previous = uow.session.execute(select(revisions.c.payload).join(resource_heads,
+            resource_heads.c.event_id == revisions.c.event_id).where(resource_heads.c.resource_id == identifier)
+            ).scalar_one_or_none()
     old_refs = {UUID(p["resource_id"]) for p in previous.get("dependency_revisions", ())} if previous else set()
     type_only = getattr(uow, "facts_type_only_ids", set()) - getattr(uow, "facts_full_ids", set())
     new = refs - type_only - old_refs - {identifier}
@@ -536,7 +538,7 @@ def _projection(uow, row):
 
 
 def record_state(uow, actor, row, expected, bundle, refs, event_type, effect, reports=None, geometry=None,
-                 candidate_report=None, permit_incomplete=False):
+                 candidate_report=None, permit_incomplete=False, previous_snapshot=None):
     from sqlalchemy import text
     # Preserve previous geometry through ordinary fact patches.
     row_context=getattr(uow,"_semantic_source_row",None)
@@ -568,8 +570,9 @@ def record_state(uow, actor, row, expected, bundle, refs, event_type, effect, re
     refs.update(uow.session.execute(select(object_dependencies.c.dependency_id).where(
         object_dependencies.c.resource_id == row["id"])).scalars())
     refs.add(bundle.id)
-    business_pins = _pins(uow, actor, row["id"], refs)
-    pins = _pins(uow, actor, row["id"], refs | getattr(uow, "facts_validation_extra_refs", set()))
+    business_pins = _pins(uow, actor, row["id"], refs, previous_snapshot=previous_snapshot)
+    pins = _pins(uow, actor, row["id"], refs | getattr(uow, "facts_validation_extra_refs", set()),
+        previous_snapshot=previous_snapshot)
     payload = _snapshot(uow, row, rows, bundle, pins, geometry,classes=classes)
     boundaries = [value for a in assertion_inputs(rows) if a.state == "accepted"
         for value in (a.valid_from, a.valid_to) if value is not None and value > evaluation_time(uow)]
@@ -592,7 +595,8 @@ def record_state(uow, actor, row, expected, bundle, refs, event_type, effect, re
     for name, report in (("validation_evidence", reports), ("candidate_validation_evidence", candidate_report)):
         evidence = getattr(uow, "facts_validation_results", {}).get(id(report))
         if evidence is not None:
-            evidence_pins = _pins(uow, actor, row["id"], {UUID(value) for value in evidence["reference_ids"]})
+            evidence_pins = _pins(uow, actor, row["id"], {UUID(value) for value in evidence["reference_ids"]},
+                previous_snapshot=previous_snapshot)
             evidence = {**evidence, "reference_ids": sorted({str(pin.resource_id) for pin in evidence_pins})}
             evidence["incoming_stamp"] = fact_validation.incoming_stamp(
                 uow, row["id"], evidence["target_predicates"], evaluation_time(uow))

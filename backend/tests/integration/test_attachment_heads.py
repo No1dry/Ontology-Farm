@@ -128,3 +128,71 @@ def test_explicit_legacy_repair_is_append_only_current_authorized_and_conflict_s
     s.revoke(s.object_editor_grant)
     s.login()
     assert s.client.post(endpoint, headers={**headers, 'X-CSRF-Token': s.csrf}).status_code == 403
+
+
+def test_legacy_repair_retains_all_exact_baseline_pins_after_dependency_advance(object_case, gis_tick, monkeypatch):
+    from uuid import uuid4
+    from sqlalchemy import select
+    from lzo.contracts import RevisionRef
+    from lzo.semantic import facts, evidence
+    from lzo.ontology.releases import get_execution_bundle
+    from lzo.auth.permissions import permission_context
+    s = object_case
+    s.scopes['retained_dependency'] = uuid4()
+    grant = s.grant('alice', 'editor', scope='retained_dependency')
+    s.login()
+    dependency = s.client.post('/api/v1/objects', headers=s.headers(), json={'bundle_id': str(s.bundle_id), 'create': {
+        'resource_id': str(uuid4()), 'class_iris': ['urn:Pond'], 'display_name': 'Exact retained dependency',
+        'owner_scope_id': str(s.scopes['retained_dependency']), 'related_scope_ids': [], 'state': 'active',
+        'data_nature': 'synthetic', 'assertions': [], 'decision_ref': None}})
+    assert dependency.status_code == 201, dependency.text
+    first = dependency.json()['revision']
+    second = s.patch(first['resource_id'], 1)
+    assert second.status_code == 200, second.text
+    retained = (RevisionRef(**{**first, 'resource_id': UUID(first['resource_id']), 'event_id': UUID(first['event_id'])}),
+        RevisionRef(**{**second.json()['revision'], 'resource_id': UUID(first['resource_id']),
+            'event_id': UUID(second.json()['revision']['event_id'])}))
+    obj = UUID(s.create_object().json()['revision']['resource_id'])
+    # Existing trusted snapshot machinery supports several exact versions.
+    with s.transaction() as uow, permission_context(uow):
+        uow.ontology_settings = s.config
+        for pin in retained:
+            facts.verify_reference(uow, s.actor('alice'), pin)
+        row = facts.get_object_row(uow, s.actor('alice'), obj, 'edit')
+        facts.record_state(uow, s.actor('alice'), row, 1, get_execution_bundle(s.actor('alice'), s.bundle_id),
+            {pin.resource_id for pin in retained}, 'object.facts_changed', {'operation': 'test.retained_pins'})
+        uow.commit()
+    gis_tick(s)
+    with monkeypatch.context() as patch:
+        patch.setattr(evidence, 'attach_to_object', lambda *args: None)
+        attached = s.client.post(f'/api/v1/artifacts?resource_id={obj}&filename=legacy-pins.txt',
+            headers={**s.headers(2), 'Content-Type': 'text/plain'}, content=b'Exact baseline evidence')
+    assert attached.status_code == 201, attached.text
+    newer = s.patch(first['resource_id'], 2)
+    assert newer.status_code == 200, newer.text
+    with s.transaction() as uow:
+        before = list(uow.session.execute(text('SELECT event_id,payload FROM revisions WHERE resource_id=:id ORDER BY revision'), {'id': obj}))
+        baseline = before[1].payload['dependency_revisions']
+        assert {(p['revision'], p['event_id']) for p in baseline if p['resource_id'] == first['resource_id']} == {
+            (pin.revision, str(pin.event_id)) for pin in retained}
+    endpoint = f'/api/v1/objects/{obj}/evidence/reconcile'
+    repaired = s.client.post(endpoint, headers=s.headers(3))
+    assert repaired.status_code == 200, repaired.text
+    with s.transaction() as uow:
+        row = uow.session.execute(text('SELECT payload FROM revisions WHERE event_id=:id'), {'id': UUID(repaired.json()['event_id'])}).scalar_one()
+        assert all(pin in row['dependency_revisions'] for pin in baseline)
+        assert {(p['revision'], p['event_id']) for p in row['dependency_revisions'] if p['resource_id'] == first['resource_id']} == {
+            (pin.revision, str(pin.event_id)) for pin in retained}
+        scheduled = uow.session.execute(text('SELECT dependency_refs FROM projection_events WHERE event_id=:id'),
+            {'id': UUID(repaired.json()['event_id'])}).scalar_one()
+        assert all(pin in scheduled for pin in baseline)
+        assert list(uow.session.execute(text('SELECT event_id,payload FROM revisions WHERE resource_id=:id AND revision<4 ORDER BY revision'), {'id': obj})) == before
+    changed = s.patch(obj, 4)
+    assert changed.status_code == 200, changed.text
+    with s.transaction() as uow:
+        pins = uow.session.execute(text('SELECT payload FROM revisions WHERE resource_id=:id AND revision=5'), {'id': obj}).scalar_one()['dependency_revisions']
+        assert all(pin in pins for pin in baseline)
+        assert not any(p['resource_id'] == first['resource_id'] and p['revision'] == 3 for p in pins)
+    s.revoke(grant)
+    s.login()
+    assert s.client.post(endpoint, headers=s.headers(5)).status_code == 404

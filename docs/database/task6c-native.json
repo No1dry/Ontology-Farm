@@ -252,10 +252,11 @@
       "probe_seconds": 14.848794899880886
     }
   },
-  "comparison": "same persisted data/current reads/digests/identity key; changed actual writer/service process incarnations and SQL postmaster start",
+  "comparison": "Concrete semantic revision/GIS/file SHA256/catalog and observation IDs/RDF digest/identity key persisted; history availability only, no history digest comparison; actual writer/service incarnations and SQL postmaster start changed",
   "not_covered": [
     "Compose containers",
     "network OIDC browser-login performance",
     "production HA/RPO/RTO"
-  ]
+  ],
+  "history_evidence_limit": "Before/after HTTP200 proves current-authorized retained revision1 availability only; no historical payload/event digest equality was captured."
 }
