@@ -1,5 +1,5 @@
 {
-  "state": "final_fix_verified_pending_scoped_rereview",
+  "state": "final_review_accepted_with_explicit_validation_limits",
   "spec": "docs/superpowers/specs/2026-10-22-multi-store-architecture-design.md",
   "plan": "docs/superpowers/plans/2026-10-22-multi-store-implementation.md",
   "baseline_commit": "d532215d3f0b284f4c4bc3ccc8b4566c06e245b4",
@@ -431,72 +431,72 @@
     "final_wave_content": "Structured professional provenance, quality filtering, non-destructive controlled archive, historical benchmark visibility limitation, and twelve chronological implementation rulings."
   },
   "whole_branch_review": {
-    "state": "pending_scoped_rereview",
+    "state": "accepted_after_one_consolidated_fix_wave",
     "base": "d532215d3f0b284f4c4bc3ccc8b4566c06e245b4",
     "original_reviewed_head": "299c2eeade1ac547b3dc6e4c3fc8f10d341a3d25",
     "product_fix_head": "e4830f81474be931c5825f8d2a6e12c5f4a6a215",
-    "scoped_reviewed_head": null,
+    "scoped_reviewed_head": "8aaa94a2399bf4643027d624c7afb44f038e0df2",
     "public_fix_evidence": "docs/database/whole-branch-fix-acceptance.json",
     "findings": [
       {
         "id": "I1",
         "subject": "A valid location observation prevents a coordinated backup",
         "severity": "Important",
-        "disposition": "Fix delivered; awaiting independent scoped re-review"
+        "disposition": "Addressed; independent scoped re-review accepted"
       },
       {
         "id": "I2",
         "subject": "GIS backup completeness does not check accepted asset/location effects",
         "severity": "Important",
-        "disposition": "Fix delivered; awaiting independent scoped re-review"
+        "disposition": "Addressed; independent scoped re-review accepted"
       },
       {
         "id": "I3",
         "subject": "GIS asset reads turn unavailable/corrupt storage into a current empty list",
         "severity": "Important",
-        "disposition": "Fix delivered; awaiting independent scoped re-review"
+        "disposition": "Addressed; independent scoped re-review accepted"
       },
       {
         "id": "I4",
         "subject": "Required quality filtering is absent from telemetry queries",
         "severity": "Important",
-        "disposition": "Fix delivered; awaiting independent scoped re-review"
+        "disposition": "Addressed; independent scoped re-review accepted"
       },
       {
         "id": "I5",
         "subject": "Professional metadata contracts omit explicit provenance requirements",
         "severity": "Important",
-        "disposition": "Fix delivered; awaiting independent scoped re-review"
+        "disposition": "Addressed; independent scoped re-review accepted"
       },
       {
         "id": "M1",
         "subject": "BlobStore's declared protocol does not describe its consumers",
         "severity": "Minor",
-        "disposition": "Fix delivered; awaiting independent scoped re-review"
+        "disposition": "Addressed; independent scoped re-review accepted"
       },
       {
         "id": "M2",
         "subject": "Word source hash describes Windows working bytes, not repository bytes",
         "severity": "Minor",
-        "disposition": "Fix delivered; awaiting independent scoped re-review"
+        "disposition": "Addressed; independent scoped re-review accepted"
       },
       {
         "id": "M3",
         "subject": "The fixture README retains the nonworking maintainer membership recipe",
         "severity": "Minor",
-        "disposition": "Fix delivered; awaiting independent scoped re-review"
+        "disposition": "Addressed; independent scoped re-review accepted"
       },
       {
         "id": "M4",
         "subject": "Benchmark domain-view samples do not read the seeded telemetry/media",
         "severity": "Minor",
-        "disposition": "Fix delivered; awaiting independent scoped re-review"
+        "disposition": "Addressed; independent scoped re-review accepted"
       },
       {
         "id": "M5",
         "subject": "Controlled archival is missing; retention preview alone is implemented",
         "severity": "Minor",
-        "disposition": "Fix delivered; awaiting independent scoped re-review"
+        "disposition": "Addressed; independent scoped re-review accepted"
       }
     ],
     "retained_report_hashes": [
@@ -507,6 +507,10 @@
       {
         "name": "whole-branch-fix-report.md",
         "sha256": "d8049244e437d15ab6a90770836dbbfb2f369ab783a1dd20c90a524577b06924"
+      },
+      {
+        "name": "whole-branch-rereview.md",
+        "sha256": "1e49185bbe02722ce05376e794c268dbcfbfe4982cd6abcf6871cb876804e50a"
       }
     ],
     "original_cannot_verify_items": [
@@ -552,6 +556,63 @@
       "original_result_unchanged": true,
       "boundary": "Measured identities had view/edit but no source.read; domain views did not return seeded observations/media. Setup used a different authorized actor. These latencies do not qualify populated professional data reads.",
       "future_driver": "Intended source/evidence rights and expected professional record identities must be checked before timing. The scoped fixture check is not a repeated baseline benchmark."
-    }
+    },
+    "scoped_review_evidence": {
+      "finding_verdicts": [
+        "**I1. A valid location observation prevents a coordinated backup** — **ADDRESSED.** `backend/src/lzo/storage/backup_format.py:123` checks actual asset references without imposing an artifact on observations. `backend/tests/unit/test_backup_references.py:60` covers the original counterexample; `backend/tests/integration/test_multistore_restore.py:495` now registers and restores both an asset and a location observation, with restored HTTP values at line 626 and independent exact domain identity/event/revision checks at line 645. The reported scoped separate-cluster restore passed.",
+        "**I2. GIS backup completeness does not check accepted asset/location effects** — **ADDRESSED.** `backend/src/lzo/storage/backup_format.py:123` checks primary and survey artifact closure and primary digest before the acknowledgement gate. Line 169 checks geometry event/active state as well as payload; line 179 checks the selected asset/observation identity, resource, original event/revision, payload and primary artifact column. Original pinned event/revision fields are respected when a later envelope retains an earlier registration. `backend/tests/unit/test_backup_references.py:67`, line 79, line 88 and line 94 cover damaged effects, pending references, pending-without-domain and unrelated retained fixtures. The same actual restore case supports the recovery claim; no unrelated negative rows are required to disappear.",
+        "**I3. GIS asset reads turn unavailable/corrupt storage into a current empty list** — **ADDRESSED.** `backend/src/lzo/gis/service.py:208` suppresses authorization refusals and deliberate `404 NOT_FOUND`, while propagating other errors, including operational `404 BLOB_MISSING`. `backend/tests/unit/test_gis_read_failures.py:10` exercises both primary and survey boundaries for unavailable, corrupt and missing bytes. `backend/tests/integration/test_gis_survey_evidence.py:74` adds four targeted byte-boundary injections to real governed core/GIS context; the retained pagination/revocation scenario also passed. This is actual-store context with injected byte failures, not a claimed physical S3 outage/corruption experiment.",
+        "**I4. Required quality filtering is absent from telemetry queries** — **ADDRESSED.** `backend/src/lzo/telemetry/router.py:58` declares the four validated quality states. `backend/src/lzo/telemetry/service.py:295` validates quality/latest combinations; line 304 includes quality in filter/cursor identity; line 378 filters accepted records before paging; line 408 passes the same filter to the domain query. `backend/src/lzo/telemetry/repository.py:88` allows the quality selector. Page aggregates remain explicitly page-scoped. `backend/tests/integration/test_timeseries.py:106` covers all four states, aggregate/page counts, changed-selector cursors, invalid selectors and latest behavior. OpenAPI/TypeScript updates and reported actual compiler/build gates cover the changed contract.",
+        "**I5. Professional metadata contracts omit explicit provenance requirements** — **ADDRESSED.** `backend/src/lzo/telemetry/schemas.py:16` through the additive fields at line 84 supply structured method, calibration, time quality and known media metadata. `backend/src/lzo/catalog/schemas.py:34` and line 56 add model hardware/category and document provenance. Serializers at telemetry line 90 and catalog line 14 omit only the new absent nullable defaults; existing fields and exact model/firmware/revision pins remain intact. CSV structured parsing is extended in `backend/src/lzo/telemetry/replay.py:41`. `backend/tests/unit/test_professional_metadata.py:49` compares exact BASE record/batch/model/document representations and hashes; `backend/tests/integration/test_professional_metadata_roundtrip.py:9` covers actual replay/storage/read and authenticated HTTP. Existing versioned JSON suffices without rewriting old envelopes or adding migrations. `docs/database/schema-guide.md:37` and the Word source explain the resulting contract and unknown-value policy.",
+        "**M1. BlobStore's declared protocol does not describe its consumers** — **ADDRESSED.** `backend/src/lzo/storage/blobs.py:15` now declares public staging and normalization members; `backend/src/lzo/artifacts/store.py:35` implements them for the inherited local/S3 adapters. Normal and asynchronous writes use public normalization at lines 72 and 102. Resumable upload consumers use the public members in `backend/src/lzo/artifacts/uploads.py:64` and line 147. The focused provider-contract test and reported provider tests cover the change without a provider rewrite.",
+        "**M2. Word source hash describes Windows working bytes, not repository bytes** — **ADDRESSED.** `docs/database/implementation-record.json:425` now records `67cb2ad98ed2e243784a2144b761664f07d2d4fd8a21231e3a121ce105980423`; line 430 explicitly scopes it to Git blob bytes. Independent hashing of the frozen HEAD blob matched that value. The DOCX binary independently matched `561ccebdb4c57da8e403edd647fe6474dc577b91bcad85552b5bbeb40879c3f9`. Raw Windows working-copy newline bytes are no longer represented as the committed source hash.",
+        "**M3. The fixture README retains the nonworking maintainer membership recipe** — **ADDRESSED.** `tests/fixtures/telemetry/README.md:40` explicitly requires `current_user=lzo_timeseries_maintainer`, gives the encoded and decoded role-selection URL option, links the accepted runbook and preserves the application's DDL restriction. No privilege relaxation or unnecessary maintenance rerun was introduced.",
+        "**M4. Benchmark domain-view samples do not read the seeded telemetry/media** — **ADDRESSED.** `scripts/benchmark_multistore.py:26` grants intended source/evidence rights; line 216 derives expected seeded IDs and line 245 checks every measured identity before timing. `backend/tests/integration/test_benchmark_visibility.py:10` exercises the exact measured-role actions with actual core/time-series/bytes; helper refusal coverage rejects empty/wrong/pending pages. `docs/database/acceptance.md:117`, `docs/database/implementation-record.json:550` and the Word source explicitly limit the historic domain-view interpretation. Independent Git-blob comparison confirmed the historic benchmark is unchanged from the fix base and retains SHA-256 `d89b75860a06a325f9898accb01407b279ddffd68284eb8d909429764c06a9e8`. No benchmark was rerun or relabeled.",
+        "**M5. Controlled archival is missing; retention preview alone is implemented** — **ADDRESSED.** `backend/src/lzo/telemetry/archive.py:58` checks selected accepted references before visibility can silently remove records; line 101 requires authorized, fully acknowledged, exact complete selected content. Line 128 records selector/source scope/hashes/accepted events in an immutable audit and retained private artifact. Explicit record/reference/byte bounds refuse oversized work and require a narrower interval or exact subset. Line 20 rechecks current source/object/pin/evidence authority against retained accepted versions, including generic artifact/history paths through `backend/src/lzo/artifacts/service.py:50`, line 201 and `backend/src/lzo/governance/history.py:131`. Upload/attachment mutation is guarded at artifacts line 57. `backend/tests/integration/test_telemetry_archive.py:19` covers actual private S3/core/domain capture, HTTP, refusal, idempotency, bounds, hidden selected dependencies and revocation. Ruling 12 at `docs/database/implementation-record.json:371` explicitly resolves the plan/spec mismatch. This is a bounded retained capture with no source deletion, space reclamation, retention-duration choice or current/latest-head change."
+      ],
+      "New Breakage in the Fix Diff": [
+        "**None established.** The added archive paths, additive serialization, GIS checks, query selectors, benchmark preflight and report changes introduced no concrete Critical, Important or Minor defect in this scoped pass."
+      ],
+      "Checks and Evidence": [
+        "**Scope checked:** fix base `299c2eeade1ac547b3dc6e4c3fc8f10d341a3d25`; frozen reviewed HEAD `8aaa94a2399bf4643027d624c7afb44f038e0df2`; product commit `e4830f81474be931c5825f8d2a6e12c5f4a6a215`. Read the fix brief first, all ten original findings, the original Cannot Verify/declined-to-judge lists, the completed fix report, public acceptance record and final documentation changes. Read the supplied 240,048-byte, 38-file diff in bounded passes; recovered only text clipped by tool output. Did not regenerate the diff or reopen a whole-branch review. The binary DOCX entry was assessed through artifact identity and supplied render evidence, not as textual patch bytes.",
+        "**Reported execution checked against the changed tests/code:** final five-file unit selection: 48 passed in 1.00s; metadata/governed GIS/pagination selection: 3 passed in 117.01s; one `test_multistore_restore.py -k split_only_post_write` case: 1 passed, 4 deselected in 993.65s; final archive/provenance/visibility/quality selection: 4 passed, 14 deselected in 16.67s. The report supplies exact executable commands, basetemp locations and observed RED/intermediate/final outputs. The native loader is explicitly configured and distinguishes real services from injected boundaries. These are the implementer's recorded results, reviewed for coverage/consistency; they were not rerun or independently re-executed here. Overlapping counts are not summed.",
+        "**Reported contract/build checks checked:** final OpenAPI and TypeScript generation/check commands exited 0; actual `tsc --noEmit` exited 0; actual Vite build exited 0 with 288 modules and 1.31s. The final documentation commit changes documentation/report artifacts, not the product paths covered by those runs. No fresh full-product pass is claimed.",
+        "**New read-only structural check run:** `.venv/Scripts/python.exe -B -X utf8 -` with an inline standard-library checker and the pinned Git executable. Exit 0: frozen HEAD matched; committed source and DOCX SHA-256 matched metadata; historic benchmark bytes matched the fix base and supplied hash; both retained review/fix report hashes matched; OpenAPI contained 158 unique operation IDs and 635 resolving local references; all operation IDs appeared in generated TypeScript; DOCX contained 11 tables, zero external relationships and zero replacement characters. Git operations were limited to read-only revision/blob checks, never diff regeneration or state mutation.",
+        "**Visual evidence boundary checked:** accepted controller evidence is the public builder's 17-page/11-table final output, final pages 1–15 byte-identical to inspected v3 pages, page 16 inspected v4/identical, and page 17 inspected final. No fresh Word render or claim of personal inspection of those PNGs was made by this reviewer. The changed builder only reduces Word's required empty paragraph after the final table; supplied visual coverage applies to the resulting binary.",
+        "**Review execution boundary checked:** no pytest suite, benchmark, service run/restart, remote action, subagent, tracked-file edit, index edit or HEAD mutation. The only written output is this report. No concrete unanswered code doubt required a new focused execution probe."
+      ],
+      "Out-of-Scope Observations": [
+        "**None newly established.** The following retained limits are explicit controller adjudication items, not new defects or reasons to extend this one-review gate."
+      ],
+      "Retained Cannot Verify Dispositions": [
+        "**Original 1 — remains unverified:** actual Compose images/startup/network/mount/persistence; no Docker execution is established.",
+        "**Original 2 — remains unverified:** physically disconnected deployment and full native/container/browser egress enforcement. The Python socket guard does not establish those properties.",
+        "**Original 3 — remains unqualified:** production performance, timeout suitability, camera counts and retention capacity. Historic graph/SPARQL failures, hardware/measurement limits and unqualified production worker defaults persist; M4 now accurately narrows the domain-view evidence.",
+        "**Original 4 — remains unestablished:** complete original P0+P1, green full 856-case suite and paused frontend visual work. Focused results do not combine into a fresh whole-product pass.",
+        "**Original 5 — remains unverified/excluded:** live camera/NVR/ONVIF/vendor-cloud/drone protocols, real firmware, real CDC guarantees and field control. Generic synthetic adapters do not prove these.",
+        "**Original 6 — remains unverified:** real field identities/boundaries/counts, surveyed horizontal/vertical accuracy, actual media quality and professional truth promotion; accountable field materials remain absent.",
+        "**Original 7 — remains unverified:** production cutover/migration, operational RPO/RTO, enterprise/OIDC recovery, power-loss durability, HA/failover and independent administrator fencing. Native isolated platform-data restore retains its narrower meaning.",
+        "**Original 8 — remains unverified:** all S3/AWS features, object lock, GC, physical quotas, arbitrary multipart size and hostile external writer behavior. Full-object verification remains a cost; the archive does not solve lifecycle cleanup.",
+        "**Original 9 — scoped follow-through supplied:** real separate-cluster asset/location restore now supports I1/I2. I3 has actual authorization/domain context with injected unavailable/corrupt byte boundaries; physical S3 outage/corruption was deliberately not induced and is not newly certified.",
+        "**Original 10 — scoped changed-path evidence supplied:** actual recorded generation/typecheck/build and covering checks support the product fix. This reviewer did not rerun them, certify a fresh full suite, or predict future edits.",
+        "**Original 11 — remains unverified:** third-party per-file reuse rights, every external publication and live URL correctness. Final report edits retain the fixed references and rights boundary; no fresh legal/content verification was performed."
+      ],
+      "Declined-to-Judge Scope Acknowledgements": [
+        "**Acknowledged 1–2:** excluded live integrations/actuation/3D/frontend/OCR/vector/mandatory-LLM work stays excluded; unknown field values and retention durations stay unknown. Generic I4/I5 structures are now supplied.",
+        "**Acknowledged 3–5:** absent Docker/physical-offline execution is not a pass; no graph/SPARQL redesign or repeat benchmark is inferred; production defaults are not changed merely to match the accepted native 240/300 profile.",
+        "**Acknowledged 6–8:** whole-object S3 Range verification and GC/capacity work remain disclosed; huge-object limits, queue fairness and historical-location semantics are not newly proven defects; shared PostgreSQL and stopped-writer/direct-admin trust assumptions remain explicit.",
+        "**Acknowledged 9–10:** fail-closed split-only rollback refusal remains correct and distinct from actual isolated restore evidence; accepted attachment-history repair and catalog terminal retry were not reopened.",
+        "**Acknowledged 11–12:** hidden-row authorization filtering remains valid; I3 fixes operational suppression. Device lifecycle may remain semantic data; I5 does not impose a duplicate SQL layout.",
+        "**Acknowledged 13–14:** existing RDFLib warnings/compact style are not new failures; retained negative/orphan rows and partition overlap remain fixture facts, not accepted business counts or a purge requirement.",
+        "**Acknowledged 15–16:** hash-scope correction alone does not require rerendering; this content-changing final document already has supplied scoped visual QA. Remote publication/integration remains the controller's role and was not performed by the reviewer.",
+        "**Archive limit retained:** Ruling 12 means an additional retained copy, not deletion, cold tiering, space reclamation or automatic retention. The synchronous result/reference bounds are not a latency/production-capacity guarantee; ordinary full-blob verification and database work remain costs.",
+        "**Recovery evidence limit retained:** the 993.65s scoped restore includes 673,006,144 bytes of retained RDF and repeated full-material verification; it is not a six-blob throughput/RTO measurement.",
+        "**Controller metadata action retained:** `docs/database/implementation-record.json` deliberately remains pending this review at the frozen head. Recording this actual verdict/report identity is the controller's final evidence bookkeeping, not an unresolved product finding or a request for another review."
+      ],
+      "Verdict": [
+        "**Fix round: All findings addressed, no new Critical/Important breakage.** I1–I5 and M1–M5 are closed for this scoped fix. No new Minor breakage was established. The retained environment/field/production limitations above remain explicit; this verdict does not convert them into qualification or authorize an additional review loop."
+      ]
+    },
+    "controller_disposition": "All ten findings closed with no new breakage or new out-of-scope finding. All retained limitations and declined-to-judge scope acknowledgements accepted explicitly. No further product fix or review wave; final changes only preserve this actual review evidence."
   }
 }
