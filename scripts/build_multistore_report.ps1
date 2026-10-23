@@ -135,6 +135,16 @@ try {
       default { throw "Unsupported report block type: $($block.type)" }
     }
   }
+  # Word requires a paragraph after a final table. Keep that empty marker
+  # small so an otherwise fitting table does not create a blank last page.
+  $lastParagraph = $reportDocument.Paragraphs.Last.Range
+  if ([string]::IsNullOrWhiteSpace(($lastParagraph.Text -replace '[\r\a]', ''))) {
+    $lastParagraph.Font.Size = 1
+    $lastParagraph.ParagraphFormat.LineSpacingRule = 4
+    $lastParagraph.ParagraphFormat.LineSpacing = 1
+    $lastParagraph.ParagraphFormat.SpaceBefore = 0
+    $lastParagraph.ParagraphFormat.SpaceAfter = 0
+  }
   $footer = $reportDocument.Sections.Item(1).Footers.Item(1).Range
   $footer.Font.Name = 'Noto Sans SC'
   $footer.Font.NameFarEast = 'Noto Sans SC'

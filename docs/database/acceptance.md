@@ -114,6 +114,8 @@ The [requested-size result](task6c-benchmark.json), measured from clean commit `
 
 Ten distinct authorized users attempted 70 operations in 175.39s: **50 complete, zero incomplete HTTP200, 20 HTTP422 SPARQL_TIMEOUT errors**. Graph and SPARQL each failed all ten requests. Pytest's `1 passed / 494.87s` establishes runner completion only. This workload is not performance qualified. No timeout budget was raised to obtain a passing number. The shared error code does not identify whether a cumulative acquisition checkpoint, parsing child or remote acquisition consumed its budget; no narrower bottleneck is claimed.
 
+The measured identities at `717b07f` had data view/edit permission but lacked `source.read`. Consequently the domain-view requests did not return the seeded observation/media records; setup verified those records using a different authorized actor. The domain-view timings below do **not** measure populated authorized telemetry/media reads. The retained JSON and measurements remain unchanged. Future runs must authorize the intended source/evidence and assert the expected professional record IDs before timing; later driver fixes do not retroactively qualify this result.
+
 | Operation | Complete / errors | P50 seconds | P95 seconds |
 | --- | ---: | ---: | ---: |
 | Object | 10 / 0 | 6.961 | 7.139 |

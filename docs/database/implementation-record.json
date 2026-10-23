@@ -1,5 +1,5 @@
 {
-  "state": "task_reviews_accepted_pending_whole_branch_review",
+  "state": "final_fix_verified_pending_scoped_rereview",
   "spec": "docs/superpowers/specs/2026-10-22-multi-store-architecture-design.md",
   "plan": "docs/superpowers/plans/2026-10-22-multi-store-implementation.md",
   "baseline_commit": "d532215d3f0b284f4c4bc3ccc8b4566c06e245b4",
@@ -366,6 +366,10 @@
     {
       "order": 11,
       "record": "the new owned Fuseki lifecycle refuses to adopt or stop a running legacy PID marker without its recorded process incarnation; an explicitly stopped, verified owned state may enter the documented upgrade/start path while retaining its configuration and TDB data — PID reuse cannot prove ownership, and fresh/stopped public reproduction must not sacrifice the retained-runtime boundary — cost if wrong: legacy running installations need a one-time operator-verified stop and maintenance transition before the new runner can manage them; no automatic in-place adoption. Retained23030 remains untouched during this fix. Validate stopped-state identity/config/free-port and record the new incarnation; never fabricate a PID marker or erase source data."
+    },
+    {
+      "order": 12,
+      "record": "implement the controlled archive interface required by authoritative spec6.2 despite the narrower preview-only implementation-plan wording, as an authorized auditable bounded immutable record archive that retains all source rows, accepted versions and evidence; do not delete/detach data, invent retention durations or claim cold-storage tiering — missing business retention values do not prevent a safe non-destructive archival contract — cost if wrong: archives consume additional storage and operators must manage explicit bounded selections; physical space reclamation and automatic lifecycle policies remain future work rather than an assumed effect of archiving."
     }
   ],
   "task6c": {
@@ -415,17 +419,139 @@
   },
   "word_report": {
     "path": "docs/database/multi-store-architecture-report.docx",
-    "sha256": "f9b9f3a3307793502632abe2a957a9aff6e143e7e2f24e234451064c5c303d83",
+    "sha256": "561ccebdb4c57da8e403edd647fe6474dc577b91bcad85552b5bbeb40879c3f9",
     "pages": 17,
     "source": "docs/database/multi-store-report.source.json",
-    "source_sha256": "1fabc89e3dc8b8aca9b539cdc60f28f638292743e1b05ac22a164aa812c33f29",
+    "source_sha256": "67cb2ad98ed2e243784a2144b761664f07d2d4fd8a21231e3a121ce105980423",
     "figure": "docs/database/report-assets/storage-architecture.svg",
     "builder": "scripts/build_multistore_report.ps1",
     "rendering": "Hidden native Microsoft Word COM export to PDF followed by Windows.Data.Pdf page PNG rendering. Hosted render_docx.py was unavailable and was not executed.",
-    "qa": "Every final page visually inspected directly or verified byte-identical to an inspected page. OOXML metadata/path/relationship/replacement-character checks passed. PDF and PNGs are internal QA only."
+    "qa": "Every final page visually inspected directly or verified byte-identical to an inspected page. OOXML metadata/path/relationship/replacement-character checks passed. PDF and PNGs are internal QA only.",
+    "source_hash_scope": "Index/committed Git blob bytes; repository attributes normalize JSON line endings. DOCX hash is the binary file SHA-256.",
+    "final_wave_content": "Structured professional provenance, quality filtering, non-destructive controlled archive, historical benchmark visibility limitation, and twelve chronological implementation rulings."
   },
   "whole_branch_review": {
-    "state": "pending",
-    "base": "d532215d3f0b284f4c4bc3ccc8b4566c06e245b4"
+    "state": "pending_scoped_rereview",
+    "base": "d532215d3f0b284f4c4bc3ccc8b4566c06e245b4",
+    "original_reviewed_head": "299c2eeade1ac547b3dc6e4c3fc8f10d341a3d25",
+    "product_fix_head": "e4830f81474be931c5825f8d2a6e12c5f4a6a215",
+    "scoped_reviewed_head": null,
+    "public_fix_evidence": "docs/database/whole-branch-fix-acceptance.json",
+    "findings": [
+      {
+        "id": "I1",
+        "subject": "A valid location observation prevents a coordinated backup",
+        "severity": "Important",
+        "disposition": "Fix delivered; awaiting independent scoped re-review"
+      },
+      {
+        "id": "I2",
+        "subject": "GIS backup completeness does not check accepted asset/location effects",
+        "severity": "Important",
+        "disposition": "Fix delivered; awaiting independent scoped re-review"
+      },
+      {
+        "id": "I3",
+        "subject": "GIS asset reads turn unavailable/corrupt storage into a current empty list",
+        "severity": "Important",
+        "disposition": "Fix delivered; awaiting independent scoped re-review"
+      },
+      {
+        "id": "I4",
+        "subject": "Required quality filtering is absent from telemetry queries",
+        "severity": "Important",
+        "disposition": "Fix delivered; awaiting independent scoped re-review"
+      },
+      {
+        "id": "I5",
+        "subject": "Professional metadata contracts omit explicit provenance requirements",
+        "severity": "Important",
+        "disposition": "Fix delivered; awaiting independent scoped re-review"
+      },
+      {
+        "id": "M1",
+        "subject": "BlobStore's declared protocol does not describe its consumers",
+        "severity": "Minor",
+        "disposition": "Fix delivered; awaiting independent scoped re-review"
+      },
+      {
+        "id": "M2",
+        "subject": "Word source hash describes Windows working bytes, not repository bytes",
+        "severity": "Minor",
+        "disposition": "Fix delivered; awaiting independent scoped re-review"
+      },
+      {
+        "id": "M3",
+        "subject": "The fixture README retains the nonworking maintainer membership recipe",
+        "severity": "Minor",
+        "disposition": "Fix delivered; awaiting independent scoped re-review"
+      },
+      {
+        "id": "M4",
+        "subject": "Benchmark domain-view samples do not read the seeded telemetry/media",
+        "severity": "Minor",
+        "disposition": "Fix delivered; awaiting independent scoped re-review"
+      },
+      {
+        "id": "M5",
+        "subject": "Controlled archival is missing; retention preview alone is implemented",
+        "severity": "Minor",
+        "disposition": "Fix delivered; awaiting independent scoped re-review"
+      }
+    ],
+    "retained_report_hashes": [
+      {
+        "name": "whole-branch-review.md",
+        "sha256": "81536da562b96d23c0e5e02d2af773f42e6c78c82cb633ef4b54395959746308"
+      },
+      {
+        "name": "whole-branch-fix-report.md",
+        "sha256": "d8049244e437d15ab6a90770836dbbfb2f369ab783a1dd20c90a524577b06924"
+      }
+    ],
+    "original_cannot_verify_items": [
+      "Actual Compose startup, images/network/mount behavior and container persistence: there is no Docker engine in the supplied environment; configuration validation is not execution.",
+      "Physically disconnected deployment or full OS/container egress enforcement: the Python socket guard does not sandbox native libpq or service processes. Browser operation under genuinely disconnected target networking remains unexecuted.",
+      "Production throughput, latency, timeout suitability, camera counts or retention capacity: graph/SPARQL failed the saved workload, production worker defaults remain unqualified, and hardware/workload/measurement limitations above apply.",
+      "Full original P0+P1 completion or a green full 856-case suite: neither is established by this branch. Earlier frontend visual work remains paused. Historic focused checks do not combine into a fresh whole-product pass.",
+      "Live camera/NVR/ONVIF/vendor-cloud/drone protocols, actual firmware capabilities, real source CDC guarantees, or field-device control: the implemented adapters and samples are generic/synthetic, and remote control is expressly excluded.",
+      "Real field identity, surveyed horizontal/vertical accuracy, actual farm/pond/orchard boundaries, installed counts, real image/video quality and professional truth promotion: required source material and accountable verification have not been supplied.",
+      "Production migration, production cutover, operational RPO/RTO, OIDC/enterprise disaster recovery, host power-loss durability, HA/failover, or independent administrator fencing: isolated native platform-data restoration and stopped-writer assumptions do not prove these.",
+      "Every S3/AWS feature, object lock, garbage collection, physical storage quota, arbitrary multipart object size or hostile external S3 writer behavior: only the supported and exercised private provider paths are evidenced.",
+      "New end-to-end recovery of GIS asset/location records for I1/I2, or actual-store outage behavior for I3 after a fix: the reviewer probes demonstrate defects but are deliberately service-free. Scoped follow-through remains required.",
+      "Fresh final-head TypeScript/build/test acceptance or behavior of a future fix commit: no such checks were rerun during this review. Existing recorded checks are evidence only for their stated revisions and scopes.",
+      "Third-party per-file reuse rights, correctness of every external publication or live reference URL: public sources/pins and acknowledged rights limitations were reviewed as project evidence; no new external legal/content verification was performed."
+    ],
+    "verification_disposition": {
+      "1-8": "Remain explicit environment/field/production limits; not claimed passed or fulfilled by mocks.",
+      "9": "Focused affected GIS backup/restore/read evidence is preserved in the fix acceptance record; injected boundary tests are distinguished from actual native store checks.",
+      "10": "Changed contracts receive actual OpenAPI/TypeScript/build and covering test execution in the fix evidence, not a repeated full-product matrix or new benchmark.",
+      "11": "Only fixed previously inspected primary sources and original fixtures are used; no new third-party code reuse or legal conclusion is claimed."
+    },
+    "considered_behaviors_acknowledged_by_controller": [
+      "Full live device integrations, remote actuator control, new 3D reconstruction/visual frontend, OCR/vector search and mandatory LLM extraction: expressly excluded or postponed by the approved scope; generic contracts still must meet I4/I5.",
+      "Real field values, surveyed geometry, device count, encoding/bitrate values and retention durations: no reliable field inputs exist. Nullable structures are appropriate; invented data would be wrong.",
+      "Docker/physical-offline acceptance: unavailable environment is an explicit recorded boundary, not a reason to label configuration as passed or to modify host virtualization during review.",
+      "Further graph/SPARQL engine redesign or another benchmark run: actual failures are conspicuous and performance remains unqualified; no new speculative optimization was authorized by the review. M4 narrows what the existing domain-view samples establish.",
+      "Changing production worker defaults solely to match 240/300: the native profile is workload evidence, not a demonstrated universal production setting. No basis to select production capacity values here.",
+      "S3 Range materializing/verifying a whole object before slicing: documented correctness-first behavior; potentially expensive for large media but not a newly hidden regression. Physical capacity and resumable-part/orphan GC remain disclosed operational work, not a fabricated completed feature.",
+      "Huge single-object S3 limits, sustained worker queue fairness, and historical location validity beyond exact pins: plausible scale/semantics risks were considered, but this pass did not establish a concrete violated supported case. They remain unverified; I am not asserting them as bugs from speculation.",
+      "Shared PostgreSQL failure domain and stopped-writer/direct-admin trust boundary: explicit approved architecture and operations assumptions. They must not be advertised as independent HA or distributed fencing.",
+      "Catalog/telemetry split-only rollback refusal: correct fail-closed behavior when legacy cannot represent post-cutover writes; separately verified isolated compatible restore is the recovery path. Refusal alone remains insufficient recovery evidence.",
+      "Legacy attachment-history repair and terminal catalog retry behavior: final code and accepted focused evidence address the named earlier defects; no reason was found to reopen those findings merely because prior versions failed.",
+      "Current authorization hiding unavailable-to-the-user evidence: deliberate non-disclosure remains valid. I3 concerns suppressing operational errors for otherwise authorized assets, not removal of hidden-row filtering.",
+      "Model/device lifecycle placement and semantic assertions versus fixed catalog columns: physical device lifecycle can properly be semantic data and must not be confused with model identity. I5 asks for a demonstrated structured mapping of explicit metadata requirements, not one prescribed SQL table layout.",
+      "Existing RDFLib deprecation warnings and compact/minified Python style: warnings and maintainability costs are real but no new user-facing failure was established. No pristine-output claim or broad formatting rewrite is warranted in this fix wave.",
+      "Retained test/orphan domain rows and partition-parent/child count overlap: documented fixture/inventory facts, not accepted business totals. I2 is specifically missing accepted effects, not a demand to purge unrelated negative evidence.",
+      "Word rerendering for metadata-only hash correction: the binary is already checked and M2 changes provenance scope, not layout. Content changes for final dispositions may require normal scoped render QA; a metadata correction alone does not.",
+      "Remote push/merge and public publication actions: outside the reviewer role. The user-authorized controller owns integration after findings are resolved; this review performs no remote mutation."
+    ],
+    "scope_statement": "All considered and declined-to-judge behaviors were acknowledged. There is no assertion of full original P0+P1, production/standard-hardware performance, Docker/physical-offline qualification or actual field truth.",
+    "benchmark_visibility": {
+      "measured_head": "717b07f4600ed9f490dc697033ff63a9aac37004",
+      "original_result_unchanged": true,
+      "boundary": "Measured identities had view/edit but no source.read; domain views did not return seeded observations/media. Setup used a different authorized actor. These latencies do not qualify populated professional data reads.",
+      "future_driver": "Intended source/evidence rights and expected professional record identities must be checked before timing. The scoped fixture check is not a repeated baseline benchmark."
+    }
   }
 }
