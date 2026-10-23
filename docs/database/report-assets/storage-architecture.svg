@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3024" height="1560" viewBox="0 0 1008 520">
+  <rect width="1008" height="520" fill="white"/>
+  <g font-family="Noto Sans SC, Microsoft YaHei, sans-serif" text-anchor="middle" fill="#111111">
+    <rect x="268" y="14" width="472" height="105" rx="8" fill="#edf3f7" stroke="#698396" stroke-width="2"/>
+    <text x="504" y="48" font-size="25" font-weight="700">RDF 本体语义主库</text>
+    <text x="504" y="79" font-size="21">Jena Fuseki 与 TDB2</text>
+    <text x="504" y="104" font-size="18">类  属性  关系  发布事实  推理与依据</text>
+    <path d="M504 120 L504 158" stroke="#516a7b" stroke-width="2"/>
+    <rect x="105" y="160" width="798" height="94" rx="8" fill="#f4f6f8" stroke="#8798a3" stroke-width="2"/>
+    <text x="504" y="196" font-size="24" font-weight="700">平台后端统一关联与治理</text>
+    <text x="504" y="228" font-size="19">UUID 与稳定 IRI   当前权限   审核版本   事件与回执</text>
+    <path d="M504 254 L504 286 M100 286 L908 286 M100 286 L100 310 M302 286 L302 310 M504 286 L504 310 M706 286 L706 310 M908 286 L908 310" stroke="#8798a3" stroke-width="2" fill="none"/>
+    <g fill="#ffffff" stroke="#9aa9b3" stroke-width="1.5">
+      <rect x="10" y="310" width="180" height="145" rx="6"/>
+      <rect x="212" y="310" width="180" height="145" rx="6"/>
+      <rect x="414" y="310" width="180" height="145" rx="6"/>
+      <rect x="616" y="310" width="180" height="145" rx="6"/>
+      <rect x="818" y="310" width="180" height="145" rx="6"/>
+    </g>
+    <g font-size="22" font-weight="700">
+      <text x="100" y="347">SQL 治理库</text><text x="302" y="347">GIS 库</text>
+      <text x="504" y="347">时序库</text><text x="706" y="347">对象存储</text><text x="908" y="347">资料库</text>
+    </g>
+    <g font-size="18">
+      <text x="100" y="379">身份 权限 审批</text><text x="100" y="407">历史 来源 任务</text><text x="100" y="435">PostgreSQL</text>
+      <text x="302" y="379">边界 位置 版本</text><text x="302" y="407">地形成果目录</text><text x="302" y="435">PostGIS</text>
+      <text x="504" y="379">观测 轨迹 事件</text><text x="504" y="407">媒体时间索引</text><text x="504" y="435">PG 时间分区</text>
+      <text x="706" y="379">视频 图片 原件</text><text x="706" y="407">地图包 文档</text><text x="706" y="435">SeaweedFS S3</text>
+      <text x="908" y="379">设备型号与能力</text><text x="908" y="407">专业资料版本</text><text x="908" y="435">PostgreSQL</text>
+    </g>
+    <text x="504" y="494" font-size="18" fill="#435563">连线表示受控关联  不表示跨库原子事务  专业库不等于备份副本</text>
+  </g>
+</svg>

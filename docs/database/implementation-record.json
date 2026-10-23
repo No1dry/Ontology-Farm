@@ -1,0 +1,431 @@
+{
+  "state": "task_reviews_accepted_pending_whole_branch_review",
+  "spec": "docs/superpowers/specs/2026-10-22-multi-store-architecture-design.md",
+  "plan": "docs/superpowers/plans/2026-10-22-multi-store-implementation.md",
+  "baseline_commit": "d532215d3f0b284f4c4bc3ccc8b4566c06e245b4",
+  "interpretation": [
+    "Stage counts overlap; do not sum them as distinct tests or coverage percentage.",
+    "Historical passing evidence belongs to its stated code stage. Final changed paths have separate covering checks.",
+    "Private native logs and source bytes are not published. Report hashes preserve the reviewed evidence identity, not public reproducibility by themselves.",
+    "Use the checked-in acceptance commands and prerequisites for a new reproduction.",
+    "Synthetic native testing does not certify field data, Docker execution, HA or the exact eight-core acceptance machine."
+  ],
+  "stages": [
+    {
+      "task": "1",
+      "subject": "Independent stores and durable delivery",
+      "base": "46f596c",
+      "implementation": "75bb9da",
+      "accepted_head": "c1d2b5a",
+      "results": [
+        {
+          "scope": "Original focused configuration and real delivery tests",
+          "passed": 14,
+          "seconds": 3.74,
+          "warnings": 0,
+          "deselected": 0
+        },
+        {
+          "scope": "Original pure regression suite, overlapping focused coverage",
+          "passed": 298,
+          "seconds": 105.74,
+          "warnings": 7,
+          "deselected": 0
+        },
+        {
+          "scope": "Final review-fix configuration, semantic identity, delivery and migration coverage",
+          "passed": 29,
+          "seconds": 5.45,
+          "warnings": 0,
+          "deselected": 0
+        }
+      ],
+      "observations": [
+        "Four independent SQL databases and app accounts; cross-domain CONNECT denied and app DDL denied.",
+        "Target transaction/inbox replay, independent core acknowledgement and native SQL restart were exercised.",
+        "Seven RDFLib deprecation warnings are retained; no broad all-service result is implied."
+      ],
+      "review": "Accepted after one independent scoped fix review",
+      "retained_report_hashes": [
+        {
+          "name": "task-1-report.md",
+          "sha256": "a4914761bca9dd6248ddbf09c4b0436add1a652fcc24a740e50633fa4917a21f"
+        },
+        {
+          "name": "task-1-rereview-1.md",
+          "sha256": "a7960b24d57767a8560001bfc219dbfe3ecc7e95fcc316a4da0ccdce453a9bc0"
+        }
+      ]
+    },
+    {
+      "task": "2",
+      "subject": "Private immutable bytes and resumable uploads",
+      "base": "c1d2b5a",
+      "implementation": "8a7cdce",
+      "accepted_head": "67e5849",
+      "results": [
+        {
+          "scope": "Original local and actual S3 upload/blob/HTTP scope",
+          "passed": 39,
+          "seconds": 35.33,
+          "warnings": 0,
+          "deselected": 0
+        },
+        {
+          "scope": "Local provider export compatibility",
+          "passed": 8,
+          "seconds": 428.15,
+          "warnings": 10,
+          "deselected": 0
+        },
+        {
+          "scope": "Actual S3 provider export compatibility",
+          "passed": 8,
+          "seconds": 432.11,
+          "warnings": 10,
+          "deselected": 0
+        },
+        {
+          "scope": "Final review-fix blob/range and upload session scope",
+          "passed": 41,
+          "seconds": 29.85,
+          "warnings": 0,
+          "deselected": 0
+        }
+      ],
+      "observations": [
+        "Actual SeaweedFS private-byte persistence and credential denial were exercised.",
+        "An 856-collected broad run was interrupted without an aggregate result; it is not passed or skipped.",
+        "Range validates the complete object; retained parts/orphans have no automatic GC or physical capacity policy.",
+        "The BlobStore Protocol capability omission was deferred to final review, not silently marked fixed."
+      ],
+      "review": "Accepted after one independent scoped fix review",
+      "retained_report_hashes": [
+        {
+          "name": "task-2-report.md",
+          "sha256": "cfb12405b2b90a8ec5fd6da131db3758061866824335cd4297f7bd29d43ce8c7"
+        },
+        {
+          "name": "task-2-rereview-1.md",
+          "sha256": "feb2577094403177e3c50ed3c0c19e5106cafc5c8cf61d620db528c6baf1c70e"
+        }
+      ]
+    },
+    {
+      "task": "3",
+      "subject": "Independent GIS and semantic receipt barriers",
+      "base": "67e5849",
+      "implementation_commits": [
+        "cfb7bd9",
+        "f9964cf"
+      ],
+      "accepted_head": "0c65ad5",
+      "results": [
+        {
+          "scope": "Original full split GIS scope",
+          "passed": 9,
+          "seconds": 200.29,
+          "warnings": 0,
+          "deselected": 0
+        },
+        {
+          "scope": "Affected durable delivery substrate without concurrent native restart",
+          "passed": 11,
+          "seconds": 4.83,
+          "warnings": 0,
+          "deselected": 1
+        },
+        {
+          "scope": "Legacy geometry, withdrawal and merge compatibility",
+          "passed": 5,
+          "seconds": 377.46,
+          "warnings": 0,
+          "deselected": 0
+        },
+        {
+          "scope": "Corrected split source withdrawal",
+          "passed": 1,
+          "seconds": 120.36,
+          "warnings": 0,
+          "deselected": 0
+        },
+        {
+          "scope": "Corrected last-support RDF geometry retraction",
+          "passed": 1,
+          "seconds": 104.09,
+          "warnings": 0,
+          "deselected": 2
+        },
+        {
+          "scope": "Permission-aware spatial asset pagination",
+          "passed": 1,
+          "seconds": 61.28,
+          "warnings": 0,
+          "deselected": 0
+        },
+        {
+          "scope": "Final review-fix controlled survey evidence and registration",
+          "passed": 2,
+          "seconds": 101.15,
+          "warnings": 0,
+          "deselected": 8
+        }
+      ],
+      "observations": [
+        "Actual PostGIS geometry/history, current revocation, exact event fencing and Fuseki publication were exercised.",
+        "Specialized late-history callbacks preserve current heads and bounded event size.",
+        "Synthetic survey fixtures prove authorization invariants, not real-world survey accuracy or a production verification-promotion workflow.",
+        "Malformed cursor handling was assigned to Task 6C."
+      ],
+      "review": "Accepted after one independent scoped fix review",
+      "retained_report_hashes": [
+        {
+          "name": "task-3-report.md",
+          "sha256": "44165e0308dcad5da4c0d58ee2ca2d6cd17b3e4289740d1bad64594bc296df43"
+        },
+        {
+          "name": "task-3-rereview-1.md",
+          "sha256": "efa4ff5a4aaad864d84032afd9fb4cde9f9c664cc3d2dcd37e5e184b31d03240"
+        }
+      ]
+    },
+    {
+      "task": "4",
+      "subject": "Versioned equipment model and professional reference catalog",
+      "base": "0c65ad5",
+      "implementation": "b86574b",
+      "accepted_head": "14c8ea5",
+      "results": [
+        {
+          "scope": "Original full catalog suite",
+          "passed": 19,
+          "seconds": 54.98,
+          "warnings": 0,
+          "deselected": 0
+        },
+        {
+          "scope": "Original affected delivery, GIS, files and ontology compatibility",
+          "passed": 38,
+          "seconds": 282.35,
+          "warnings": 0,
+          "deselected": 0
+        },
+        {
+          "scope": "Final optional-reference wire contract and real governed release coverage",
+          "passed": 5,
+          "seconds": 43.66,
+          "warnings": 0,
+          "deselected": 0
+        }
+      ],
+      "observations": [
+        "Catalog model and document history, artifact authority, independent approval and exact references were exercised.",
+        "Actual TypeScript compiler, generated-client and OpenAPI checks passed at the accepted fix.",
+        "Examples are synthetic; model records do not certify installed device capabilities.",
+        "Terminal catalog recovery and exact publication dependency coverage were assigned to Task 6C."
+      ],
+      "review": "Accepted after one independent scoped fix review",
+      "retained_report_hashes": [
+        {
+          "name": "task-4-report.md",
+          "sha256": "484c5f08dfa951b6d80e9201a895753155f37b7d67c3b09260f1cf8327bb9dc8"
+        },
+        {
+          "name": "task-4-rereview-1.md",
+          "sha256": "dabd96dcd3e1932cdc8525f7ac0159766c348dad9bf9bf2ba65bea5fbda22ac4"
+        }
+      ]
+    },
+    {
+      "task": "5",
+      "subject": "Partitioned telemetry, media timelines and static replay",
+      "base": "14c8ea5",
+      "implementation": "cfa995c",
+      "accepted_head": "7a0a28b",
+      "results": [
+        {
+          "scope": "Original final new telemetry suite",
+          "passed": 19,
+          "seconds": 215.35,
+          "warnings": 0,
+          "deselected": 0
+        },
+        {
+          "scope": "Affected storage, files, catalog and exact semantic contracts",
+          "passed": 44,
+          "seconds": 62.33,
+          "warnings": 0,
+          "deselected": 1
+        },
+        {
+          "scope": "Final affected catalog cases",
+          "passed": 3,
+          "seconds": 6.41,
+          "warnings": 0,
+          "deselected": 16
+        },
+        {
+          "scope": "Review-fix actual routes at 10001 rows and 101 streams",
+          "passed": 2,
+          "seconds": 263.85,
+          "warnings": 0,
+          "deselected": 5
+        },
+        {
+          "scope": "Review-fix selected summary provenance, authority and exact RDF receipt barrier",
+          "passed": 3,
+          "seconds": 56.05,
+          "warnings": 0,
+          "deselected": 7
+        },
+        {
+          "scope": "Review-fix affected regressions",
+          "passed": 8,
+          "seconds": 15.02,
+          "warnings": 0,
+          "deselected": 34
+        }
+      ],
+      "observations": [
+        "UTC partitions, cross-partition identity, exact decimals, explicit corrections/withdrawal and current linked authority were exercised.",
+        "Bounded queries expose incomplete states and actually usable narrowing routes.",
+        "128-record functional timing is not a 10000-entity/100000-relation capacity benchmark.",
+        "Media fixtures are non-playable synthetic bytes; live acquisition and device control remain disabled.",
+        "Malformed cursors and the member-login maintenance recipe were assigned to Task 6C."
+      ],
+      "review": "Accepted after one independent scoped fix review",
+      "retained_report_hashes": [
+        {
+          "name": "task-5-report.md",
+          "sha256": "a315ccd8f494eb068f124b291267017213ad86022b1b2f5cce5f02090eb0f8fd"
+        },
+        {
+          "name": "task-5-rereview-1.md",
+          "sha256": "327b082409834807a9ff37139eddd450663586c4c66cd28321caae7f593ad6cd"
+        }
+      ]
+    }
+  ],
+  "task6ab": {
+    "accepted_head": "fefefc0ad11a7ef76255d98905c740991632b74e",
+    "evidence": "task6ab-acceptance.json",
+    "runbook": "migration-recovery.md",
+    "review": "Four Important findings addressed in independent scoped review",
+    "retained_report_hashes": [
+      {
+        "name": "task-6ab-report.md",
+        "sha256": "8310648439dbc27b704b666d04ae336cc87ad3b71d1f38681de122b478ddeec6"
+      },
+      {
+        "name": "task-6ab-rereview-1.md",
+        "sha256": "78e11a5f63017b70f417b3d74c084d16c90cbf776e2e42550ce700c4f090e0f8"
+      }
+    ]
+  },
+  "rulings": [
+    {
+      "order": 1,
+      "record": "stop the owned 856-test broad regression run after 18 minutes at 8% with multiple prerequisite/legacy fixture failures; keep its log explicitly incomplete and unpassed, finish the two relevant export compatibility runs, and move comprehensive acceptance to Task 6 after all domain handlers exist — focused Task 2 coverage is complete, and repeating unrelated unavailable integration paths does not improve Task 2 evidence — cost if wrong: an unrelated regression may surface later at Task 6/final review rather than at this gate."
+    },
+    {
+      "order": 2,
+      "record": "spatial assets attach immutable asset_id/artifact_version and spatial metadata to an existing authorized object's governed revision, reusing existing audit/authorization rather than creating a parallel resource-kind engine; GIS indexes independent asset history, and verified quality requires verified object nature plus authorized survey evidence — this matches the approved shared identity/current-permission model — cost if wrong: standalone assets that lack any semantic object would later need an explicit governed resource type. Governed location observations are distinct from Task 5 high-frequency tracks, which must not emit a full RDF revision per point; attachment/evidence authorization remains current on reads and writes."
+    },
+    {
+      "order": 3,
+      "record": "waiting for an unapplied GIS dependency delays and releases an RDF job without exhausting its execution-failure budget; capped/terminal GIS delivery failure must remain explicitly observable as a blocked dependency, with existing delivery retry limits preserved — a recoverable store outage must not permanently consume unrelated semantic work retries — cost if wrong: longer-lived queued/blocked jobs require operator visibility and recovery controls. Task 3 adds focused pause/resume and unrelated-job progress coverage."
+    },
+    {
+      "order": 4,
+      "record": "extend existing governed jobs retry for DOMAIN_DELIVERY_FAILED to reset only failed GIS delivery receipts required by the job's exact accepted event(s), retaining immutable envelope IDs, current authorization, If-Match/idempotency and audited previous failure/attempts — Task 1 lacks a governed capped-delivery recovery path, and manual owner SQL is inadequate as the normal outage recovery procedure — cost if wrong: a small cross-module dependency between job retry and synchronization must be maintained. Task 3 owns focused authorized/unauthorized/unrelated-delivery protection and actual recovery-to-Fuseki coverage, without new auth engine or UI."
+    },
+    {
+      "order": 5,
+      "record": "preserve out-of-order immutable GIS history via an explicitly registered history/superseded callback, atomically with target inbox, after existing semantic conflict/order checks; leave generic/GIS current heads monotonic and default delivery behavior unchanged — repeating all historical geometry/assets/locations in each envelope would grow quadratically — cost if wrong: each specialized callback must uphold append-only and head invariants. Envelopes carry bounded per-event changes, original events supply old history; history queries must expose still-pending/failed accepted events. Task 3 adds callback rollback/replay/order tests and scoped Task 1 delivery regression. Tasks 4/5 must consider this optional interface when preserving out-of-order catalog or observation history."
+    },
+    {
+      "order": 6,
+      "record": "use a governed operator-controlled stopped-writer maintenance window and durable checked activation artifact, keeping core identity in place for legacy GIS/blob migration; do not add live routing or claim checkbox-only quiescence. Split remaining Task 6 into 6A migration/compatible rollback, 6B coordinated whole-store restore, 6C integrated acceptance/docs. Legacy reads may activate only after all accepted versions are represented; incompatible split-only catalog/telemetry changes must refuse downgrade and use the 6B restore path — approved spec section 9 permits paused writers and recovery from a new backup, while static global legacy routing cannot safely represent new domains — cost if wrong: operations need downtime and a compatible recovery deployment instead of an instant old-config rollback; more automated routing would require later work. Task 6 remains incomplete until the full restore alternative is actually implemented/tested."
+    },
+    {
+      "order": 7,
+      "record": "regroup 6A migration and 6B coordinated backup/restore into one 6AB implementation/review gate, retaining the same informed implementer and BASE 7a0a28b; keep 6C acceptance/docs separate — real activation cannot be accepted before its real backup/reference-completeness producer exists, and a synthetic self-reported receipt is not evidence — cost if wrong: this operational review becomes larger and its acceptance later, but no partial migration is represented as safely complete. This supersedes only the separate 6A-before-6B sequencing, not the stopped-writer or preservation requirements."
+    },
+    {
+      "order": 8,
+      "record": "keep 6AB focused by rejecting nonrepresentable legacy semantic-object heads during migration, while carrying the confirmed direct-attachment/object-revision mismatch as an OPEN integration correctness item for 6C/final gating — direct ArtifactService.register_upload can advance resource_heads with evidence.attached without advancing semantic_objects or producing a GIS delivery; changing the backup fixture owner does not verify that normal object path — cost if wrong: affected legacy objects require explicit repair and the later integration task may need a scoped artifact/semantic revision fix. Do not silently accept this as a permanent operating limitation or mark overall work complete without disposition. Implementer must preserve a focused reproducer and public-route/baseline trace in task-6ab-report.md."
+    },
+    {
+      "order": 9,
+      "record": "repair evidenced legacy semantic-object attachment/head divergence through a narrow append-only authenticated evidence reconciliation command, requiring exact current If-Match, a contiguous recognized legacy evidence.attached tail and current authority over every retained dependency; preserve all old revisions, record exact repair inputs, and require the new exact GIS delivery before split current reads — the approved migration/history requirements need a real recovery path without rewriting immutable evidence, and ordinary attachment handling can reuse the existing governed record_state path — cost if wrong: one small maintenance API and its authorization/version invariants require ongoing support; unknown intervening states remain refused rather than silently reconstructed. Snapshot selection must preserve geometry removal/withdrawal and cannot generally skip an unknown newer state to resurrect history."
+    },
+    {
+      "order": 10,
+      "record": "catalog terminal-delivery retry uses a separately scoped catalog.delivery_retry audit resource, exact original accepted reference/event and unchanged payload/version, with current catalog.manage/dependency authority, current baseline, existing idempotency and atomic audit/reset; it does not manufacture a new catalog metadata head — standalone exhausted catalog events must be recoverable without repeating the known generic-head divergence, and failed semantic-job retry alone cannot cover them — cost if wrong: the small operational audit resource needs its own correctly linked current-authorization and retention behavior; future domain retries must preserve this distinction. Pending/acknowledged/unrelated events are not reset. Named catalog release receipt risk is now confirmed by implementer code inspection and awaits RED/GREEN pending/failed/lost-ack/applied evidence."
+    },
+    {
+      "order": 11,
+      "record": "the new owned Fuseki lifecycle refuses to adopt or stop a running legacy PID marker without its recorded process incarnation; an explicitly stopped, verified owned state may enter the documented upgrade/start path while retaining its configuration and TDB data — PID reuse cannot prove ownership, and fresh/stopped public reproduction must not sacrifice the retained-runtime boundary — cost if wrong: legacy running installations need a one-time operator-verified stop and maintenance transition before the new runner can manage them; no automatic in-place adoption. Retained23030 remains untouched during this fix. Validate stopped-state identity/config/free-port and record the new incarnation; never fabricate a PID marker or erase source data."
+    }
+  ],
+  "task6c": {
+    "accepted_head": "78f954d80e801995bd0994f8f2ba6c4375f675af",
+    "original_task_head": "741fa3ddc6fd690e337d35f55a358afa42729b9c",
+    "measured_head": "717b07f4600ed9f490dc697033ff63a9aac37004",
+    "evidence": [
+      "task6c-acceptance.json",
+      "task6c-native.json",
+      "task6c-benchmark.json",
+      "task6c-timeout.json",
+      "task6c-maintenance.json"
+    ],
+    "review_dispositions": [
+      {
+        "id": "I1",
+        "subject": "Legacy attachment repair must retain all exact semantic baseline pins",
+        "disposition": "Addressed by scoped fix and independent re-review; see retained fix report identity"
+      },
+      {
+        "id": "I2",
+        "subject": "Public fresh and stopped-state owned Fuseki bootstrap",
+        "disposition": "Addressed by scoped fix and independent re-review; retained runtime was not used for new lifecycle checks"
+      },
+      {
+        "id": "M1",
+        "subject": "Historical payload comparison exceeded native restart probe assertions",
+        "disposition": "Claims narrowed to authorized historical revision access; no exact history-content digest comparison claimed"
+      }
+    ],
+    "retained_report_hashes": [
+      {
+        "name": "task-6c-report.md",
+        "sha256": "48f4bc29429dea3b31295c144c73306ea3b0eff101c4b9ab978ce33eb590e4cf"
+      },
+      {
+        "name": "task-6c-review.md",
+        "sha256": "2e571079333ddb5a2f0efa2a34048bbf6fa921591c81c0419a4edd0a8867ff07"
+      },
+      {
+        "name": "task-6c-rereview-1.md",
+        "sha256": "fd77737f51afa42d0220cbfdd494fc4947b1f1292856be9c1a495b919a60f9d9"
+      }
+    ],
+    "performance_disposition": "Unqualified. Full 10000 entities / 100000 relations persisted and projected; 70 attempts, 50 complete, 20 errors. Graph and SPARQL each timed out in all ten attempts. Runner completion is not performance acceptance.",
+    "historical_evidence": "Original functional 50 passed / 3 failed and focused follow-through remain separate. Subsequent corrections do not re-label earlier measurements as final-head benchmarks."
+  },
+  "word_report": {
+    "path": "docs/database/multi-store-architecture-report.docx",
+    "sha256": "f9b9f3a3307793502632abe2a957a9aff6e143e7e2f24e234451064c5c303d83",
+    "pages": 17,
+    "source": "docs/database/multi-store-report.source.json",
+    "source_sha256": "1fabc89e3dc8b8aca9b539cdc60f28f638292743e1b05ac22a164aa812c33f29",
+    "figure": "docs/database/report-assets/storage-architecture.svg",
+    "builder": "scripts/build_multistore_report.ps1",
+    "rendering": "Hidden native Microsoft Word COM export to PDF followed by Windows.Data.Pdf page PNG rendering. Hosted render_docx.py was unavailable and was not executed.",
+    "qa": "Every final page visually inspected directly or verified byte-identical to an inspected page. OOXML metadata/path/relationship/replacement-character checks passed. PDF and PNGs are internal QA only."
+  },
+  "whole_branch_review": {
+    "state": "pending",
+    "base": "d532215d3f0b284f4c4bc3ccc8b4566c06e245b4"
+  }
+}

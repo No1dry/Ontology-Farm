@@ -1,7 +1,7 @@
 {
   "format_version": 1,
   "review_base": "741fa3ddc6fd690e337d35f55a358afa42729b9c",
-  "state": "implemented_covering_verified_pending_independent_rereview",
+  "state": "accepted_after_independent_scoped_rereview",
   "addressed": [
     "I1",
     "I2",
@@ -147,5 +147,8 @@
     "benchmark_rerun": false,
     "large_matrix_rerun": false,
     "performance_still_unqualified": true
-  }
+  },
+  "accepted_head": "78f954d80e801995bd0994f8f2ba6c4375f675af",
+  "rereview_sha256": "fd77737f51afa42d0220cbfdd494fc4947b1f1292856be9c1a495b919a60f9d9",
+  "rereview_verdict": "I1 I2 M1 addressed; no new Critical/Important/Minor breakage identified"
 }

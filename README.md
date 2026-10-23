@@ -4,6 +4,8 @@
 
 历史快照前里程碑为 **15/29**，见[历史快照状态](docs/status/2026-10-21-source-snapshot.md)。新增多存储的实际结构、原生验证、恢复证据、性能边界及未执行的容器/现场维度见[当前数据库验收](docs/database/acceptance.md)；这些工程结果不构成整个原 P0+P1 产品或生产迁移完成声明。
 
+本次拆分的完整说明见 [Word 架构与数据准备报告](docs/database/multi-store-architecture-report.docx)，包含各库职责、统一身份、静态与动态输入路径、真实资料问题及实测结果。[阶段实施与审查记录](docs/database/implementation-record.json)保留各轮证据和决定。初始负载已完整保存并投影 1 万实例、10 万关系，但 10 用户测量中的图谱和 SPARQL 请求全部超时；当前性能验收不通过，不能把测量脚本成功退出解释为性能达标。
+
 | 目录 | 职责 |
 | --- | --- |
 | [backend/](backend/README.md) | Python API、worker、权限治理、语义逻辑、摄取、地图服务、模型及测试 |
